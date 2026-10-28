@@ -1,0 +1,34 @@
+---
+description: Core rules for the Farsi-first Pomodoro app
+alwaysApply: true
+---
+
+# Project context
+- Farsi-first Pomodoro web app (PWA). Full plan: docs/PLAN.md — read it before large changes.
+- The Next.js app lives in `web/`. Run all npm commands from `web/`.
+- Stack: Next.js App Router, TypeScript (strict), Tailwind CSS, shadcn/ui, next-intl, Zustand, PostgreSQL + Prisma, Better Auth, Zarinpal.
+- The developer knows React but is new to backends and databases: when writing server, database, auth or payment code, add short comments explaining WHY, and summarize what you changed at the end.
+
+# i18n & RTL (very important)
+- Never hard-code user-facing text. Every string goes through next-intl (`useTranslations` / `getTranslations`) with keys in `web/messages/{fa,en,es,fr,de,ja,ko}.json`. Add keys to ALL locale files; Farsi first.
+- Default locale is `fa` (RTL). Others are LTR. Set `dir` on `<html>` from the locale.
+- Use Tailwind logical utilities only: `ms-* me-* ps-* pe-* start-* end-* text-start text-end border-s border-e rounded-s rounded-e`. Never `ml-* mr-* pl-* pr-* left-* right-* text-left text-right`.
+- Icons that imply direction (arrows, chevrons) must flip in RTL (`rtl:-scale-x-100`).
+- Format numbers, durations and dates with `Intl` using the active locale (fa → Persian digits, Jalali calendar via `fa-IR-u-ca-persian`). Never build date strings by hand.
+
+# Timer
+- Timer state is timestamps (`startedAt`, `plannedSec`, `pausedAt`, `pausedTotalSec`), never a decrementing counter. Remaining time is always computed from `Date.now()`.
+
+# Data & security
+- All database access happens on the server (Server Actions / Route Handlers). Never import Prisma in client components.
+- Validate every input on the server with Zod.
+- Every query is scoped to the signed-in user's id.
+- Pro features are enforced on the server with `requirePro()`, not only hidden in the UI.
+- Secrets only in `.env.local` (never committed). Access env vars through one validated module.
+- Times are stored in UTC; convert to the user's timezone (default `Asia/Tehran`) for stats and streaks.
+
+# Code style
+- Small focused components; colocate feature code under `web/src/features/<feature>/`.
+- Prefer Server Components; add `"use client"` only where interactivity is needed.
+- No new dependencies without saying why.
+- Don't modify files unrelated to the current task.
