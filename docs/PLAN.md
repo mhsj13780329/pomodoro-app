@@ -83,7 +83,7 @@ Payment         id, userId, plan (MONTH|YEAR|LIFETIME), amountToman, authority, 
 3. **Completed sessions** are written to IndexedDB first, then flushed to the server when online. The client-generated UUID makes retries safe (no duplicates). Important given unreliable connections.
 4. Settings/tasks/notes: last-write-wins using `updatedAt`.
 
-Timer accuracy: never count `setInterval` ticks — browsers throttle background tabs. Always compute from timestamps.
+Timer accuracy: never count `setInterval` ticks — browsers throttle background tabs. Always compute from timestamps. A running session keeps going while the tab is asleep: when the page runs again, phases that would have ended are reconstructed from those timestamps, and the next phase has already started if its auto-start was on. The end sound and the browser notification can only play while the page is actually running. Firing them at the exact end time while the phone is locked needs the Phase 9 service worker.
 
 ## 6. Phases
 
@@ -98,7 +98,7 @@ Each phase ends with something that works. Commit to git at the end of every ste
 - [ ] **Phase 6 — Stats, heatmap, streaks:** dashboard with Jalali dates for fa, GitHub-style heatmap, current & best streak, per-task breakdown (Pro).
 - [ ] **Phase 7 — Pro & payments:** pricing page, Zarinpal sandbox → request → redirect → callback → verify → grant `proUntil`/lifetime; payment history; expiry reminders; server-side `requirePro()`.
 - [ ] **Phase 8 — Pro features:** unlimited themes, fully custom timer, notepad, ambient sounds (self-hosted audio files).
-- [ ] **Phase 9 — PWA:** manifest, icons, service worker (Serwist), offline shell, "Add to Home Screen" guide (esp. iOS).
+- [ ] **Phase 9 — PWA:** manifest, icons, service worker (Serwist), offline shell, "Add to Home Screen" guide (esp. iOS). The service worker also plays the phase-end sound and shows the browser notification while the page is frozen (locked phone or sleeping computer). Until then, those fire when the page runs again; the timer schedule itself does not wait.
 - [ ] **Phase 10 — Production:** domain, Iranian hosting + managed Postgres, real SMS provider, Enamad, Zarinpal production merchant, backups, error logging, privacy policy & terms (fa + en), self-hosted analytics.
 - [ ] **Phase 11 — Launch & marketing:** landing page (fa first), content, social, Iranian app directories, feedback loop.
 

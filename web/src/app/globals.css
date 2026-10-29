@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ground: #f6f1e9;
+  --color-surface: #fffbf5;
+  --color-surface-2: #ebe2d4;
+  --color-line: #e4d8c7;
+  --color-line-strong: #cdbfae;
+  --color-ink: #2b2420;
+  --color-muted: #66594e;
+
+  --color-focus: #b8472f;
+  --color-focus-soft: #f3ddd3;
+  --color-focus-ink: #8a2f1b;
+  --color-short: #3f7352;
+  --color-long: #35688a;
+
+  --color-pro-bg: #f6e7c1;
+  --color-pro-ink: #6b4500;
+
+  --color-ring-track: #e6d9c8;
+  --color-switch-off: #8f8171;
+
+  --color-heat-0: #ebe2d4;
+  --color-heat-1: #f0c9b8;
+  --color-heat-2: #e39c80;
+  --color-heat-3: #c9694a;
+  --color-heat-4: #8f3320;
+
+  --font-sans: "Vazirmatn Variable", Tahoma, "Segoe UI", sans-serif;
+
+  --radius-pill: 22px;
+  --radius-card: 20px;
+  --radius-feature: 28px;
+  --radius-panel: 24px;
+  --radius-track: 16px;
+  --radius-tab: 12px;
+  --radius-control: 16px;
+  --radius-nav: 14px;
+  --radius-sheet: 18px;
+}
+
+html {
+  background: var(--color-ground);
+  color-scheme: light;
+}
+
+body {
+  background: var(--color-ground);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}

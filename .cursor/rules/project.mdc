@@ -9,6 +9,11 @@ alwaysApply: true
 - Stack: Next.js App Router, TypeScript (strict), Tailwind CSS, shadcn/ui, next-intl, Zustand, PostgreSQL + Prisma, Better Auth, Zarinpal.
 - The developer knows React but is new to backends and databases: when writing server, database, auth or payment code, add short comments explaining WHY, and summarize what you changed at the end.
 
+# Design
+- UI follows docs/DESIGN.md (tokens, components, RTL rules). Mockups: docs/design/source/*.dc.html (phone + desktop). They are mockup files, not app code: rebuild them as React + Tailwind components, copying exact colors, spacing and Farsi copy.
+- Colors, radii and fonts come from the Tailwind `@theme` tokens in globals.css; never hard-code hex values in components.
+- Every control is at least 44×44px. Use real `<button>`, `<a>`, `<input>` + `<label>` elements.
+
 # i18n & RTL (very important)
 - Never hard-code user-facing text. Every string goes through next-intl (`useTranslations` / `getTranslations`) with keys in `web/messages/{fa,en,es,fr,de,ja,ko}.json`. Add keys to ALL locale files; Farsi first.
 - Default locale is `fa` (RTL). Others are LTR. Set `dir` on `<html>` from the locale.
