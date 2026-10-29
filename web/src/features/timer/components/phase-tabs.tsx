@@ -1,5 +1,5 @@
+import { useTranslations } from "next-intl";
 import { PHASES, type Phase } from "../logic";
-import { strings } from "../strings.fa";
 
 type Props = {
   phase: Phase;
@@ -7,6 +7,7 @@ type Props = {
 };
 
 export function PhaseTabs({ phase, onSelect }: Props) {
+  const t = useTranslations("timer.phases");
   return (
     <div role="tablist" className="flex w-full gap-1 rounded-track bg-surface-2 p-1">
       {PHASES.map((item) => {
@@ -22,7 +23,7 @@ export function PhaseTabs({ phase, onSelect }: Props) {
               selected ? "bg-[var(--phase)] text-white" : "text-muted"
             }`}
           >
-            {strings.phases[item]}
+            {t(item)}
           </button>
         );
       })}

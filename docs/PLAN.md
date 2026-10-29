@@ -91,7 +91,7 @@ Each phase ends with something that works. Commit to git at the end of every ste
 
 - [ ] **Phase 0 — Setup:** tools installed, Next.js app scaffolded in `web/`, git initialized, Cursor rules in place.
 - [ ] **Phase 1 — Timer core (no backend):** focus → break → long break cycle, auto-start toggles per phase, pause/resume/skip/reset, end sound, browser notification, tab-title countdown. State in a single store (Zustand) + localStorage.
-- [ ] **Phase 2 — i18n, RTL, design:** next-intl with all 7 locales, `dir="rtl"` for fa, Vazirmatn, Persian digits, language switcher, 3 free themes, light/dark. *No hard-coded UI strings from here on.*
+- [x] **Phase 2 — i18n, RTL, design:** next-intl with all 7 locales, `dir="rtl"` for fa, Vazirmatn, Persian digits, language switcher, 3 free themes, light/dark. *No hard-coded UI strings from here on.*
 - [ ] **Phase 3 — Database + auth:** local PostgreSQL, Prisma schema (§4), Better Auth with phone OTP + email OTP (log OTPs to the console in dev; real SMS later). Guest mode: app works without an account; on sign-up, local data is uploaded.
 - [ ] **Phase 4 — Sync:** settings, ActiveTimer and FocusSession sync per §5.
 - [ ] **Phase 5 — Tasks:** free simple list; Pro projects/tags/subtasks/estimates. Pick a task for the current focus session.

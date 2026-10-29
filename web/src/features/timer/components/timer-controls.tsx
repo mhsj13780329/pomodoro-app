@@ -1,5 +1,5 @@
+import { useTranslations } from "next-intl";
 import { IconPause, IconPlay, IconReset, IconSkip } from "@/components/icons";
-import { strings } from "../strings.fa";
 
 type Props = {
   running: boolean;
@@ -9,11 +9,12 @@ type Props = {
 };
 
 export function TimerControls({ running, onToggle, onReset, onSkip }: Props) {
+  const t = useTranslations("timer");
   return (
     <div className="flex items-center justify-center gap-7 md:gap-8">
       <button
         type="button"
-        aria-label={strings.reset}
+        aria-label={t("reset")}
         onClick={onReset}
         className="flex size-14 cursor-pointer items-center justify-center rounded-full border border-line bg-surface p-0 text-ink md:bg-ground"
       >
@@ -21,7 +22,7 @@ export function TimerControls({ running, onToggle, onReset, onSkip }: Props) {
       </button>
       <button
         type="button"
-        aria-label={running ? strings.pause : strings.play}
+        aria-label={running ? t("pause") : t("play")}
         onClick={onToggle}
         className="flex size-[84px] cursor-pointer items-center justify-center rounded-full border-0 bg-[var(--phase)] p-0 text-white"
       >
@@ -29,7 +30,7 @@ export function TimerControls({ running, onToggle, onReset, onSkip }: Props) {
       </button>
       <button
         type="button"
-        aria-label={strings.skip}
+        aria-label={t("skip")}
         onClick={onSkip}
         className="flex size-14 cursor-pointer items-center justify-center rounded-full border border-line bg-surface p-0 text-ink md:bg-ground"
       >

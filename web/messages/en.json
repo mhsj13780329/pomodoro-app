@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "description": "A {appName} timer for staying focused"
+  },
+  "nav": {
+    "menu": "Main menu",
+    "timer": "Timer",
+    "tasks": "Tasks",
+    "stats": "Stats",
+    "settings": "Settings"
+  },
+  "timer": {
+    "play": "Start",
+    "pause": "Pause",
+    "reset": "Reset",
+    "skip": "Skip",
+    "autoStart": "Auto-start",
+    "session": "Session {current, number} of {total, number}",
+    "shortHint": "Time for a break",
+    "longHint": "Take a deep breath",
+    "started": "Started",
+    "ready": "Ready",
+    "phases": {
+      "focus": "Focus",
+      "shortBreak": "Short break",
+      "longBreak": "Long break"
+    }
+  },
+  "streak": "{count, plural, one {# day in a row} other {# days in a row}}",
+  "today": {
+    "heading": "Today",
+    "focusHours": "Focus time",
+    "sessionsDone": "Sessions done"
+  },
+  "tasks": {
+    "heading": "Tasks",
+    "all": "All",
+    "done": "Done: {title}",
+    "progress": "{done, number} of {planned, number}",
+    "samples": {
+      "physics": "Study physics chapter 3",
+      "math": "Solve the math exercises",
+      "lab": "Write the lab report"
+    },
+    "placeholder": "Tasks coming soon"
+  },
+  "stats": {
+    "placeholder": "Stats coming soon"
+  },
+  "settings": {
+    "title": "Settings",
+    "theme": "Theme",
+    "themeWarm": "Warm theme",
+    "themeNight": "Night theme",
+    "themeForest": "Forest theme",
+    "themeSelected": "{name} (selected)",
+    "language": "Language"
+  },
+  "languages": {
+    "fa": "فارسی",
+    "en": "English",
+    "es": "Español",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ja": "日本語",
+    "ko": "한국어"
+  }
+}

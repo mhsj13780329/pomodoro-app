@@ -1,11 +1,12 @@
 "use client";
 
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { formatClock, phaseLabel } from "./format";
+import { useLocale, useTranslations } from "next-intl";
+import { APP_NAME } from "@/config/brand";
+import { formatClock } from "@/lib/format";
 import { displaySeconds, type TimerCore } from "./logic";
 import { notifyPhase, playChime } from "./notify";
 import { useTimerStore } from "./store";
-import { strings } from "./strings.fa";
 
 type Runtime = {
   ready: boolean;
@@ -17,21 +18,28 @@ type Runtime = {
 
 const TimerRuntimeContext = createContext<Runtime | null>(null);
 
-function titleFor(state: TimerCore, now: number): string {
-  if (state.status !== "running") return strings.appName;
-  return `${formatClock(displaySeconds(state, now))} — ${phaseLabel(state.phase)}`;
-}
-
-function chimeFor(state: TimerCore): void {
-  playChime();
-  const name = phaseLabel(state.phase);
-  const body = state.status === "running" ? strings.started : strings.ready;
-  notifyPhase(name, body);
-}
-
 export function TimerRuntime({ children }: { children: ReactNode }) {
+  const locale = useLocale();
+  const t = useTranslations("timer");
+  const phases = useTranslations("timer.phases");
   const [ready, setReady] = useState(false);
   const [now, setNow] = useState(0);
+
+  const titleFor = useMemo(() => {
+    return (state: TimerCore, stamp: number) => {
+      if (state.status !== "running") return APP_NAME;
+      return `${formatClock(displaySeconds(state, stamp), locale)} — ${phases(state.phase)}`;
+    };
+  }, [locale, phases]);
+
+  const chimeFor = useMemo(() => {
+    return (state: TimerCore) => {
+      playChime();
+      const name = phases(state.phase);
+      const body = state.status === "running" ? t("started") : t("ready");
+      notifyPhase(name, body);
+    };
+  }, [phases, t]);
 
   const sync = useMemo(() => {
     return () => {
@@ -42,7 +50,7 @@ export function TimerRuntime({ children }: { children: ReactNode }) {
       document.title = titleFor(useTimerStore.getState(), stamp);
       return ended;
     };
-  }, []);
+  }, [chimeFor, titleFor]);
 
   const refresh = useMemo(() => {
     return () => {
@@ -50,7 +58,7 @@ export function TimerRuntime({ children }: { children: ReactNode }) {
       setNow(stamp);
       document.title = titleFor(useTimerStore.getState(), stamp);
     };
-  }, []);
+  }, [titleFor]);
 
   useEffect(() => {
     let cancelled = false;
@@ -74,14 +82,11 @@ export function TimerRuntime({ children }: { children: ReactNode }) {
       cancelled = true;
       window.clearInterval(intervalId);
       document.removeEventListener("visibilitychange", onVisible);
-      document.title = strings.appName;
+      document.title = APP_NAME;
     };
   }, [sync]);
 
-  const value = useMemo(
-    () => ({ ready, now, sync, refresh }),
-    [ready, now, sync, refresh],
-  );
+  const value = useMemo(() => ({ ready, now, sync, refresh }), [ready, now, sync, refresh]);
 
   return <TimerRuntimeContext.Provider value={value}>{children}</TimerRuntimeContext.Provider>;
 }

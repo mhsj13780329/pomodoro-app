@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "description": "Ein {appName}-Timer für konzentriertes Arbeiten"
+  },
+  "nav": {
+    "menu": "Hauptmenü",
+    "timer": "Timer",
+    "tasks": "Aufgaben",
+    "stats": "Statistik",
+    "settings": "Einstellungen"
+  },
+  "timer": {
+    "play": "Start",
+    "pause": "Pause",
+    "reset": "Neu starten",
+    "skip": "Überspringen",
+    "autoStart": "Automatisch starten",
+    "session": "Sitzung {current, number} von {total, number}",
+    "shortHint": "Zeit für eine Pause",
+    "longHint": "Tief durchatmen",
+    "started": "Gestartet",
+    "ready": "Bereit",
+    "phases": {
+      "focus": "Fokus",
+      "shortBreak": "Kurze Pause",
+      "longBreak": "Lange Pause"
+    }
+  },
+  "streak": "{count, plural, one {# Tag in Folge} other {# Tage in Folge}}",
+  "today": {
+    "heading": "Heute",
+    "focusHours": "Fokuszeit",
+    "sessionsDone": "Abgeschlossene Sitzungen"
+  },
+  "tasks": {
+    "heading": "Aufgaben",
+    "all": "Alle",
+    "done": "Erledigt: {title}",
+    "progress": "{done, number} von {planned, number}",
+    "samples": {
+      "physics": "Physik, Kapitel 3 lernen",
+      "math": "Matheaufgaben lösen",
+      "lab": "Laborbericht schreiben"
+    },
+    "placeholder": "Aufgaben folgen bald"
+  },
+  "stats": {
+    "placeholder": "Statistik folgt bald"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "theme": "Thema",
+    "themeWarm": "Warmes Thema",
+    "themeNight": "Nacht-Thema",
+    "themeForest": "Wald-Thema",
+    "themeSelected": "{name} (ausgewählt)",
+    "language": "Sprache"
+  },
+  "languages": {
+    "fa": "فارسی",
+    "en": "English",
+    "es": "Español",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ja": "日本語",
+    "ko": "한국어"
+  }
+}

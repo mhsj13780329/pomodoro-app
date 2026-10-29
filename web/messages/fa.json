@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "description": "تایمر {appName} برای تمرکز"
+  },
+  "nav": {
+    "menu": "منوی اصلی",
+    "timer": "تایمر",
+    "tasks": "کارها",
+    "stats": "آمار",
+    "settings": "تنظیمات"
+  },
+  "timer": {
+    "play": "شروع",
+    "pause": "توقف",
+    "reset": "از اول",
+    "skip": "رد کردن",
+    "autoStart": "شروع خودکار",
+    "session": "جلسه {current, number} از {total, number}",
+    "shortHint": "وقت استراحت",
+    "longHint": "نفس عمیق بکش",
+    "started": "شروع شد",
+    "ready": "آماده است",
+    "phases": {
+      "focus": "تمرکز",
+      "shortBreak": "استراحت کوتاه",
+      "longBreak": "استراحت بلند"
+    }
+  },
+  "streak": "{count, plural, one {# روز پیاپی} other {# روز پیاپی}}",
+  "today": {
+    "heading": "امروز",
+    "focusHours": "ساعت تمرکز",
+    "sessionsDone": "جلسه کامل"
+  },
+  "tasks": {
+    "heading": "کارها",
+    "all": "همه",
+    "done": "انجام شد: {title}",
+    "progress": "{done, number} از {planned, number}",
+    "samples": {
+      "physics": "مطالعه فصل ۳ فیزیک",
+      "math": "حل تمرین ریاضی",
+      "lab": "نوشتن گزارش آزمایشگاه"
+    },
+    "placeholder": "کارها به‌زودی"
+  },
+  "stats": {
+    "placeholder": "آمار به‌زودی"
+  },
+  "settings": {
+    "title": "تنظیمات",
+    "theme": "تم",
+    "themeWarm": "تم گرم",
+    "themeNight": "تم شب",
+    "themeForest": "تم جنگل",
+    "themeSelected": "{name} (انتخاب‌شده)",
+    "language": "زبان"
+  },
+  "languages": {
+    "fa": "فارسی",
+    "en": "English",
+    "es": "Español",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ja": "日本語",
+    "ko": "한국어"
+  }
+}

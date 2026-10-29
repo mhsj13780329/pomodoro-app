@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "description": "集中するための{appName}タイマー"
+  },
+  "nav": {
+    "menu": "メインメニュー",
+    "timer": "タイマー",
+    "tasks": "タスク",
+    "stats": "統計",
+    "settings": "設定"
+  },
+  "timer": {
+    "play": "開始",
+    "pause": "一時停止",
+    "reset": "最初から",
+    "skip": "スキップ",
+    "autoStart": "自動スタート",
+    "session": "セッション {current, number} / {total, number}",
+    "shortHint": "休憩の時間です",
+    "longHint": "深呼吸しましょう",
+    "started": "始まりました",
+    "ready": "準備できました",
+    "phases": {
+      "focus": "集中",
+      "shortBreak": "短い休憩",
+      "longBreak": "長い休憩"
+    }
+  },
+  "streak": "{count, plural, other {#日連続}}",
+  "today": {
+    "heading": "今日",
+    "focusHours": "集中時間",
+    "sessionsDone": "完了したセッション"
+  },
+  "tasks": {
+    "heading": "タスク",
+    "all": "すべて",
+    "done": "完了: {title}",
+    "progress": "{done, number} / {planned, number}",
+    "samples": {
+      "physics": "物理の第3章を勉強する",
+      "math": "数学の問題を解く",
+      "lab": "実験レポートを書く"
+    },
+    "placeholder": "タスクは近日公開"
+  },
+  "stats": {
+    "placeholder": "統計は近日公開"
+  },
+  "settings": {
+    "title": "設定",
+    "theme": "テーマ",
+    "themeWarm": "ウォームテーマ",
+    "themeNight": "ナイトテーマ",
+    "themeForest": "フォレストテーマ",
+    "themeSelected": "{name}（選択中）",
+    "language": "言語"
+  },
+  "languages": {
+    "fa": "فارسی",
+    "en": "English",
+    "es": "Español",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ja": "日本語",
+    "ko": "한국어"
+  }
+}

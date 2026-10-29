@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "description": "Un minuteur {appName} pour rester concentré"
+  },
+  "nav": {
+    "menu": "Menu principal",
+    "timer": "Minuteur",
+    "tasks": "Tâches",
+    "stats": "Statistiques",
+    "settings": "Réglages"
+  },
+  "timer": {
+    "play": "Démarrer",
+    "pause": "Pause",
+    "reset": "Recommencer",
+    "skip": "Passer",
+    "autoStart": "Démarrage automatique",
+    "session": "Session {current, number} sur {total, number}",
+    "shortHint": "C’est l’heure de la pause",
+    "longHint": "Respire profondément",
+    "started": "C’est parti",
+    "ready": "Prêt",
+    "phases": {
+      "focus": "Concentration",
+      "shortBreak": "Pause courte",
+      "longBreak": "Pause longue"
+    }
+  },
+  "streak": "{count, plural, one {# jour d’affilée} other {# jours d’affilée}}",
+  "today": {
+    "heading": "Aujourd’hui",
+    "focusHours": "Temps de concentration",
+    "sessionsDone": "Sessions terminées"
+  },
+  "tasks": {
+    "heading": "Tâches",
+    "all": "Tout",
+    "done": "Terminé : {title}",
+    "progress": "{done, number} sur {planned, number}",
+    "samples": {
+      "physics": "Étudier le chapitre 3 de physique",
+      "math": "Faire les exercices de maths",
+      "lab": "Rédiger le compte rendu de labo"
+    },
+    "placeholder": "Les tâches arrivent bientôt"
+  },
+  "stats": {
+    "placeholder": "Les statistiques arrivent bientôt"
+  },
+  "settings": {
+    "title": "Réglages",
+    "theme": "Thème",
+    "themeWarm": "Thème chaud",
+    "themeNight": "Thème nuit",
+    "themeForest": "Thème forêt",
+    "themeSelected": "{name} (sélectionné)",
+    "language": "Langue"
+  },
+  "languages": {
+    "fa": "فارسی",
+    "en": "English",
+    "es": "Español",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ja": "日本語",
+    "ko": "한국어"
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "description": "집중을 위한 {appName} 타이머"
+  },
+  "nav": {
+    "menu": "주 메뉴",
+    "timer": "타이머",
+    "tasks": "할 일",
+    "stats": "통계",
+    "settings": "설정"
+  },
+  "timer": {
+    "play": "시작",
+    "pause": "일시정지",
+    "reset": "처음부터",
+    "skip": "건너뛰기",
+    "autoStart": "자동 시작",
+    "session": "세션 {current, number} / {total, number}",
+    "shortHint": "쉬는 시간이에요",
+    "longHint": "깊게 숨을 쉬어 보세요",
+    "started": "시작됨",
+    "ready": "준비됨",
+    "phases": {
+      "focus": "집중",
+      "shortBreak": "짧은 휴식",
+      "longBreak": "긴 휴식"
+    }
+  },
+  "streak": "{count, plural, other {#일 연속}}",
+  "today": {
+    "heading": "오늘",
+    "focusHours": "집중 시간",
+    "sessionsDone": "완료한 세션"
+  },
+  "tasks": {
+    "heading": "할 일",
+    "all": "전체",
+    "done": "완료: {title}",
+    "progress": "{done, number} / {planned, number}",
+    "samples": {
+      "physics": "물리 3단원 공부",
+      "math": "수학 문제 풀기",
+      "lab": "실험 보고서 쓰기"
+    },
+    "placeholder": "할 일은 곧 열려요"
+  },
+  "stats": {
+    "placeholder": "통계는 곧 열려요"
+  },
+  "settings": {
+    "title": "설정",
+    "theme": "테마",
+    "themeWarm": "웜 테마",
+    "themeNight": "나이트 테마",
+    "themeForest": "포레스트 테마",
+    "themeSelected": "{name} (선택됨)",
+    "language": "언어"
+  },
+  "languages": {
+    "fa": "فارسی",
+    "en": "English",
+    "es": "Español",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ja": "日本語",
+    "ko": "한국어"
+  }
+}

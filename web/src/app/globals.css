@@ -1,32 +1,8 @@
 @import "tailwindcss";
 
+/* Radii, font, and swatch previews stay fixed. Colour utilities point at
+   variables that [data-theme] changes, so one class works for every theme. */
 @theme {
-  --color-ground: #f6f1e9;
-  --color-surface: #fffbf5;
-  --color-surface-2: #ebe2d4;
-  --color-line: #e4d8c7;
-  --color-line-strong: #cdbfae;
-  --color-ink: #2b2420;
-  --color-muted: #66594e;
-
-  --color-focus: #b8472f;
-  --color-focus-soft: #f3ddd3;
-  --color-focus-ink: #8a2f1b;
-  --color-short: #3f7352;
-  --color-long: #35688a;
-
-  --color-pro-bg: #f6e7c1;
-  --color-pro-ink: #6b4500;
-
-  --color-ring-track: #e6d9c8;
-  --color-switch-off: #8f8171;
-
-  --color-heat-0: #ebe2d4;
-  --color-heat-1: #f0c9b8;
-  --color-heat-2: #e39c80;
-  --color-heat-3: #c9694a;
-  --color-heat-4: #8f3320;
-
   --font-sans: "Vazirmatn Variable", Tahoma, "Segoe UI", sans-serif;
 
   --radius-pill: 22px;
@@ -38,21 +14,127 @@
   --radius-control: 16px;
   --radius-nav: 14px;
   --radius-sheet: 18px;
+
+  --color-swatch-warm: #f6f1e9;
+  --color-swatch-warm-dot: #b8472f;
+  --color-swatch-night: #1f1b18;
+  --color-swatch-night-dot: #b5523c;
+  --color-swatch-forest: #e3ede1;
+  --color-swatch-forest-dot: #3f7352;
+}
+
+@theme inline {
+  --color-ground: var(--ground);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-focus: var(--focus);
+  --color-focus-soft: var(--focus-soft);
+  --color-focus-ink: var(--focus-ink);
+  --color-short: var(--short);
+  --color-long: var(--long);
+  --color-pro-bg: var(--pro-bg);
+  --color-pro-ink: var(--pro-ink);
+  --color-ring-track: var(--ring-track);
+  --color-switch-off: var(--switch-off);
+  --color-heat-0: var(--heat-0);
+  --color-heat-1: var(--heat-1);
+  --color-heat-2: var(--heat-2);
+  --color-heat-3: var(--heat-3);
+  --color-heat-4: var(--heat-4);
+}
+
+[data-theme="warm"] {
+  color-scheme: light;
+  --ground: #f6f1e9;
+  --surface: #fffbf5;
+  --surface-2: #ebe2d4;
+  --line: #e4d8c7;
+  --line-strong: #cdbfae;
+  --ink: #2b2420;
+  --muted: #66594e;
+  --focus: #b8472f;
+  --focus-soft: #f3ddd3;
+  --focus-ink: #8a2f1b;
+  --short: #3f7352;
+  --long: #35688a;
+  --pro-bg: #f6e7c1;
+  --pro-ink: #6b4500;
+  --ring-track: #e6d9c8;
+  --switch-off: #8f8171;
+  --heat-0: #ebe2d4;
+  --heat-1: #f0c9b8;
+  --heat-2: #e39c80;
+  --heat-3: #c9694a;
+  --heat-4: #8f3320;
+}
+
+[data-theme="night"] {
+  color-scheme: dark;
+  --ground: #1f1b18;
+  --surface: #2a2420;
+  --surface-2: #3a322c;
+  --line: #4a4038;
+  --line-strong: #6b5c50;
+  --ink: #f6f1e9;
+  --muted: #c4b5a6;
+  --focus: #b5523c;
+  --focus-soft: #3d2a24;
+  --focus-ink: #f3c7ba;
+  --short: #3f7352;
+  --long: #35688a;
+  --pro-bg: #3a3018;
+  --pro-ink: #f0d48a;
+  --ring-track: #3a322c;
+  --switch-off: #6b5c50;
+  --heat-0: #3a322c;
+  --heat-1: #5c3a30;
+  --heat-2: #8a4a38;
+  --heat-3: #b5523c;
+  --heat-4: #8f3320;
+}
+
+[data-theme="forest"] {
+  color-scheme: light;
+  --ground: #e3ede1;
+  --surface: #f7fbf6;
+  --surface-2: #d5e4d0;
+  --line: #c5d6be;
+  --line-strong: #8faa8a;
+  --ink: #1c2a22;
+  --muted: #3e5346;
+  --focus: #3f7352;
+  --focus-soft: #d7ebda;
+  --focus-ink: #1b4a30;
+  --short: #8a5a12;
+  --long: #2a5678;
+  --pro-bg: #f6e7c1;
+  --pro-ink: #6b4500;
+  --ring-track: #d5e4d0;
+  --switch-off: #6e8576;
+  --heat-0: #d5e4d0;
+  --heat-1: #b7d4b4;
+  --heat-2: #7eae84;
+  --heat-3: #3f7352;
+  --heat-4: #1e4a34;
 }
 
 html {
-  background: var(--color-ground);
+  background: var(--ground);
   color-scheme: light;
 }
 
 body {
-  background: var(--color-ground);
-  color: var(--color-ink);
+  background: var(--ground);
+  color: var(--ink);
   font-family: var(--font-sans);
 }
 
 button:focus-visible,
 a:focus-visible {
-  outline: 2px solid var(--color-focus);
+  outline: 2px solid var(--focus);
   outline-offset: 2px;
 }

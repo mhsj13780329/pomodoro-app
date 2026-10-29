@@ -22,7 +22,7 @@ export function TimerRing({ progress, clock, subtitle }: Props) {
         className="absolute top-0 bottom-0 start-0 end-0 size-full"
         aria-hidden="true"
       >
-        <circle cx="140" cy="140" r={RADIUS} stroke="var(--color-ring-track)" strokeWidth="12" fill="none" />
+        <circle cx="140" cy="140" r={RADIUS} stroke="var(--ring-track)" strokeWidth="12" fill="none" />
         {clamped > 0.001 ? (
           <circle
             cx="140"

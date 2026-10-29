@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "description": "Un temporizador {appName} para concentrarte"
+  },
+  "nav": {
+    "menu": "Menú principal",
+    "timer": "Temporizador",
+    "tasks": "Tareas",
+    "stats": "Estadísticas",
+    "settings": "Ajustes"
+  },
+  "timer": {
+    "play": "Empezar",
+    "pause": "Pausa",
+    "reset": "Reiniciar",
+    "skip": "Saltar",
+    "autoStart": "Inicio automático",
+    "session": "Sesión {current, number} de {total, number}",
+    "shortHint": "Hora de descansar",
+    "longHint": "Respira hondo",
+    "started": "Empezó",
+    "ready": "Listo",
+    "phases": {
+      "focus": "Concentración",
+      "shortBreak": "Descanso corto",
+      "longBreak": "Descanso largo"
+    }
+  },
+  "streak": "{count, plural, one {# día seguido} other {# días seguidos}}",
+  "today": {
+    "heading": "Hoy",
+    "focusHours": "Tiempo de concentración",
+    "sessionsDone": "Sesiones hechas"
+  },
+  "tasks": {
+    "heading": "Tareas",
+    "all": "Todas",
+    "done": "Hecho: {title}",
+    "progress": "{done, number} de {planned, number}",
+    "samples": {
+      "physics": "Estudiar el capítulo 3 de física",
+      "math": "Resolver los ejercicios de matemáticas",
+      "lab": "Escribir el informe de laboratorio"
+    },
+    "placeholder": "Las tareas llegarán pronto"
+  },
+  "stats": {
+    "placeholder": "Las estadísticas llegarán pronto"
+  },
+  "settings": {
+    "title": "Ajustes",
+    "theme": "Tema",
+    "themeWarm": "Tema cálido",
+    "themeNight": "Tema noche",
+    "themeForest": "Tema bosque",
+    "themeSelected": "{name} (seleccionado)",
+    "language": "Idioma"
+  },
+  "languages": {
+    "fa": "فارسی",
+    "en": "English",
+    "es": "Español",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ja": "日本語",
+    "ko": "한국어"
+  }
+}

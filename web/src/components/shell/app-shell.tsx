@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
+import { APP_NAME } from "@/config/brand";
 import {
   IconLogo,
   IconNavSettings,
@@ -10,14 +10,14 @@ import {
   IconNavTasks,
   IconNavTimer,
 } from "@/components/icons";
+import { Link, usePathname } from "@/i18n/navigation";
 import { TimerRuntime } from "@/features/timer/timer-runtime";
-import { strings } from "@/features/timer/strings.fa";
 
 const links = [
-  { href: "/", label: strings.nav.timer, icon: IconNavTimer },
-  { href: "/tasks", label: strings.nav.tasks, icon: IconNavTasks },
-  { href: "/stats", label: strings.nav.stats, icon: IconNavStats },
-  { href: "/settings", label: strings.nav.settings, icon: IconNavSettings },
+  { href: "/", labelKey: "timer", icon: IconNavTimer },
+  { href: "/tasks", labelKey: "tasks", icon: IconNavTasks },
+  { href: "/stats", labelKey: "stats", icon: IconNavStats },
+  { href: "/settings", labelKey: "settings", icon: IconNavSettings },
 ] as const;
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -36,16 +36,16 @@ export function AppShell({ children }: { children: ReactNode }) {
 
 function DesktopNav() {
   const pathname = usePathname();
+  const t = useTranslations("nav");
   return (
     <aside className="hidden w-60 shrink-0 flex-col gap-1.5 border-e border-line bg-surface px-4 py-5 md:flex">
       <div className="mb-3 flex min-h-12 items-center gap-2.5 px-2">
         <span className="flex size-9 items-center justify-center rounded-full bg-focus text-white">
           <IconLogo className="size-5" />
         </span>
-        {/* Placeholder name until one is chosen. DESIGN.md §5 */}
-        <span className="text-xl font-bold">{strings.appName}</span>
+        <span className="text-xl font-bold">{APP_NAME}</span>
       </div>
-      <nav className="flex flex-col gap-1" aria-label={strings.menu}>
+      <nav className="flex flex-col gap-1" aria-label={t("menu")}>
         {links.map((link) => {
           const active = pathname === link.href;
           const Icon = link.icon;
@@ -59,7 +59,7 @@ function DesktopNav() {
               }`}
             >
               <Icon className="size-[22px]" />
-              <span>{link.label}</span>
+              <span>{t(link.labelKey)}</span>
             </Link>
           );
         })}
@@ -70,8 +70,9 @@ function DesktopNav() {
 
 function PhoneNav() {
   const pathname = usePathname();
+  const t = useTranslations("nav");
   return (
-    <nav className="border-t border-line bg-surface md:hidden" aria-label={strings.menu}>
+    <nav className="border-t border-line bg-surface md:hidden" aria-label={t("menu")}>
       <div className="flex px-2">
         {links.map((link) => {
           const active = pathname === link.href;
@@ -86,7 +87,7 @@ function PhoneNav() {
               }`}
             >
               <Icon className="size-6" />
-              <span>{link.label}</span>
+              <span>{t(link.labelKey)}</span>
             </Link>
           );
         })}

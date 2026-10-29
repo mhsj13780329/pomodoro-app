@@ -1,11 +1,12 @@
 "use client";
 
 import type { CSSProperties } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { APP_NAME } from "@/config/brand";
+import { formatClock } from "@/lib/format";
 import { defaultTimer, displaySeconds, remainingMs, type Phase, type TimerCore } from "../logic";
-import { formatClock, formatSession } from "../format";
 import { requestNotificationPermission, unlockAudio } from "../notify";
 import { useTimerStore } from "../store";
-import { strings } from "../strings.fa";
 import { useTimerRuntime } from "../timer-runtime";
 import { AutoStartSwitches } from "./auto-start-switches";
 import { CycleDots } from "./cycle-dots";
@@ -19,31 +20,34 @@ import { TodayPanel } from "./today-panel";
 import { IconLogo } from "@/components/icons";
 
 const phaseColor: Record<Phase, string> = {
-  focus: "var(--color-focus)",
-  shortBreak: "var(--color-short)",
-  longBreak: "var(--color-long)",
+  focus: "var(--focus)",
+  shortBreak: "var(--short)",
+  longBreak: "var(--long)",
 };
 
-function sessionLabel(state: TimerCore): string {
-  const total = state.longBreakEvery;
-  const current =
-    state.phase === "focus"
-      ? Math.min(state.completedFocusInCycle + 1, total)
-      : Math.min(state.completedFocusInCycle, total);
-  return formatSession(current, total);
-}
-
-function subtitle(state: TimerCore): string {
-  if (state.phase === "shortBreak") return strings.shortHint;
-  if (state.phase === "longBreak") return strings.longHint;
-  return sessionLabel(state);
-}
-
 export function TimerScreen() {
+  const locale = useLocale();
+  const t = useTranslations("timer");
+  const nav = useTranslations("nav");
   const stored = useTimerStore();
   const { ready, now, sync, refresh } = useTimerRuntime();
   const timer = ready ? stored : defaultTimer;
   const clockNow = ready ? now : 0;
+  const sessionLabel = (state: TimerCore) => {
+    const total = state.longBreakEvery;
+    const current =
+      state.phase === "focus"
+        ? Math.min(state.completedFocusInCycle + 1, total)
+        : Math.min(state.completedFocusInCycle, total);
+    return t("session", { current, total });
+  };
+
+  const subtitle = (state: TimerCore) => {
+    if (state.phase === "shortBreak") return t("shortHint");
+    if (state.phase === "longBreak") return t("longHint");
+    return sessionLabel(state);
+  };
+
   const seconds = displaySeconds(timer, clockNow);
   const plannedMs = Math.round(timer.plannedSec * 1000);
   const leftMs = remainingMs(timer, clockNow);
@@ -80,14 +84,13 @@ export function TimerScreen() {
           <span className="flex size-8 items-center justify-center rounded-full bg-focus text-white">
             <IconLogo className="size-[18px]" />
           </span>
-          {/* Placeholder name until one is chosen. DESIGN.md §5 */}
-          <span className="text-lg font-bold">{strings.appName}</span>
+          <span className="text-lg font-bold">{APP_NAME}</span>
         </div>
         <StreakChip />
       </div>
 
       <div className="hidden items-center justify-between gap-3 md:flex">
-        <h1 className="text-[26px] font-bold">{strings.nav.timer}</h1>
+        <h1 className="text-[26px] font-bold">{nav("timer")}</h1>
         <StreakChip />
       </div>
 
@@ -103,7 +106,7 @@ export function TimerScreen() {
             />
           </div>
           <div className="mt-4 md:mt-0">
-            <TimerRing progress={progress} clock={formatClock(seconds)} subtitle={subtitle(timer)} />
+            <TimerRing progress={progress} clock={formatClock(seconds, locale)} subtitle={subtitle(timer)} />
           </div>
           <div className="mt-3.5 md:hidden">
             <TaskChip />
