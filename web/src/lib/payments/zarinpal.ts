@@ -4,6 +4,8 @@
 // Amounts are toman. currency "IRT" tells Zarinpal that. Verify has no currency field:
 // it must be sent the same integer, or Zarinpal answers -50 (amount mismatch).
 
+import { testOtpEnabled } from "@/lib/test-otp";
+import { fakeGateway } from "./fake-gateway";
 import { paymentEnv } from "./payment-env";
 
 const PRODUCTION = {
@@ -189,7 +191,8 @@ export function zarinpalFromEnv(): PaymentGateway {
   return createZarinpal({ merchantId: env.merchantId, sandbox: env.sandbox });
 }
 
-/** What the routes call. The e2e suite replaces this with a fake when E2E_OTP=1. */
+/** What the routes call. Playwright (E2E_OTP=1, not production) gets the in-memory gateway. */
 export function getPaymentGateway(): PaymentGateway {
+  if (testOtpEnabled()) return fakeGateway();
   return zarinpalFromEnv();
 }

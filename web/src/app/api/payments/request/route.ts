@@ -9,6 +9,7 @@ import { getPlan } from "@/lib/payments/plans";
 import { getPaymentGateway, ZarinpalError, ZarinpalUnavailable } from "@/lib/payments/zarinpal";
 import { prisma } from "@/lib/prisma";
 import { readJson } from "@/lib/sync/http";
+import { testOtpEnabled } from "@/lib/test-otp";
 
 // The browser sends a plan id only. The toman amount is copied from plans.ts here,
 // so a modified request cannot pick its own price.
@@ -41,7 +42,8 @@ export async function POST(request: Request) {
   let appUrl: string;
   try {
     gateway = getPaymentGateway();
-    appUrl = paymentEnv().appUrl;
+    // The e2e server has no merchant id. Its callback is this server's own origin.
+    appUrl = testOtpEnabled() ? new URL(request.url).origin : paymentEnv().appUrl;
   } catch (error) {
     if (error instanceof PaymentConfigError) return Response.json({ error: "unavailable" }, { status: 503 });
     throw error;
@@ -72,7 +74,9 @@ export async function POST(request: Request) {
       },
     });
     await prisma.payment.update({ where: { id: payment.id }, data: { authority } });
-    return Response.json({ url: gateway.startPayUrl(authority) });
+    // A relative StartPay path (the e2e fake) becomes an absolute URL on this host.
+    const start = gateway.startPayUrl(authority);
+    return Response.json({ url: new URL(start, appUrl).toString() });
   } catch (error) {
     if (error instanceof ZarinpalError) {
       await prisma.payment.update({
