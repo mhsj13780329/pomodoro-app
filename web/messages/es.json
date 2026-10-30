@@ -172,9 +172,54 @@
     }
   },
   "pricing": {
-    "title": "Pro",
-    "soon": "La página de precios llegará pronto.",
-    "gatewayDescription": "Suscripción Pro de Pomodoro"
+    "badge": "Pro",
+    "headline": "Más concentración, sin límites",
+    "lead": "Abre todas las funciones. Se paga una vez y no se renueva solo.",
+    "back": "Volver",
+    "legend": "Elige un plan",
+    "recommended": "Nuestra elección",
+    "price": "{amount} toman",
+    "pay": "Pagar con Zarinpal",
+    "paying": "Abriendo la pasarela",
+    "note": "Pago bancario seguro · sin renovación automática · te avisamos antes de que termine Pro",
+    "enamad": "Sello de confianza",
+    "statusFree": "Gratis",
+    "statusUntil": "Pro hasta {date}",
+    "statusLifetime": "Pro de por vida",
+    "thanksTitle": "Gracias por Pro",
+    "thanksBody": "Tu plan no caduca, así que no hay nada más que pagar.",
+    "gatewayDescription": "Suscripción Pro de Pomodoro",
+    "plans": {
+      "month": { "name": "Un mes", "hint": "Para probarlo" },
+      "year": { "name": "Un año", "hint": "Más barato al mes" },
+      "lifetime": { "name": "De por vida", "hint": "Un pago, para siempre" }
+    },
+    "features": {
+      "themes": "Temas ilimitados",
+      "tasks": "Tareas con proyectos, etiquetas y subtareas",
+      "stats": "Estadísticas completas y mapa de un año",
+      "sounds": "Un sonido distinto para cada fase",
+      "ambient": "Sonidos ambientales",
+      "notes": "Bloc de notas"
+    },
+    "compare": {
+      "title": "Gratis y Pro",
+      "free": "Gratis",
+      "pro": "Pro",
+      "timer": { "label": "Temporizador", "free": "Preajustes 25/5/15 y 50/10/20", "pro": "Cualquier duración, intervalo y sonidos por fase" },
+      "autostart": { "label": "Inicio automático", "free": "Cada fase", "pro": "Cada fase" },
+      "sync": { "label": "Sincronización", "free": "Entre dispositivos", "pro": "Entre dispositivos" },
+      "streak": { "label": "Racha diaria", "free": "Incluida", "pro": "Incluida" },
+      "themes": { "label": "Temas", "free": "3 temas", "pro": "Ilimitados" },
+      "tasks": { "label": "Tareas", "free": "Lista simple, hasta 10 activas", "pro": "Proyectos, etiquetas, subtareas, sin límite" },
+      "stats": { "label": "Estadísticas", "free": "Hoy, 7 días y este mes", "pro": "Historial completo, mapa anual, desglose y exportación" },
+      "notepad": { "label": "Bloc", "free": "No incluido", "pro": "Incluido" },
+      "ambient": { "label": "Sonido ambiental", "free": "1 sonido", "pro": "Biblioteca completa" }
+    },
+    "errors": {
+      "gateway": "El pago no empezó. Inténtalo de nuevo.",
+      "unavailable": "La pasarela no responde ahora. Inténtalo en un momento."
+    }
   },
   "settings": {
     "title": "Ajustes",

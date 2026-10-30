@@ -422,7 +422,7 @@ test.describe("Pro task features", () => {
 
     await details.getByRole("link", { name: "Upgrade to Pro" }).click();
     await page.waitForURL("**/en/pricing");
-    await expect(page.getByText("The pricing page is coming soon.")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "More focus, without limits" })).toBeVisible();
   });
 
   test("when Pro ends, the data stays visible but read-only, and open work can still be finished", async ({ browser }) => {

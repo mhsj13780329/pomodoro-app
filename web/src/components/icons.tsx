@@ -193,6 +193,23 @@ export function IconPencil({ className }: IconProps) {
   );
 }
 
+export function IconCheck({ className }: IconProps) {
+  return (
+    <Svg className={className}>
+      <polyline points="20 6 9 17 4 12" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
+/** The Pro mark on the pricing page. Symmetric, so it is not flipped in RTL. */
+export function IconCrown({ className }: IconProps) {
+  return (
+    <Svg className={className}>
+      <path d="M2 8l4 10h12l4-10-6 4-4-8-4 8-6-4z" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
 export function IconLock({ className }: IconProps) {
   return (
     <Svg className={className}>

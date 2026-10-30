@@ -172,9 +172,54 @@
     }
   },
   "pricing": {
-    "title": "Pro",
-    "soon": "Die Preisseite folgt bald.",
-    "gatewayDescription": "Pomodoro-Pro-Abo"
+    "badge": "Pro",
+    "headline": "Mehr Fokus, ohne Grenzen",
+    "lead": "Alles freischalten. Einmal zahlen, keine automatische Verlängerung.",
+    "back": "Zurück",
+    "legend": "Tarif wählen",
+    "recommended": "Unsere Empfehlung",
+    "price": "{amount} Toman",
+    "pay": "Mit Zarinpal zahlen",
+    "paying": "Gateway wird geöffnet",
+    "note": "Sichere Bankzahlung · keine automatische Verlängerung · wir erinnern vor dem Ende von Pro",
+    "enamad": "Vertrauenssiegel",
+    "statusFree": "Kostenlos",
+    "statusUntil": "Pro bis {date}",
+    "statusLifetime": "Pro auf Lebenszeit",
+    "thanksTitle": "Danke für Pro",
+    "thanksBody": "Dein Tarif läuft nicht ab, es ist nichts mehr zu zahlen.",
+    "gatewayDescription": "Pomodoro-Pro-Abo",
+    "plans": {
+      "month": { "name": "Ein Monat", "hint": "Zum Ausprobieren" },
+      "year": { "name": "Ein Jahr", "hint": "Günstiger pro Monat" },
+      "lifetime": { "name": "Für immer", "hint": "Einmal zahlen, behalten" }
+    },
+    "features": {
+      "themes": "Unbegrenzte Themen",
+      "tasks": "Aufgaben mit Projekten, Tags und Unteraufgaben",
+      "stats": "Volle Statistik und Jahres-Heatmap",
+      "sounds": "Ein eigener Ton für jede Phase",
+      "ambient": "Umgebungsklänge",
+      "notes": "Notizbuch"
+    },
+    "compare": {
+      "title": "Kostenlos und Pro",
+      "free": "Kostenlos",
+      "pro": "Pro",
+      "timer": { "label": "Timer", "free": "Vorlagen 25/5/15 und 50/10/20", "pro": "Jede Länge, Langpausen-Abstand und Töne je Phase" },
+      "autostart": { "label": "Autostart", "free": "Jede Phase", "pro": "Jede Phase" },
+      "sync": { "label": "Sync", "free": "Zwischen Geräten", "pro": "Zwischen Geräten" },
+      "streak": { "label": "Tagessträhne", "free": "Enthalten", "pro": "Enthalten" },
+      "themes": { "label": "Themen", "free": "3 Themen", "pro": "Unbegrenzt" },
+      "tasks": { "label": "Aufgaben", "free": "Einfache Liste, bis 10 aktiv", "pro": "Projekte, Tags, Unteraufgaben, unbegrenzt" },
+      "stats": { "label": "Statistik", "free": "Heute, 7 Tage und dieser Monat", "pro": "Ganze Historie, Jahres-Heatmap, Aufschlüsselung und Export" },
+      "notepad": { "label": "Notizbuch", "free": "Nicht enthalten", "pro": "Enthalten" },
+      "ambient": { "label": "Umgebungsklang", "free": "1 Klang", "pro": "Ganze Bibliothek" }
+    },
+    "errors": {
+      "gateway": "Die Zahlung hat nicht begonnen. Versuch es noch einmal.",
+      "unavailable": "Das Gateway ist gerade nicht erreichbar. Versuch es gleich noch einmal."
+    }
   },
   "settings": {
     "title": "Einstellungen",

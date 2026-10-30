@@ -26,7 +26,7 @@ function emailOk(value: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
-export function LoginScreen() {
+export function LoginScreen({ returnTo = null }: { returnTo?: string | null }) {
   const t = useTranslations("auth");
   const locale = useLocale();
   const router = useRouter();
@@ -128,7 +128,7 @@ export function LoginScreen() {
       }
       const userId = result.data?.user.id;
       if (userId) await importGuestData(userId);
-      router.push("/settings");
+      router.push(returnTo ?? "/settings");
       router.refresh();
     } catch {
       setError("generic");

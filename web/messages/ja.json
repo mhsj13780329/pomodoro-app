@@ -172,9 +172,54 @@
     }
   },
   "pricing": {
-    "title": "Pro",
-    "soon": "料金ページは近日公開です。",
-    "gatewayDescription": "ポモドーロ Pro の購入"
+    "badge": "Pro",
+    "headline": "制限なく、もっと集中",
+    "lead": "すべての機能を開きます。支払いは一度だけで、自動では更新されません。",
+    "back": "戻る",
+    "legend": "プランを選ぶ",
+    "recommended": "おすすめ",
+    "price": "{amount} トマン",
+    "pay": "Zarinpal で支払う",
+    "paying": "決済画面を開いています",
+    "note": "銀行の安全な決済 · 自動更新なし · Pro の終了前にお知らせします",
+    "enamad": "信頼マーク",
+    "statusFree": "無料",
+    "statusUntil": "{date} まで Pro",
+    "statusLifetime": "Pro は無期限",
+    "thanksTitle": "Pro をありがとうございます",
+    "thanksBody": "プランに期限はないので、これ以上の支払いはありません。",
+    "gatewayDescription": "ポモドーロ Pro の購入",
+    "plans": {
+      "month": { "name": "1か月", "hint": "試してみる" },
+      "year": { "name": "1年", "hint": "月あたりがお得" },
+      "lifetime": { "name": "無期限", "hint": "一度の支払いでずっと" }
+    },
+    "features": {
+      "themes": "テーマ無制限",
+      "tasks": "プロジェクト、タグ、サブタスク付きのタスク",
+      "stats": "すべての統計と1年のヒートマップ",
+      "sounds": "段階ごとの通知音",
+      "ambient": "環境音",
+      "notes": "ノート"
+    },
+    "compare": {
+      "title": "無料と Pro",
+      "free": "無料",
+      "pro": "Pro",
+      "timer": { "label": "タイマー", "free": "プリセット 25/5/15 と 50/10/20", "pro": "任意の長さ、長い休憩の間隔、段階ごとの音" },
+      "autostart": { "label": "自動開始", "free": "各段階", "pro": "各段階" },
+      "sync": { "label": "同期", "free": "端末のあいだ", "pro": "端末のあいだ" },
+      "streak": { "label": "連続日数", "free": "含む", "pro": "含む" },
+      "themes": { "label": "テーマ", "free": "3種類", "pro": "無制限" },
+      "tasks": { "label": "タスク", "free": "シンプルな一覧、進行中は10件まで", "pro": "プロジェクト、タグ、サブタスク、無制限" },
+      "stats": { "label": "統計", "free": "今日、7日間、今月", "pro": "すべての履歴、年のヒートマップ、内訳と書き出し" },
+      "notepad": { "label": "ノート", "free": "含まない", "pro": "含む" },
+      "ambient": { "label": "環境音", "free": "1種類", "pro": "すべての音" }
+    },
+    "errors": {
+      "gateway": "支払いを開始できませんでした。もう一度お試しください。",
+      "unavailable": "決済サービスに接続できません。しばらくしてからお試しください。"
+    }
   },
   "settings": {
     "title": "設定",

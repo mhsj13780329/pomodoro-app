@@ -172,9 +172,54 @@
     }
   },
   "pricing": {
-    "title": "Pro",
-    "soon": "The pricing page is coming soon.",
-    "gatewayDescription": "Pomodoro Pro subscription"
+    "badge": "Pro",
+    "headline": "More focus, without limits",
+    "lead": "Unlock everything. You pay once, and it does not renew on its own.",
+    "back": "Back",
+    "legend": "Choose a plan",
+    "recommended": "Our pick",
+    "price": "{amount} toman",
+    "pay": "Pay with Zarinpal",
+    "paying": "Opening the gateway",
+    "note": "Secure bank payment · no auto-renewal · we remind you before Pro ends",
+    "enamad": "Trust seal",
+    "statusFree": "Free",
+    "statusUntil": "Pro until {date}",
+    "statusLifetime": "Pro for life",
+    "thanksTitle": "Thank you for Pro",
+    "thanksBody": "Your plan never expires, so there is nothing more to pay.",
+    "gatewayDescription": "Pomodoro Pro subscription",
+    "plans": {
+      "month": { "name": "One month", "hint": "To try it" },
+      "year": { "name": "One year", "hint": "Less per month" },
+      "lifetime": { "name": "Lifetime", "hint": "Pay once, keep it" }
+    },
+    "features": {
+      "themes": "Unlimited themes",
+      "tasks": "Tasks with projects, tags and subtasks",
+      "stats": "Full stats and a one-year heatmap",
+      "sounds": "A separate alert sound for each phase",
+      "ambient": "Ambient sounds",
+      "notes": "Notepad"
+    },
+    "compare": {
+      "title": "Free and Pro",
+      "free": "Free",
+      "pro": "Pro",
+      "timer": { "label": "Timer", "free": "Presets 25/5/15 and 50/10/20", "pro": "Any length, long-break interval and per-phase sounds" },
+      "autostart": { "label": "Auto-start", "free": "Each phase", "pro": "Each phase" },
+      "sync": { "label": "Sync", "free": "Across devices", "pro": "Across devices" },
+      "streak": { "label": "Daily streak", "free": "Included", "pro": "Included" },
+      "themes": { "label": "Themes", "free": "3 themes", "pro": "Unlimited" },
+      "tasks": { "label": "Tasks", "free": "A simple list, up to 10 active", "pro": "Projects, tags, subtasks, unlimited" },
+      "stats": { "label": "Stats", "free": "Today, 7 days and this month", "pro": "Full history, year heatmap, breakdown and export" },
+      "notepad": { "label": "Notepad", "free": "Not included", "pro": "Included" },
+      "ambient": { "label": "Ambient sound", "free": "1 sound", "pro": "Full library" }
+    },
+    "errors": {
+      "gateway": "The payment did not start. Try again.",
+      "unavailable": "The gateway is not reachable right now. Try again in a moment."
+    }
   },
   "settings": {
     "title": "Settings",
