@@ -16,6 +16,17 @@ export function verifyOutcome(code: number): VerifyClass {
   return "transient";
 }
 
+/** What to do with a PENDING row older than 15 minutes. Transient errors stay PENDING. */
+export function reconcileDecision(
+  authority: string | null,
+  outcome: VerifyClass | "unreachable",
+): "settle" | "expire" | "keep" {
+  if (!authority) return "expire";
+  if (outcome === "paid") return "settle";
+  if (outcome === "definitive") return "expire";
+  return "keep";
+}
+
 export type PaidWrite = {
   refId: string | null;
   cardPan: string | null;

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { ProColumns } from "./extend-pro";
 import { YEAR_DAYS } from "./plans";
-import { verifyAndGrant, verifyOutcome, type GrantLock } from "./settle";
+import { reconcileDecision, verifyAndGrant, verifyOutcome, type GrantLock } from "./settle";
 
 const DAY = 86_400_000;
 const NOW = new Date("2026-10-30T12:00:00Z");
@@ -45,6 +45,16 @@ describe("verifyOutcome", () => {
     expect(verifyOutcome(-50)).toBe("definitive");
     expect(verifyOutcome(-52)).toBe("transient");
     expect(verifyOutcome(-12)).toBe("transient");
+  });
+});
+
+describe("reconcileDecision", () => {
+  it("expires an abandoned request and keeps a row Zarinpal could not answer", () => {
+    expect(reconcileDecision(null, "unreachable")).toBe("expire");
+    expect(reconcileDecision("A100", "definitive")).toBe("expire");
+    expect(reconcileDecision("A100", "paid")).toBe("settle");
+    expect(reconcileDecision("A100", "transient")).toBe("keep");
+    expect(reconcileDecision("A100", "unreachable")).toBe("keep");
   });
 });
 

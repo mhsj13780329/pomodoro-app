@@ -1,4 +1,5 @@
-import "server-only";
+// Not marked `server-only`: scripts/reconcile-payments.ts imports this in plain Node,
+// the same reason prisma.ts is not. Client components must not import it.
 import { prisma } from "@/lib/prisma";
 import type { ProColumns } from "./extend-pro";
 import type { GrantLock, PaidWrite } from "./settle";
@@ -54,6 +55,27 @@ export function prismaGrantLock(): GrantLock {
 
 /** Marks a checkout failed unless it was already paid. A late success must not be overwritten. */
 export async function markPaymentFailed(paymentId: string, errorCode: number | null): Promise<void> {
+  await setStatusUnlessPaid(paymentId, "FAILED", errorCode);
+}
+
+/**
+ * An old PENDING row that will never be paid. Leaves PAID and FAILED rows alone,
+ * so running the reconcile script twice does not change a finished payment.
+ */
+export async function expirePayment(paymentId: string, errorCode: number | null): Promise<void> {
+  await prisma.$transaction(async (tx) => {
+    const locked = await tx.$queryRaw<Array<{ status: string }>>`
+      SELECT "status" FROM "Payment" WHERE "id" = ${paymentId} FOR UPDATE
+    `;
+    if (locked[0]?.status !== "PENDING") return;
+    await tx.payment.update({
+      where: { id: paymentId },
+      data: { status: "EXPIRED", errorCode },
+    });
+  });
+}
+
+async function setStatusUnlessPaid(paymentId: string, status: "FAILED", errorCode: number | null): Promise<void> {
   await prisma.$transaction(async (tx) => {
     const locked = await tx.$queryRaw<Array<{ status: string }>>`
       SELECT "status" FROM "Payment" WHERE "id" = ${paymentId} FOR UPDATE
@@ -61,7 +83,7 @@ export async function markPaymentFailed(paymentId: string, errorCode: number | n
     if (locked[0]?.status === "PAID") return;
     await tx.payment.update({
       where: { id: paymentId },
-      data: { status: "FAILED", errorCode },
+      data: { status, errorCode },
     });
   });
 }
