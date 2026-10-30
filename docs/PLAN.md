@@ -78,8 +78,11 @@ Task            id, userId, projectId?, parentId?, title, notes?, estimatePomodo
 
 Note            id, userId, title, body, updatedAt           (Pro)
 
-Payment         id, userId, plan (MONTH|YEAR|LIFETIME), amountToman, authority, refId?,
-                status (PENDING|PAID|FAILED), createdAt, verifiedAt?
+Payment         id, userId, plan (MONTH|YEAR|LIFETIME), amountToman, authority? (unique),
+                refId?, cardPan?, errorCode?, locale, status (PENDING|PAID|FAILED|EXPIRED),
+                createdAt, verifiedAt?, updatedAt
+ProReminder     userId, proUntil, kind (EXPIRING|EXPIRED), channel (SMS|EMAIL), sentAt
+                unique (userId, proUntil, kind)
 ```
 
 **Sync columns (Phase 5).** `Task`, `Project` and `Tag` carry three times. `updatedAt` is the client's edit time (`@default(now())`, not Prisma `@updatedAt`): last write wins on it. `deletedAt` is a soft delete and it sticks — a later edit cannot bring a deleted row back, and the row stays so other devices learn about the delete. `serverUpdatedAt` is `@updatedAt` and is only the pull cursor. `Project` also gained `createdAt`. `Task.recurrence` was removed: recurring tasks are out of scope. `Tag` has no unique `(userId, name)`, only `@@index([userId, serverUpdatedAt])`, because two devices can create the same tag offline; the client merges duplicates by name.
@@ -104,6 +107,16 @@ The server is the source of truth for a signed-in user. The local store is a cac
 8. **Tasks** sync through the same queue, pull and refresh triggers (focus, visible, online, 15s poll). Writes flush to `POST /api/tasks` (last-write-wins on `updatedAt`, soft delete via `deletedAt`, client UUIDs). `GET /api/sync/state?tasksSince=<ms>` returns a `tasks` block; `0` means the full set, and the saved cursor is `serverNow − 5s` so a row written during the round trip is not missed. Guests keep tasks on this device only and upload them through the existing import path on sign-up.
 9. **Stats are not part of the sync pull.** `GET /api/stats` reads `FocusSession` for a local-date range. The client merges the IndexedDB session queue by id, so a focus that has not uploaded yet still counts today. Guests compute the same numbers from the sessions on this device and do not call the API.
 
+### Payments
+
+Pro is still only `proUntil` and `proLifetime`. `requirePro()` is unchanged. A payment writes those two columns and nothing else.
+
+1. The pricing page sends a plan id. The server copies the toman amount from `lib/payments/plans.ts` onto a `PENDING` row, then asks Zarinpal with `currency: "IRT"`. The callback URL is `{APP_URL}/api/payments/callback` and is not under `/fa` or `/en`. The row stores the page locale for the redirect.
+2. Zarinpal sends the buyer's browser back with `Authority` and `Status`. `Status=NOK` is a cancellation. Anything else is verified with the amount on our row. The query string is not trusted for the amount or the outcome.
+3. Verify code `100` or `101` means the payment succeeded. One transaction locks the Payment row (`SELECT … FOR UPDATE`). If it is not already `PAID`, we store the reference and extend Pro: lifetime sets `proLifetime`; a month adds 30 days and a year adds 365, starting from `max(now, proUntil)`, so paying early stacks. A refresh or a second callback sees `PAID` and does not add the days again.
+4. `scripts/reconcile-payments.ts` re-verifies `PENDING` rows older than 15 minutes through that same path. A definitive failure becomes `EXPIRED`. A network error or `-52` leaves the row `PENDING`, so the script is safe to run again.
+5. `scripts/send-expiry-reminders.ts` messages people whose Pro ends in 3 local days, and people whose Pro ended yesterday. A `ProReminder` row keyed by `(userId, proUntil, kind)` stops the same reminder going out twice. A renewal changes `proUntil`, so the new date can be reminded.
+
 Timer accuracy: never count `setInterval` ticks — browsers throttle background tabs. The interval only re-renders. The end sound and the browser notification can only play while the page is actually running. Firing them at the exact end time while the phone is locked needs the Phase 9 service worker.
 
 ## 6. Phases
@@ -117,7 +130,7 @@ Each phase ends with something that works. Commit to git at the end of every ste
 - [x] **Phase 4 — Sync:** settings, ActiveTimer and FocusSession sync per §5.
 - [x] **Phase 5 — Tasks:** free simple list (add, rename, check, delete, reorder, max 10 active); Pro projects, tags, subtasks, estimates and notes, gated by `requirePro()`. The picked task is stored in `ActiveTimer.taskId` and copied to `FocusSession.taskId` when the focus completes. `/pricing` is a placeholder until Phase 7. Dev helper: `npx tsx scripts/grant-pro.ts <email> [days|lifetime|off]`.
 - [x] **Phase 6 — Stats, heatmap, streaks:** dashboard with Jalali dates for fa, GitHub-style year heatmap (Pro), current and best streak, last 7 days, per-task and per-project breakdown and CSV export (Pro). Derived from `FocusSession`, gated with `requirePro()`.
-- [ ] **Phase 7 — Pro & payments:** pricing page (replacing the Phase 5 placeholder), Zarinpal sandbox → request → redirect → callback → verify → grant `proUntil`/lifetime; payment history; expiry reminders. `requirePro()` already exists (Phase 5); payments plug into the same two columns.
+- [x] **Phase 7 — Pro & payments:** pricing page (replacing the Phase 5 placeholder), Zarinpal sandbox → request → redirect → callback → verify → grant `proUntil`/lifetime; payment history; expiry reminders. `requirePro()` already exists (Phase 5); payments plug into the same two columns.
 - [ ] **Phase 8 — Pro features:** unlimited themes, fully custom timer, notepad, ambient sounds (self-hosted audio files).
 - [ ] **Phase 9 — PWA:** manifest, icons, service worker (Serwist), offline shell, "Add to Home Screen" guide (esp. iOS). The service worker also plays the phase-end sound and shows the browser notification while the page is frozen (locked phone or sleeping computer). Until then, those fire when the page runs again; the timer schedule itself does not wait.
 - [ ] **Phase 10 — Production:** domain, Iranian hosting + managed Postgres, real SMS provider, Enamad, Zarinpal production merchant, backups, error logging, privacy policy & terms (fa + en), self-hosted analytics.
