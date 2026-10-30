@@ -1,0 +1,256 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                  String    @id
+  name                String
+  email               String
+  emailVerified       Boolean   @default(false)
+  image               String?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  phoneNumber         String?
+  phoneNumberVerified Boolean?
+  locale              String    @default("fa")
+  timezone            String    @default("Asia/Tehran")
+  proUntil            DateTime?
+  proLifetime         Boolean?  @default(false)
+  sessions            Session[]
+  accounts            Account[]
+  settings            Settings?
+  activeTimer         ActiveTimer?
+  focusSessions       FocusSession[]
+  projects            Project[]
+  tags                Tag[]
+  tasks               Task[]
+  notes               Note[]
+  payments            Payment[]
+
+  @@unique([email])
+  @@unique([phoneNumber])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+// Timer phase stored on the server. The app uses focus / shortBreak / longBreak
+// and converts at the boundary so the database values stay stable.
+enum Phase {
+  FOCUS
+  SHORT_BREAK
+  LONG_BREAK
+}
+
+enum TimerStatus {
+  RUNNING
+  PAUSED
+}
+
+enum Plan {
+  MONTH
+  YEAR
+  LIFETIME
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+// One row per user. Created by the first guest import, not at sign-up,
+// so a missing row means "this account has no server data yet."
+model Settings {
+  userId              String   @id
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  focusMin            Int
+  shortBreakMin       Int
+  longBreakMin        Int
+  longBreakEvery      Int
+  autoStartFocus      Boolean
+  autoStartShortBreak Boolean
+  autoStartLongBreak  Boolean
+  themeId             String
+  soundId             String   @default("default")
+  ambientId           String?
+  notificationsOn     Boolean  @default(true)
+  updatedAt           DateTime @updatedAt
+}
+
+// The running countdown, as timestamps. Phase 4 syncs this. Not written by the import.
+model ActiveTimer {
+  userId         String      @id
+  user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  phase          Phase
+  status         TimerStatus
+  startedAt      DateTime
+  plannedSec     Int
+  pausedAt       DateTime?
+  pausedTotalSec Int         @default(0)
+  cycleIndex     Int
+  taskId         String?
+  task           Task?       @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  updatedAt      DateTime    @updatedAt
+}
+
+// A finished pomodoro. id is the UUID the browser created, so a retry cannot duplicate it.
+model FocusSession {
+  id          String   @id
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  taskId      String?
+  task        Task?    @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  phase       Phase
+  startedAt   DateTime
+  endedAt     DateTime
+  durationSec Int
+  completed   Boolean
+  createdAt   DateTime @default(now())
+
+  @@index([userId, startedAt])
+}
+
+model Project {
+  id       String  @id @default(uuid())
+  userId   String
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name     String
+  color    String
+  archived Boolean @default(false)
+  tasks    Task[]
+
+  @@index([userId])
+}
+
+model Tag {
+  id     String    @id @default(uuid())
+  userId String
+  user   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name   String
+  tasks  TaskTag[]
+
+  @@unique([userId, name])
+}
+
+model TaskTag {
+  taskId String
+  tagId  String
+  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([taskId, tagId])
+}
+
+model Task {
+  id                String         @id @default(uuid())
+  userId            String
+  user              User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectId         String?
+  project           Project?       @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  parentId          String?
+  parent            Task?          @relation("Subtasks", fields: [parentId], references: [id], onDelete: Cascade)
+  children          Task[]         @relation("Subtasks")
+  title             String
+  notes             String?
+  estimatePomodoros Int?
+  done              Boolean        @default(false)
+  doneAt            DateTime?
+  order             Int            @default(0)
+  recurrence        String?
+  createdAt         DateTime       @default(now())
+  tags              TaskTag[]
+  focusSessions     FocusSession[]
+  activeTimers      ActiveTimer[]
+
+  @@index([userId])
+}
+
+model Note {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  body      String
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Payment {
+  id          String        @id @default(uuid())
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan        Plan
+  amountToman Int
+  authority   String
+  refId       String?
+  status      PaymentStatus
+  createdAt   DateTime      @default(now())
+  verifiedAt  DateTime?
+
+  @@index([userId])
+}
+
+// OTP send counters. The key is the phone, email, or IP plus the window kind.
+model OtpRateLimit {
+  key         String   @id
+  windowStart DateTime
+  count       Int
+}

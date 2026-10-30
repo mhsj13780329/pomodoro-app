@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { finishedFocusSession, type GuestFocusSession } from "./sessions";
 import {
   catchUp as catchUpCore,
   defaultTimer,
@@ -30,7 +31,12 @@ type Actions = {
   catchUp: (now: number) => boolean;
 };
 
-export type TimerStore = TimerCore & Actions;
+const MAX_GUEST_SESSIONS = 200;
+
+export type TimerStore = TimerCore &
+  Actions & {
+    completedSessions: GuestFocusSession[];
+  };
 
 function toCore(state: TimerStore): TimerCore {
   return {
@@ -55,6 +61,7 @@ export const useTimerStore = create<TimerStore>()(
   persist(
     (set, get) => ({
       ...defaultTimer,
+      completedSessions: [],
       start: (now) => set(startCore(toCore(get()), now)),
       pause: (now) => set(pauseCore(toCore(get()), now)),
       resume: (now) => set(resumeCore(toCore(get()), now)),
@@ -65,9 +72,15 @@ export const useTimerStore = create<TimerStore>()(
       setPhaseSeconds: (phase, sec) => set(setSecondsCore(toCore(get()), phase, sec)),
       setLongBreakEvery: (n) => set(setEveryCore(toCore(get()), n)),
       catchUp: (now) => {
-        const result = catchUpCore(toCore(get()), now);
-        if (result.ended) set(result.state);
-        return result.ended;
+        const before = toCore(get());
+        const result = catchUpCore(before, now);
+        if (!result.ended) return false;
+        const session = finishedFocusSession(before, crypto.randomUUID());
+        const completedSessions = session
+          ? [...get().completedSessions, session].slice(-MAX_GUEST_SESSIONS)
+          : get().completedSessions;
+        set({ ...result.state, completedSessions });
+        return true;
       },
     }),
     {
@@ -76,7 +89,10 @@ export const useTimerStore = create<TimerStore>()(
       // the server has no localStorage, and the first paint must match the default state.
       storage: createJSONStorage(() => localStorage),
       skipHydration: true,
-      partialize: (state) => toCore(state),
+      partialize: (state) => ({
+        ...toCore(state),
+        completedSessions: state.completedSessions,
+      }),
     },
   ),
 );

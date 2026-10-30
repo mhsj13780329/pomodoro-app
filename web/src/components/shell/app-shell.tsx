@@ -11,6 +11,7 @@ import {
   IconNavTimer,
 } from "@/components/icons";
 import { Link, usePathname } from "@/i18n/navigation";
+import { GuestImport } from "@/features/auth/components/guest-import";
 import { TimerRuntime } from "@/features/timer/timer-runtime";
 
 const links = [
@@ -22,15 +23,18 @@ const links = [
 
 export function AppShell({ children }: { children: ReactNode }) {
   return (
-    <TimerRuntime>
-      <div className="flex min-h-dvh flex-col bg-ground md:flex-row">
-        <DesktopNav />
-        <div className="flex min-w-0 flex-1 flex-col">
-          <div className="flex flex-1 flex-col px-4 pt-4 md:px-8 md:py-7">{children}</div>
-          <PhoneNav />
+    <>
+      <GuestImport />
+      <TimerRuntime>
+        <div className="flex min-h-dvh flex-col bg-ground md:flex-row">
+          <DesktopNav />
+          <div className="flex min-w-0 flex-1 flex-col">
+            <div className="flex flex-1 flex-col px-4 pt-4 md:px-8 md:py-7">{children}</div>
+            <PhoneNav />
+          </div>
         </div>
-      </div>
-    </TimerRuntime>
+      </TimerRuntime>
+    </>
   );
 }
 

@@ -1,19 +1,35 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { formatDate, formatHourMinute, formatNumber } from "@/lib/format";
 import { SAMPLE_FOCUS_MINUTES, SAMPLE_SESSIONS_DONE } from "../sample";
+
+const todayCache = new Map<string, { iso: string; label: string }>();
+
+function subscribe() {
+  return () => {};
+}
+
+function todaySnapshot(locale: string) {
+  const now = new Date();
+  const label = formatDate(now, locale);
+  const cached = todayCache.get(locale);
+  if (cached?.label === label) return cached;
+  const next = { iso: now.toISOString(), label };
+  todayCache.set(locale, next);
+  return next;
+}
 
 export function TodayPanel() {
   const locale = useLocale();
   const t = useTranslations("today");
-  const [today, setToday] = useState<{ iso: string; label: string } | null>(null);
-  // The calendar day is read after mount. Cache Components rejects new Date() during prerender.
-  useEffect(() => {
-    const now = new Date();
-    setToday({ iso: now.toISOString(), label: formatDate(now, locale) });
-  }, [locale]);
+  // The calendar day is read on the client. Cache Components rejects new Date() during prerender.
+  const today = useSyncExternalStore(
+    subscribe,
+    () => todaySnapshot(locale),
+    () => null,
+  );
   // TODO: Phase 6 replaces these sample numbers with today's real totals.
   return (
     <section className="rounded-panel border border-line bg-surface p-5">
