@@ -219,6 +219,22 @@
     "errors": {
       "gateway": "Le paiement n’a pas démarré. Réessayez.",
       "unavailable": "La passerelle ne répond pas. Réessayez dans un instant."
+    },
+    "result": {
+      "successTitle": "Paiement effectué",
+      "successRef": "Référence : {ref}",
+      "successUntil": "Pro est actif jusqu’au {date}",
+      "successLifetime": "Pro est actif à vie",
+      "failedTitle": "Le paiement n’a pas abouti",
+      "failedBody": "Vous n’avez pas été débité. Vous pouvez réessayer.",
+      "cancelledTitle": "Paiement annulé",
+      "cancelledBody": "Vous avez quitté la passerelle et Pro n’a pas été activé.",
+      "pendingTitle": "Paiement pas encore confirmé",
+      "pendingBody": "Si vous avez payé, Pro s’activera bientôt. Actualisez cette page.",
+      "unknownTitle": "Paiement introuvable",
+      "unknownBody": "Le lien de retour n’est pas valable, ou ce paiement appartient à un autre compte.",
+      "again": "Réessayer",
+      "home": "Retour au minuteur"
     }
   },
   "settings": {

@@ -219,6 +219,22 @@
     "errors": {
       "gateway": "결제를 시작하지 못했습니다. 다시 시도해 주세요.",
       "unavailable": "결제 서비스에 연결되지 않습니다. 잠시 후 다시 시도해 주세요."
+    },
+    "result": {
+      "successTitle": "결제가 완료되었습니다",
+      "successRef": "승인 번호: {ref}",
+      "successUntil": "Pro는 {date}까지 사용할 수 있습니다",
+      "successLifetime": "Pro가 평생 활성화되었습니다",
+      "failedTitle": "결제가 완료되지 않았습니다",
+      "failedBody": "결제된 금액은 없습니다. 다시 시도할 수 있습니다.",
+      "cancelledTitle": "결제를 취소했습니다",
+      "cancelledBody": "결제 화면을 떠나 Pro가 활성화되지 않았습니다.",
+      "pendingTitle": "결제가 아직 확인되지 않았습니다",
+      "pendingBody": "결제했다면 곧 Pro가 켜집니다. 이 페이지를 새로고침하세요.",
+      "unknownTitle": "이 결제를 찾을 수 없습니다",
+      "unknownBody": "돌아온 링크가 잘못되었거나, 이 결제는 다른 계정의 것입니다.",
+      "again": "다시 시도",
+      "home": "타이머로 돌아가기"
     }
   },
   "settings": {

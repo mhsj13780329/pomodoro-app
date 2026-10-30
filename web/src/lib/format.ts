@@ -32,6 +32,12 @@ export function formatHourMinute(totalMinutes: number, locale: string): string {
   return `${hourText}:${minuteText}`;
 }
 
+/** A receipt code. Digits follow the locale; grouping commas are not added. */
+export function formatCode(value: string, locale: string): string {
+  const digit = new Intl.NumberFormat(numberLocale(locale), { useGrouping: false });
+  return value.replace(/\d/g, (char) => digit.format(Number(char)));
+}
+
 /** Calendar date in the user's zone. Farsi uses the Jalali calendar. */
 export function formatDate(date: Date, locale: string, timeZone = "Asia/Tehran"): string {
   return new Intl.DateTimeFormat(dateLocale(locale), {

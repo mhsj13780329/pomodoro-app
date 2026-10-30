@@ -219,6 +219,22 @@
     "errors": {
       "gateway": "The payment did not start. Try again.",
       "unavailable": "The gateway is not reachable right now. Try again in a moment."
+    },
+    "result": {
+      "successTitle": "Payment complete",
+      "successRef": "Reference: {ref}",
+      "successUntil": "Pro is active until {date}",
+      "successLifetime": "Pro is active for life",
+      "failedTitle": "Payment did not go through",
+      "failedBody": "You were not charged. You can try again.",
+      "cancelledTitle": "Payment cancelled",
+      "cancelledBody": "You left the gateway, and Pro was not activated.",
+      "pendingTitle": "Payment is not confirmed yet",
+      "pendingBody": "If you paid, Pro will turn on shortly. Refresh this page.",
+      "unknownTitle": "We could not find this payment",
+      "unknownBody": "The return link is not valid, or this payment belongs to another account.",
+      "again": "Try again",
+      "home": "Back to the timer"
     }
   },
   "settings": {

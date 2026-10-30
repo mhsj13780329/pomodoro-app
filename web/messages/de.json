@@ -219,6 +219,22 @@
     "errors": {
       "gateway": "Die Zahlung hat nicht begonnen. Versuch es noch einmal.",
       "unavailable": "Das Gateway ist gerade nicht erreichbar. Versuch es gleich noch einmal."
+    },
+    "result": {
+      "successTitle": "Zahlung abgeschlossen",
+      "successRef": "Referenz: {ref}",
+      "successUntil": "Pro ist aktiv bis {date}",
+      "successLifetime": "Pro ist dauerhaft aktiv",
+      "failedTitle": "Zahlung nicht abgeschlossen",
+      "failedBody": "Es wurde nichts abgebucht. Du kannst es noch einmal versuchen.",
+      "cancelledTitle": "Zahlung abgebrochen",
+      "cancelledBody": "Du hast das Gateway verlassen, und Pro wurde nicht aktiviert.",
+      "pendingTitle": "Zahlung noch nicht bestätigt",
+      "pendingBody": "Wenn du gezahlt hast, wird Pro gleich aktiv. Lade diese Seite neu.",
+      "unknownTitle": "Zahlung nicht gefunden",
+      "unknownBody": "Der Rückkehr-Link ist ungültig, oder diese Zahlung gehört zu einem anderen Konto.",
+      "again": "Nochmal versuchen",
+      "home": "Zurück zum Timer"
     }
   },
   "settings": {

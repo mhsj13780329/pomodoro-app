@@ -219,6 +219,22 @@
     "errors": {
       "gateway": "El pago no empezó. Inténtalo de nuevo.",
       "unavailable": "La pasarela no responde ahora. Inténtalo en un momento."
+    },
+    "result": {
+      "successTitle": "Pago completado",
+      "successRef": "Referencia: {ref}",
+      "successUntil": "Pro está activo hasta {date}",
+      "successLifetime": "Pro está activo para siempre",
+      "failedTitle": "El pago no se completó",
+      "failedBody": "No se te cobró. Puedes intentarlo de nuevo.",
+      "cancelledTitle": "Pago cancelado",
+      "cancelledBody": "Saliste de la pasarela y Pro no se activó.",
+      "pendingTitle": "El pago aún no está confirmado",
+      "pendingBody": "Si pagaste, Pro se activará en breve. Actualiza esta página.",
+      "unknownTitle": "No encontramos este pago",
+      "unknownBody": "El enlace de vuelta no es válido, o este pago es de otra cuenta.",
+      "again": "Intentar de nuevo",
+      "home": "Volver al temporizador"
     }
   },
   "settings": {

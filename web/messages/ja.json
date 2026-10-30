@@ -219,6 +219,22 @@
     "errors": {
       "gateway": "支払いを開始できませんでした。もう一度お試しください。",
       "unavailable": "決済サービスに接続できません。しばらくしてからお試しください。"
+    },
+    "result": {
+      "successTitle": "支払いが完了しました",
+      "successRef": "照会番号: {ref}",
+      "successUntil": "Pro は {date} まで有効です",
+      "successLifetime": "Pro は無期限で有効になりました",
+      "failedTitle": "支払いは完了しませんでした",
+      "failedBody": "請求は行われていません。もう一度お試しください。",
+      "cancelledTitle": "支払いをキャンセルしました",
+      "cancelledBody": "決済画面を離れたため、Pro は有効になっていません。",
+      "pendingTitle": "支払いはまだ確認できていません",
+      "pendingBody": "支払い済みなら、まもなく Pro が有効になります。このページを更新してください。",
+      "unknownTitle": "この支払いが見つかりません",
+      "unknownBody": "戻り先のリンクが無効か、この支払いは別のアカウントのものです。",
+      "again": "もう一度試す",
+      "home": "タイマーに戻る"
     }
   },
   "settings": {
