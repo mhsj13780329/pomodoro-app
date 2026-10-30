@@ -245,6 +245,17 @@
     "themeForest": "Thème forêt",
     "themeSelected": "{name} (sélectionné)",
     "language": "Langue",
+    "payments": {
+      "title": "Paiements",
+      "empty": "Aucun paiement pour l’instant.",
+      "ref": "Référence : {ref}",
+      "status": {
+        "PENDING": "En attente",
+        "PAID": "Payé",
+        "FAILED": "Échoué",
+        "EXPIRED": "Expiré"
+      }
+    },
     "durations": {
       "title": "Durées",
       "focus": "Concentration",

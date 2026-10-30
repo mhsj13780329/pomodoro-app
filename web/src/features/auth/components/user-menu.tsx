@@ -7,6 +7,7 @@ import { LogoutButton } from "./logout-button";
 
 export async function UserMenu() {
   const t = await getTranslations("auth");
+  const settings = await getTranslations("settings");
   const user = await getCurrentUser();
 
   return (
@@ -18,6 +19,9 @@ export async function UserMenu() {
           <p dir="ltr" className="mt-1 text-start text-[15px]">
             {displayIdentifier(user)}
           </p>
+          <Link href="/settings/payments" className="mt-2 flex min-h-11 items-center text-[15px] font-semibold text-focus-ink">
+            {settings("payments.title")}
+          </Link>
           <SyncStatus />
           <LogoutButton />
         </>

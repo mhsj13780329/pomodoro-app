@@ -245,6 +245,17 @@
     "themeForest": "포레스트 테마",
     "themeSelected": "{name} (선택됨)",
     "language": "언어",
+    "payments": {
+      "title": "결제",
+      "empty": "아직 결제가 없습니다.",
+      "ref": "승인 번호: {ref}",
+      "status": {
+        "PENDING": "대기",
+        "PAID": "결제됨",
+        "FAILED": "실패",
+        "EXPIRED": "만료"
+      }
+    },
     "durations": {
       "title": "시간",
       "focus": "집중",

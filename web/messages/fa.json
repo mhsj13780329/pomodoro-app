@@ -245,6 +245,17 @@
     "themeForest": "تم جنگل",
     "themeSelected": "{name} (انتخاب‌شده)",
     "language": "زبان",
+    "payments": {
+      "title": "پرداخت‌ها",
+      "empty": "هنوز پرداختی ندارید.",
+      "ref": "شماره پیگیری: {ref}",
+      "status": {
+        "PENDING": "در انتظار",
+        "PAID": "پرداخت‌شده",
+        "FAILED": "ناموفق",
+        "EXPIRED": "منقضی"
+      }
+    },
     "durations": {
       "title": "زمان‌ها",
       "focus": "تمرکز",

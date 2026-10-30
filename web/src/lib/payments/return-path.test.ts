@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { pricingReturnPath } from "./return-path";
+import { loginReturnPath, pricingReturnPath } from "./return-path";
 
 describe("pricingReturnPath", () => {
   it("keeps a pricing return and the selected plan", () => {
@@ -15,5 +15,13 @@ describe("pricingReturnPath", () => {
     expect(pricingReturnPath("/pricing?plan=WEEK")).toBeNull();
     expect(pricingReturnPath("/pricing?plan=YEAR&next=/settings")).toBeNull();
     expect(pricingReturnPath(null)).toBeNull();
+  });
+});
+
+describe("loginReturnPath", () => {
+  it("allows pricing and the payment history page", () => {
+    expect(loginReturnPath("/settings/payments")).toBe("/settings/payments");
+    expect(loginReturnPath("/pricing?plan=YEAR")).toBe("/pricing?plan=YEAR");
+    expect(loginReturnPath("/settings")).toBeNull();
   });
 });

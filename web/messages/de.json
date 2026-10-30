@@ -245,6 +245,17 @@
     "themeForest": "Wald-Thema",
     "themeSelected": "{name} (ausgewählt)",
     "language": "Sprache",
+    "payments": {
+      "title": "Zahlungen",
+      "empty": "Noch keine Zahlungen.",
+      "ref": "Referenz: {ref}",
+      "status": {
+        "PENDING": "Offen",
+        "PAID": "Bezahlt",
+        "FAILED": "Fehlgeschlagen",
+        "EXPIRED": "Abgelaufen"
+      }
+    },
     "durations": {
       "title": "Zeiten",
       "focus": "Fokus",

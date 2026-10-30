@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { LoginScreen } from "@/features/auth/components/login-screen";
 import { routing } from "@/i18n/routing";
-import { pricingReturnPath } from "@/lib/payments/return-path";
+import { loginReturnPath } from "@/lib/payments/return-path";
 
 export default async function LoginPage({
   params,
@@ -30,5 +30,5 @@ async function LoginWithReturn({
 }) {
   const query = await searchParams;
   const next = typeof query.next === "string" ? query.next : null;
-  return <LoginScreen returnTo={pricingReturnPath(next)} />;
+  return <LoginScreen returnTo={loginReturnPath(next)} />;
 }

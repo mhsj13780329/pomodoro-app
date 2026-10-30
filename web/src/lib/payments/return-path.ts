@@ -1,5 +1,16 @@
 import { isPlanId } from "./plans";
 
+const HISTORY = "/settings/payments";
+
+/**
+ * Login may only send someone back to pricing, or to their own payment history.
+ * Anything else is ignored so this cannot be an open redirect.
+ */
+export function loginReturnPath(next: string | null | undefined): string | null {
+  if (next === HISTORY) return HISTORY;
+  return pricingReturnPath(next);
+}
+
 /**
  * Login may only send someone back to the pricing page.
  * Anything else (another site, another path) is ignored so this cannot be an open redirect.

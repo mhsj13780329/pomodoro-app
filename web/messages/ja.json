@@ -245,6 +245,17 @@
     "themeForest": "フォレストテーマ",
     "themeSelected": "{name}（選択中）",
     "language": "言語",
+    "payments": {
+      "title": "支払い",
+      "empty": "支払いはまだありません。",
+      "ref": "照会番号: {ref}",
+      "status": {
+        "PENDING": "確認中",
+        "PAID": "支払済み",
+        "FAILED": "失敗",
+        "EXPIRED": "期限切れ"
+      }
+    },
     "durations": {
       "title": "時間",
       "focus": "集中",

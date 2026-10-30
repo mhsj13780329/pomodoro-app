@@ -245,6 +245,17 @@
     "themeForest": "Tema bosque",
     "themeSelected": "{name} (seleccionado)",
     "language": "Idioma",
+    "payments": {
+      "title": "Pagos",
+      "empty": "Todavía no hay pagos.",
+      "ref": "Referencia: {ref}",
+      "status": {
+        "PENDING": "Pendiente",
+        "PAID": "Pagado",
+        "FAILED": "Fallido",
+        "EXPIRED": "Caducado"
+      }
+    },
     "durations": {
       "title": "Tiempos",
       "focus": "Concentración",
