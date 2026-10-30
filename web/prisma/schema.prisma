@@ -99,6 +99,7 @@ enum Phase {
 }
 
 enum TimerStatus {
+  IDLE
   RUNNING
   PAUSED
 }
@@ -115,8 +116,9 @@ enum PaymentStatus {
   FAILED
 }
 
-// One row per user. Created by the first guest import, not at sign-up,
-// so a missing row means "this account has no server data yet."
+// One row per user. Guest import creates it on first login when the account
+// has none. Sync also creates these defaults on first read (a seed user, or
+// an import that never wrote settings) so a missing row is not an error.
 model Settings {
   userId              String   @id
   user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -134,7 +136,9 @@ model Settings {
   updatedAt           DateTime @updatedAt
 }
 
-// The running countdown, as timestamps. Phase 4 syncs this. Not written by the import.
+// The countdown, as timestamps. Not written by the guest import.
+// version rejects a stale write from another device. runId is the id of the
+// current phase; a finished focus session reuses it so a retry cannot duplicate.
 model ActiveTimer {
   userId         String      @id
   user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -145,12 +149,15 @@ model ActiveTimer {
   pausedAt       DateTime?
   pausedTotalSec Int         @default(0)
   cycleIndex     Int
+  // Placeholder while idle. Replaced when a phase starts.
+  runId          String      @default(uuid())
+  version        Int         @default(0)
   taskId         String?
   task           Task?       @relation(fields: [taskId], references: [id], onDelete: SetNull)
   updatedAt      DateTime    @updatedAt
 }
 
-// A finished pomodoro. id is the UUID the browser created, so a retry cannot duplicate it.
+// A finished pomodoro. id is the runId of that phase, so a retry cannot duplicate it.
 model FocusSession {
   id          String   @id
   userId      String

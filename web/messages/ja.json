@@ -54,7 +54,24 @@
     "themeNight": "ナイトテーマ",
     "themeForest": "フォレストテーマ",
     "themeSelected": "{name}（選択中）",
-    "language": "言語"
+    "language": "言語",
+    "durations": {
+      "title": "時間",
+      "focus": "集中",
+      "short": "短い休憩",
+      "long": "長い休憩",
+      "every": "長い休憩の間隔",
+      "minutes": "{count, number}分",
+      "sessions": "{count, number}回",
+      "decrease": "{label}を減らす",
+      "increase": "{label}を増やす"
+    },
+    "sync": {
+      "synced": "同期済み",
+      "offline": "オフライン — {count, number}件待機",
+      "syncing": "同期中…",
+      "logoutWarning": "{count, number}件がまだ同期されていません。ログアウトすると失われます。ログアウトしますか？"
+    }
   },
   "auth": {
     "title": "ログイン",

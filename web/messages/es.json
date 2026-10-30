@@ -54,7 +54,24 @@
     "themeNight": "Tema noche",
     "themeForest": "Tema bosque",
     "themeSelected": "{name} (seleccionado)",
-    "language": "Idioma"
+    "language": "Idioma",
+    "durations": {
+      "title": "Tiempos",
+      "focus": "Concentración",
+      "short": "Descanso corto",
+      "long": "Descanso largo",
+      "every": "Descanso largo después de",
+      "minutes": "{count, number} min",
+      "sessions": "{count, number} sesiones",
+      "decrease": "Reducir {label}",
+      "increase": "Aumentar {label}"
+    },
+    "sync": {
+      "synced": "Sincronizado",
+      "offline": "Sin conexión — {count, number} en espera",
+      "syncing": "Sincronizando…",
+      "logoutWarning": "{count, number} elementos aún no se han sincronizado y se perderán si sales. ¿Salir de todos modos?"
+    }
   },
   "auth": {
     "title": "Entrar",

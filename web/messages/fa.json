@@ -54,7 +54,24 @@
     "themeNight": "تم شب",
     "themeForest": "تم جنگل",
     "themeSelected": "{name} (انتخاب‌شده)",
-    "language": "زبان"
+    "language": "زبان",
+    "durations": {
+      "title": "زمان‌ها",
+      "focus": "تمرکز",
+      "short": "استراحت کوتاه",
+      "long": "استراحت بلند",
+      "every": "استراحت بلند بعد از",
+      "minutes": "{count, number} دقیقه",
+      "sessions": "{count, number} جلسه",
+      "decrease": "کم کردن {label}",
+      "increase": "زیاد کردن {label}"
+    },
+    "sync": {
+      "synced": "همگام",
+      "offline": "آفلاین — {count, number} در انتظار",
+      "syncing": "در حال همگام‌سازی…",
+      "logoutWarning": "{count, number} مورد هنوز همگام نشده و با خروج پاک می‌شود. خارج می‌شوید؟"
+    }
   },
   "auth": {
     "title": "ورود",

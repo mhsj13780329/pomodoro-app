@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 import { useLocale, useTranslations } from "next-intl";
 import { APP_NAME } from "@/config/brand";
 import { formatClock } from "@/lib/format";
+import { syncIsActive, syncNow } from "@/lib/sync/engine";
 import { displaySeconds, type TimerCore } from "./logic";
 import { notifyPhase, playChime } from "./notify";
 import { useTimerStore } from "./store";
@@ -43,6 +44,17 @@ export function TimerRuntime({ children }: { children: ReactNode }) {
 
   const sync = useMemo(() => {
     return () => {
+      // Signed-in devices ask the server to advance one phase. Guests still
+      // reconstruct locally, because they have no server to ask.
+      if (syncIsActive()) {
+        const stamp = syncNow();
+        const ended = useTimerStore.getState().completeIfDue(stamp);
+        const state = useTimerStore.getState();
+        if (ended) chimeFor(state);
+        setNow(stamp);
+        document.title = titleFor(state, stamp);
+        return ended;
+      }
       const ended = useTimerStore.getState().catchUp(Date.now());
       const stamp = Date.now();
       if (ended) chimeFor(useTimerStore.getState());
@@ -54,7 +66,7 @@ export function TimerRuntime({ children }: { children: ReactNode }) {
 
   const refresh = useMemo(() => {
     return () => {
-      const stamp = Date.now();
+      const stamp = syncIsActive() ? syncNow() : Date.now();
       setNow(stamp);
       document.title = titleFor(useTimerStore.getState(), stamp);
     };

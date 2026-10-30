@@ -54,7 +54,24 @@
     "themeNight": "Nacht-Thema",
     "themeForest": "Wald-Thema",
     "themeSelected": "{name} (ausgewählt)",
-    "language": "Sprache"
+    "language": "Sprache",
+    "durations": {
+      "title": "Zeiten",
+      "focus": "Fokus",
+      "short": "Kurze Pause",
+      "long": "Lange Pause",
+      "every": "Lange Pause nach",
+      "minutes": "{count, number} Min.",
+      "sessions": "{count, number} Einheiten",
+      "decrease": "{label} verringern",
+      "increase": "{label} erhöhen"
+    },
+    "sync": {
+      "synced": "Synchron",
+      "offline": "Offline — {count, number} wartend",
+      "syncing": "Synchronisiert…",
+      "logoutWarning": "{count, number} Einträge sind noch nicht synchron und gehen beim Abmelden verloren. Trotzdem abmelden?"
+    }
   },
   "auth": {
     "title": "Anmelden",

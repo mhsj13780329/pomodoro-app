@@ -1,4 +1,5 @@
 import { getTranslations } from "next-intl/server";
+import { SyncStatus } from "@/features/settings/components/sync-status";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/current-user";
 import { displayIdentifier } from "../identifier";
@@ -17,6 +18,7 @@ export async function UserMenu() {
           <p dir="ltr" className="mt-1 text-start text-[15px]">
             {displayIdentifier(user)}
           </p>
+          <SyncStatus />
           <LogoutButton />
         </>
       ) : (

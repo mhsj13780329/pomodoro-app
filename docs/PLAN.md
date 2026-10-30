@@ -55,11 +55,16 @@ Settings        userId (1:1), focusMin, shortBreakMin, longBreakMin, longBreakEv
                 autoStartFocus, autoStartShortBreak, autoStartLongBreak,
                 themeId, soundId, ambientId?, notificationsOn, updatedAt
 
-ActiveTimer     userId (1:1), phase (FOCUS|SHORT_BREAK|LONG_BREAK), status (RUNNING|PAUSED),
-                startedAt, plannedSec, pausedAt?, pausedTotalSec, cycleIndex, taskId?, updatedAt
+ActiveTimer     userId (1:1), phase (FOCUS|SHORT_BREAK|LONG_BREAK),
+                status (IDLE|RUNNING|PAUSED),
+                startedAt, plannedSec, pausedAt?, pausedTotalSec, cycleIndex,
+                runId (UUID of the current phase; placeholder while idle),
+                version (integer, starts at 0; every change sends expectedVersion),
+                taskId?, updatedAt
 
-FocusSession    id (client-generated UUID → idempotent sync), userId, taskId?, phase,
-                startedAt, endedAt, durationSec, completed (bool), createdAt
+FocusSession    id (equals the runId of the phase that finished → idempotent sync),
+                userId, taskId?, phase, startedAt, endedAt, durationSec,
+                completed (bool), createdAt
 
 Project         id, userId, name, color, archived            (Pro)
 Tag / TaskTag   …                                            (Pro)
@@ -78,12 +83,17 @@ Payment         id, userId, plan (MONTH|YEAR|LIFETIME), amountToman, authority, 
 
 ## 5. How sync works
 
-1. **Timer state** lives in `ActiveTimer` as timestamps, not a ticking number. Any device computes `remaining = plannedSec − (now − startedAt − pausedTotalSec)`. Start on the laptop → the phone shows the same countdown.
-2. Devices refresh timer state on app focus/visibility change + light polling while open (upgrade to Server-Sent Events later if needed).
-3. **Completed sessions** are written to IndexedDB first, then flushed to the server when online. The client-generated UUID makes retries safe (no duplicates). Important given unreliable connections.
-4. Settings/tasks/notes: last-write-wins using `updatedAt`.
+The server is the source of truth for a signed-in user. The local store is a cache plus a queue. Guests stay on this device only and make no sync calls.
 
-Timer accuracy: never count `setInterval` ticks — browsers throttle background tabs. Always compute from timestamps. A running session keeps going while the tab is asleep: when the page runs again, phases that would have ended are reconstructed from those timestamps, and the next phase has already started if its auto-start was on. The end sound and the browser notification can only play while the page is actually running. Firing them at the exact end time while the phone is locked needs the Phase 9 service worker.
+1. **Timer state** lives in `ActiveTimer` as timestamps, not a ticking number. Any device computes `remaining = plannedSec − (now − startedAt − pausedTotalSec)`. While paused, `now` is `pausedAt`. Start on the laptop → the phone shows the same countdown.
+2. **Clocks can be wrong.** Every sync response includes `serverNow`. The client keeps `clockOffset = serverNow − Date.now()` (a smoothed median, ignoring a response whose round trip was over a second) and uses `Date.now() + clockOffset` in the formula above.
+3. **No silent overwrites.** Every timer change sends `expectedVersion`. The server applies it only when that matches `ActiveTimer.version`, then adds 1. A mismatch returns 409 with the current row, and the client adopts it. No error toast.
+4. **One completion, one row.** A phase start stores a new `runId`. The `FocusSession` for that focus uses `id = runId`. A second device, or a retry, inserts nothing.
+5. Devices refresh on app start, tab focus, becoming visible, coming back online, and every 15s while the tab is visible. Polling stops while the tab is hidden. A later `GET /api/sync/stream` (Server-Sent Events) can replace that poll; the pull function stays the one place that adopts server state.
+6. **Completed sessions** are written to IndexedDB first, then flushed when online. The `runId` makes retries safe. A signed-in device that was closed through several phases does not invent the missing sessions: one `complete` advances one phase, and auto-start begins the next phase at `serverNow`. Guests still reconstruct locally, because they have no server.
+7. Settings: last-write-wins using `updatedAt`. Tasks and notes will use the same rule when they exist.
+
+Timer accuracy: never count `setInterval` ticks — browsers throttle background tabs. The interval only re-renders. The end sound and the browser notification can only play while the page is actually running. Firing them at the exact end time while the phone is locked needs the Phase 9 service worker.
 
 ## 6. Phases
 
@@ -93,7 +103,7 @@ Each phase ends with something that works. Commit to git at the end of every ste
 - [ ] **Phase 1 — Timer core (no backend):** focus → break → long break cycle, auto-start toggles per phase, pause/resume/skip/reset, end sound, browser notification, tab-title countdown. State in a single store (Zustand) + localStorage.
 - [x] **Phase 2 — i18n, RTL, design:** next-intl with all 7 locales, `dir="rtl"` for fa, Vazirmatn, Persian digits, language switcher, 3 free themes, light/dark. *No hard-coded UI strings from here on.*
 - [x] **Phase 3 — Database + auth:** local PostgreSQL, Prisma schema (§4), Better Auth with phone OTP + email OTP (log OTPs to the console in dev; real SMS later). Guest mode: app works without an account; on sign-up, local data is uploaded.
-- [ ] **Phase 4 — Sync:** settings, ActiveTimer and FocusSession sync per §5.
+- [x] **Phase 4 — Sync:** settings, ActiveTimer and FocusSession sync per §5.
 - [ ] **Phase 5 — Tasks:** free simple list; Pro projects/tags/subtasks/estimates. Pick a task for the current focus session.
 - [ ] **Phase 6 — Stats, heatmap, streaks:** dashboard with Jalali dates for fa, GitHub-style heatmap, current & best streak, per-task breakdown (Pro).
 - [ ] **Phase 7 — Pro & payments:** pricing page, Zarinpal sandbox → request → redirect → callback → verify → grant `proUntil`/lifetime; payment history; expiry reminders; server-side `requirePro()`.
@@ -112,5 +122,6 @@ Each phase ends with something that works. Commit to git at the end of every ste
 - Reference context explicitly: `@docs/PLAN.md`, specific files, and official docs.
 - **Review every diff.** If you don't understand backend code, ask "explain this like I'm new to backends" before accepting. You're learning the backend as you go; that's the point.
 - Run the app and test after each step. When something breaks, paste the **exact error** into the chat.
+- **Tests:** from `web/`, `npm test` runs the unit tests. With Postgres running, `npm run test:e2e` runs the Playwright sync tests (two signed-in browsers on one account, about 4 minutes because two tests wait out a real one-minute focus). The first run needs `npx playwright install chromium`. The suite starts its own dev server on port 3100 (folder `.next/e2e`, so `npm run dev` can keep running) with `E2E_OTP=1`, which lets the tests read login codes from `GET /api/test/otp`. That route answers 404 in every other mode. Test accounts are `e2e-…@example.com` and are deleted after each test.
 - `git commit` after each working step, so any bad AI change is one `git restore` away.
 - Never paste real secrets into chat; keep them in `web/.env.local` (git-ignored).

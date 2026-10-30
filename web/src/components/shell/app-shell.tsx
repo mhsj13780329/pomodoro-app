@@ -11,7 +11,7 @@ import {
   IconNavTimer,
 } from "@/components/icons";
 import { Link, usePathname } from "@/i18n/navigation";
-import { GuestImport } from "@/features/auth/components/guest-import";
+import { SyncRoot } from "@/features/auth/components/sync-root";
 import { TimerRuntime } from "@/features/timer/timer-runtime";
 
 const links = [
@@ -24,7 +24,7 @@ const links = [
 export function AppShell({ children }: { children: ReactNode }) {
   return (
     <>
-      <GuestImport />
+      <SyncRoot />
       <TimerRuntime>
         <div className="flex min-h-dvh flex-col bg-ground md:flex-row">
           <DesktopNav />

@@ -54,7 +54,24 @@
     "themeNight": "나이트 테마",
     "themeForest": "포레스트 테마",
     "themeSelected": "{name} (선택됨)",
-    "language": "언어"
+    "language": "언어",
+    "durations": {
+      "title": "시간",
+      "focus": "집중",
+      "short": "짧은 휴식",
+      "long": "긴 휴식",
+      "every": "긴 휴식까지",
+      "minutes": "{count, number}분",
+      "sessions": "{count, number}회",
+      "decrease": "{label} 줄이기",
+      "increase": "{label} 늘리기"
+    },
+    "sync": {
+      "synced": "동기화됨",
+      "offline": "오프라인 — {count, number}개 대기",
+      "syncing": "동기화 중…",
+      "logoutWarning": "{count, number}개가 아직 동기화되지 않았습니다. 로그아웃하면 사라집니다. 로그아웃할까요?"
+    }
   },
   "auth": {
     "title": "로그인",

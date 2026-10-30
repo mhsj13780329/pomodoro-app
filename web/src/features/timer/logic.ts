@@ -1,5 +1,11 @@
 // Pure timer math. No React. The screen asks "what time is it?" and this file answers
 // from timestamps, so a locked phone or a background tab cannot drift the countdown.
+// One-step changes go through lib/timer/transitions so guests and the server agree.
+// Catch-up below still walks several phases for a guest whose tab was asleep.
+
+import { applyTimerAction, advancePhase, type PhaseSettings, type TransitionTimer } from "@/lib/timer/transitions";
+
+export { displaySeconds, remainingMs } from "@/lib/timer/remaining";
 
 export type Phase = "focus" | "shortBreak" | "longBreak";
 
@@ -71,26 +77,6 @@ function durationMs(state: TimerCore, phase: Phase): number {
   return ms(durationOf(state, phase));
 }
 
-/**
- * Time left in this phase.
- * While paused, the clock is frozen at pausedAt. Otherwise it is `now`.
- * Remaining is never stored: it is always planned minus the time actually spent running.
- */
-export function remainingMs(state: TimerCore, now: number): number {
-  if (state.status === "idle" || state.startedAt == null) {
-    return ms(state.plannedSec);
-  }
-  const effectiveNow =
-    state.status === "paused" && state.pausedAt != null ? state.pausedAt : now;
-  const elapsed = effectiveNow - state.startedAt - ms(state.pausedTotalSec);
-  return Math.max(0, ms(state.plannedSec) - elapsed);
-}
-
-/** Seconds to show on the ring. Rounded up so the first instant still shows the full duration. */
-export function displaySeconds(state: TimerCore, now: number): number {
-  return Math.ceil(remainingMs(state, now) / 1000 - 1e-6);
-}
-
 function phaseEndAt(state: TimerCore): number {
   if (state.startedAt == null) return Number.POSITIVE_INFINITY;
   return state.startedAt + ms(state.pausedTotalSec) + ms(state.plannedSec);
@@ -129,74 +115,82 @@ function beginPhase(
 
 /** Where a phase goes when it actually runs out. A finished focus counts toward the long break. */
 function advance(state: TimerCore): { phase: Phase; completedFocusInCycle: number } {
-  if (state.phase === "focus") {
-    const completed = state.completedFocusInCycle + 1;
-    if (completed >= state.longBreakEvery) {
-      return { phase: "longBreak", completedFocusInCycle: completed };
-    }
-    return { phase: "shortBreak", completedFocusInCycle: completed };
-  }
-  if (state.phase === "longBreak") {
-    return { phase: "focus", completedFocusInCycle: 0 };
-  }
-  return { phase: "focus", completedFocusInCycle: state.completedFocusInCycle };
+  const next = advancePhase(state.phase, state.completedFocusInCycle, state.longBreakEvery);
+  return { phase: next.phase, completedFocusInCycle: next.cycleIndex };
 }
 
-/**
- * Skip does not count as a finished focus, so mashing skip cannot earn a long break.
- * A skipped long break still opens a fresh cycle.
- */
-function skipTarget(state: TimerCore): { phase: Phase; completedFocusInCycle: number } {
-  if (state.phase === "focus") {
-    return { phase: "shortBreak", completedFocusInCycle: state.completedFocusInCycle };
-  }
-  if (state.phase === "longBreak") {
-    return { phase: "focus", completedFocusInCycle: 0 };
-  }
-  return { phase: "focus", completedFocusInCycle: state.completedFocusInCycle };
+function lengthsOf(state: TimerCore): PhaseSettings {
+  return {
+    focusSec: state.focusSec,
+    shortBreakSec: state.shortBreakSec,
+    longBreakSec: state.longBreakSec,
+    longBreakEvery: state.longBreakEvery,
+    autoStartFocus: state.autoStartFocus,
+    autoStartShortBreak: state.autoStartShortBreak,
+    autoStartLongBreak: state.autoStartLongBreak,
+  };
+}
+
+function toRow(state: TimerCore): TransitionTimer {
+  return {
+    phase: state.phase,
+    status: state.status,
+    startedAt: state.startedAt,
+    plannedSec: state.plannedSec,
+    pausedAt: state.pausedAt,
+    pausedTotalSec: state.pausedTotalSec,
+    cycleIndex: state.completedFocusInCycle,
+    runId: "local",
+    version: 0,
+    taskId: null,
+  };
+}
+
+function fromRow(state: TimerCore, timer: TransitionTimer): TimerCore {
+  return {
+    ...state,
+    phase: timer.phase,
+    status: timer.status,
+    startedAt: timer.startedAt,
+    plannedSec: timer.plannedSec,
+    pausedAt: timer.pausedAt,
+    pausedTotalSec: timer.pausedTotalSec,
+    completedFocusInCycle: timer.cycleIndex,
+  };
+}
+
+function guestStep(
+  state: TimerCore,
+  action: Parameters<typeof applyTimerAction>[2],
+  now: number,
+): TimerCore {
+  const step = applyTimerAction(toRow(state), lengthsOf(state), action, now);
+  if (!step.changed) return state;
+  return fromRow(state, step.timer);
 }
 
 export function start(state: TimerCore, now: number): TimerCore {
-  if (state.status !== "idle") return state;
-  return {
-    ...state,
-    status: "running",
-    startedAt: now,
-    pausedAt: null,
-    pausedTotalSec: 0,
-    plannedSec: durationOf(state, state.phase),
-  };
+  return guestStep(state, { type: "start", runId: "local" }, now);
 }
 
 export function pause(state: TimerCore, now: number): TimerCore {
-  if (state.status !== "running" || state.startedAt == null) return state;
-  return { ...state, status: "paused", pausedAt: now };
+  return guestStep(state, { type: "pause" }, now);
 }
 
 export function resume(state: TimerCore, now: number): TimerCore {
-  if (state.status !== "paused" || state.pausedAt == null) return state;
-  // Add the real gap. The start timestamp stays put, so the pause cannot drift.
-  const pausedSec = (now - state.pausedAt) / 1000;
-  return {
-    ...state,
-    status: "running",
-    pausedAt: null,
-    pausedTotalSec: state.pausedTotalSec + pausedSec,
-  };
+  return guestStep(state, { type: "resume" }, now);
 }
 
 export function reset(state: TimerCore): TimerCore {
-  return waitPhase(state, state.phase, state.completedFocusInCycle);
+  return guestStep(state, { type: "reset" }, 0);
 }
 
 export function skip(state: TimerCore): TimerCore {
-  const next = skipTarget(state);
-  return waitPhase(state, next.phase, next.completedFocusInCycle);
+  return guestStep(state, { type: "skip" }, 0);
 }
 
 export function selectPhase(state: TimerCore, phase: Phase): TimerCore {
-  if (phase === state.phase) return state;
-  return waitPhase(state, phase, state.completedFocusInCycle);
+  return guestStep(state, { type: "select", phase }, 0);
 }
 
 export function setPhaseSeconds(state: TimerCore, phase: Phase, sec: number): TimerCore {
