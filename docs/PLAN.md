@@ -86,8 +86,9 @@ Payment         id, userId, plan (MONTH|YEAR|LIFETIME), amountToman, authority, 
 
 **Stats & streaks are derived from** `FocusSession` — no separate counters to get out of sync. Pomodoro counts on a task are derived the same way: completed focus sessions with that `taskId`, versus `estimatePomodoros`. No counter columns.
 
-- A day "counts" for the streak if it has ≥ 1 completed focus session, using the **user's timezone**.
-- Heatmap = SUM(durationSec) of completed focus sessions grouped by local date.
+- A day counts for the streak when it has at least one completed focus session. The local day is the date of `endedAt` in `User.timezone`: the whole session counts on that day, even if it started before midnight. The current streak stays alive through today — if yesterday counted and today is still empty, the streak is the run that ended yesterday. It breaks only after a full local day with no session.
+- The best streak is the longest run in the whole history. It is one number and stays free, even though browsing that history is Pro.
+- Heatmap = SUM(durationSec) of completed focus sessions grouped by that same local date. `FocusSession` is indexed on `(userId, endedAt)` for this lookup.
 
 ## 5. How sync works
 
@@ -101,6 +102,7 @@ The server is the source of truth for a signed-in user. The local store is a cac
 6. **Completed sessions** are written to IndexedDB first, then flushed when online. The `runId` makes retries safe. A signed-in device that was closed through several phases does not invent the missing sessions: one `complete` advances one phase, and auto-start begins the next phase at `serverNow`. Guests still reconstruct locally, because they have no server.
 7. Settings: last-write-wins using `updatedAt`. Notes will use the same rule when they exist.
 8. **Tasks** sync through the same queue, pull and refresh triggers (focus, visible, online, 15s poll). Writes flush to `POST /api/tasks` (last-write-wins on `updatedAt`, soft delete via `deletedAt`, client UUIDs). `GET /api/sync/state?tasksSince=<ms>` returns a `tasks` block; `0` means the full set, and the saved cursor is `serverNow − 5s` so a row written during the round trip is not missed. Guests keep tasks on this device only and upload them through the existing import path on sign-up.
+9. **Stats are not part of the sync pull.** `GET /api/stats` reads `FocusSession` for a local-date range. The client merges the IndexedDB session queue by id, so a focus that has not uploaded yet still counts today. Guests compute the same numbers from the sessions on this device and do not call the API.
 
 Timer accuracy: never count `setInterval` ticks — browsers throttle background tabs. The interval only re-renders. The end sound and the browser notification can only play while the page is actually running. Firing them at the exact end time while the phone is locked needs the Phase 9 service worker.
 
@@ -114,7 +116,7 @@ Each phase ends with something that works. Commit to git at the end of every ste
 - [x] **Phase 3 — Database + auth:** local PostgreSQL, Prisma schema (§4), Better Auth with phone OTP + email OTP (log OTPs to the console in dev; real SMS later). Guest mode: app works without an account; on sign-up, local data is uploaded.
 - [x] **Phase 4 — Sync:** settings, ActiveTimer and FocusSession sync per §5.
 - [x] **Phase 5 — Tasks:** free simple list (add, rename, check, delete, reorder, max 10 active); Pro projects, tags, subtasks, estimates and notes, gated by `requirePro()`. The picked task is stored in `ActiveTimer.taskId` and copied to `FocusSession.taskId` when the focus completes. `/pricing` is a placeholder until Phase 7. Dev helper: `npx tsx scripts/grant-pro.ts <email> [days|lifetime|off]`.
-- [ ] **Phase 6 — Stats, heatmap, streaks:** dashboard with Jalali dates for fa, GitHub-style heatmap, current & best streak, per-task breakdown (Pro).
+- [x] **Phase 6 — Stats, heatmap, streaks:** dashboard with Jalali dates for fa, GitHub-style year heatmap (Pro), current and best streak, last 7 days, per-task and per-project breakdown and CSV export (Pro). Derived from `FocusSession`, gated with `requirePro()`.
 - [ ] **Phase 7 — Pro & payments:** pricing page (replacing the Phase 5 placeholder), Zarinpal sandbox → request → redirect → callback → verify → grant `proUntil`/lifetime; payment history; expiry reminders. `requirePro()` already exists (Phase 5); payments plug into the same two columns.
 - [ ] **Phase 8 — Pro features:** unlimited themes, fully custom timer, notepad, ambient sounds (self-hosted audio files).
 - [ ] **Phase 9 — PWA:** manifest, icons, service worker (Serwist), offline shell, "Add to Home Screen" guide (esp. iOS). The service worker also plays the phase-end sound and shows the browser notification while the page is frozen (locked phone or sleeping computer). Until then, those fire when the page runs again; the timer schedule itself does not wait.
