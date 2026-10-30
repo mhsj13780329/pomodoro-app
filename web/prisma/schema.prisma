@@ -36,6 +36,7 @@ model User {
   tasks               Task[]
   notes               Note[]
   payments            Payment[]
+  proReminders        ProReminder[]
 
   @@unique([email])
   @@unique([phoneNumber])
@@ -114,6 +115,19 @@ enum PaymentStatus {
   PENDING
   PAID
   FAILED
+  // Checkout was abandoned, or a late verify said the session can never be paid.
+  EXPIRED
+}
+
+// Which expiry email/SMS we already sent. A renewal changes proUntil, so a new row is allowed.
+enum ReminderKind {
+  EXPIRING
+  EXPIRED
+}
+
+enum ReminderChannel {
+  SMS
+  EMAIL
 }
 
 // One row per user. Guest import creates it on first login when the account
@@ -270,13 +284,38 @@ model Payment {
   userId      String
   user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   plan        Plan
+  // Copied from plans.ts at request time. The client never sends an amount.
   amountToman Int
-  authority   String
+  // Null until Zarinpal answers. Unique so the callback finds one row. Many nulls are allowed.
+  authority   String?       @unique
   refId       String?
+  // Masked card from verify (502229******5995). The card hash is not stored.
+  cardPan     String?
+  // Zarinpal's code when this row did not become PAID.
+  errorCode   Int?
+  // Pricing-page locale. The callback URL has no /fa or /en, so the redirect reads this.
+  locale      String
   status      PaymentStatus
   createdAt   DateTime      @default(now())
   verifiedAt  DateTime?
+  // Status changes. Reconcile ages rows by createdAt, so a retry cannot postpone expiry.
+  updatedAt   DateTime      @updatedAt
 
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+}
+
+// One row per (user, expiry instant, kind). The unique key stops a second reminder for the same proUntil.
+model ProReminder {
+  id       String          @id @default(uuid())
+  userId   String
+  user     User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  proUntil DateTime
+  kind     ReminderKind
+  channel  ReminderChannel
+  sentAt   DateTime        @default(now())
+
+  @@unique([userId, proUntil, kind])
   @@index([userId])
 }
 
