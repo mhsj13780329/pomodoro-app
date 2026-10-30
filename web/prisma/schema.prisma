@@ -172,6 +172,8 @@ model FocusSession {
   createdAt   DateTime @default(now())
 
   @@index([userId, startedAt])
+  // Stats filter on when the session ended. The startedAt index does not help that.
+  @@index([userId, endedAt])
 }
 
 // Projects, tags and tasks sync with last-write-wins, like Settings:
