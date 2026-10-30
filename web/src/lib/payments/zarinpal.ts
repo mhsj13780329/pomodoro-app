@@ -188,3 +188,8 @@ export function zarinpalFromEnv(): PaymentGateway {
   const env = paymentEnv();
   return createZarinpal({ merchantId: env.merchantId, sandbox: env.sandbox });
 }
+
+/** What the routes call. The e2e suite replaces this with a fake when E2E_OTP=1. */
+export function getPaymentGateway(): PaymentGateway {
+  return zarinpalFromEnv();
+}

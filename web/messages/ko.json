@@ -173,7 +173,8 @@
   },
   "pricing": {
     "title": "Pro",
-    "soon": "요금 페이지는 곧 열려요."
+    "soon": "요금 페이지는 곧 열려요.",
+    "gatewayDescription": "포모도로 Pro 구독"
   },
   "settings": {
     "title": "설정",

@@ -173,7 +173,8 @@
   },
   "pricing": {
     "title": "Pro",
-    "soon": "The pricing page is coming soon."
+    "soon": "The pricing page is coming soon.",
+    "gatewayDescription": "Pomodoro Pro subscription"
   },
   "settings": {
     "title": "Settings",

@@ -173,7 +173,8 @@
   },
   "pricing": {
     "title": "Pro",
-    "soon": "La page des tarifs arrive bientôt."
+    "soon": "La page des tarifs arrive bientôt.",
+    "gatewayDescription": "Abonnement Pro Pomodoro"
   },
   "settings": {
     "title": "Réglages",

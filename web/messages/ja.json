@@ -173,7 +173,8 @@
   },
   "pricing": {
     "title": "Pro",
-    "soon": "料金ページは近日公開です。"
+    "soon": "料金ページは近日公開です。",
+    "gatewayDescription": "ポモドーロ Pro の購入"
   },
   "settings": {
     "title": "設定",
