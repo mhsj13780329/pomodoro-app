@@ -235,6 +235,16 @@
       "unknownBody": "Le lien de retour n’est pas valable, ou ce paiement appartient à un autre compte.",
       "again": "Réessayer",
       "home": "Retour au minuteur"
+    },
+    "banner": {
+      "soon": "Pro se termine dans quelques jours.",
+      "expired": "Pro est terminé. Vous pouvez le réactiver quand vous voulez.",
+      "renew": "Renouveler",
+      "dismiss": "Fermer le rappel"
+    },
+    "remind": {
+      "expiring": "Pro se termine dans trois jours. Ouvrez la page Pro pour le renouveler.",
+      "expired": "Pro s’est terminé hier. Vous pouvez le réactiver quand vous voulez."
     }
   },
   "settings": {

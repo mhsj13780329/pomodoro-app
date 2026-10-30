@@ -235,6 +235,16 @@
       "unknownBody": "돌아온 링크가 잘못되었거나, 이 결제는 다른 계정의 것입니다.",
       "again": "다시 시도",
       "home": "타이머로 돌아가기"
+    },
+    "banner": {
+      "soon": "Pro가 며칠 뒤 끝납니다.",
+      "expired": "Pro가 끝났습니다. 원할 때 다시 켤 수 있습니다.",
+      "renew": "연장",
+      "dismiss": "알림 닫기"
+    },
+    "remind": {
+      "expiring": "Pro가 3일 뒤에 끝납니다. 연장하려면 Pro 페이지를 여세요.",
+      "expired": "Pro가 어제 끝났습니다. 원할 때 다시 켤 수 있습니다."
     }
   },
   "settings": {

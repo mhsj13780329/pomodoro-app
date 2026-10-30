@@ -235,6 +235,16 @@
       "unknownBody": "The return link is not valid, or this payment belongs to another account.",
       "again": "Try again",
       "home": "Back to the timer"
+    },
+    "banner": {
+      "soon": "Pro ends in a few days.",
+      "expired": "Pro has ended. You can turn it back on whenever you like.",
+      "renew": "Renew",
+      "dismiss": "Dismiss reminder"
+    },
+    "remind": {
+      "expiring": "Pro ends in three days. Open the Pro page when you want to renew.",
+      "expired": "Pro ended yesterday. You can turn it back on whenever you like."
     }
   },
   "settings": {

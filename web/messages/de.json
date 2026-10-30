@@ -235,6 +235,16 @@
       "unknownBody": "Der Rückkehr-Link ist ungültig, oder diese Zahlung gehört zu einem anderen Konto.",
       "again": "Nochmal versuchen",
       "home": "Zurück zum Timer"
+    },
+    "banner": {
+      "soon": "Pro endet in ein paar Tagen.",
+      "expired": "Pro ist zu Ende. Du kannst es jederzeit wieder einschalten.",
+      "renew": "Verlängern",
+      "dismiss": "Hinweis schließen"
+    },
+    "remind": {
+      "expiring": "Pro endet in drei Tagen. Öffne die Pro-Seite, wenn du verlängern willst.",
+      "expired": "Pro ist gestern zu Ende gegangen. Du kannst es jederzeit wieder einschalten."
     }
   },
   "settings": {

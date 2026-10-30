@@ -235,6 +235,16 @@
       "unknownBody": "El enlace de vuelta no es válido, o este pago es de otra cuenta.",
       "again": "Intentar de nuevo",
       "home": "Volver al temporizador"
+    },
+    "banner": {
+      "soon": "Pro termina en unos días.",
+      "expired": "Pro ha terminado. Puedes activarlo de nuevo cuando quieras.",
+      "renew": "Renovar",
+      "dismiss": "Cerrar el aviso"
+    },
+    "remind": {
+      "expiring": "Pro termina en tres días. Abre la página de Pro si quieres renovarlo.",
+      "expired": "Pro terminó ayer. Puedes activarlo de nuevo cuando quieras."
     }
   },
   "settings": {
