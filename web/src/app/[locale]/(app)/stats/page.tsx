@@ -1,12 +1,12 @@
 import { hasLocale } from "next-intl";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { StatsScreen } from "@/features/stats/components/stats-screen";
 import { routing } from "@/i18n/routing";
 
 export default async function StatsPage({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
-  const t = await getTranslations("stats");
-  return <h1 className="text-[22px] font-bold leading-relaxed">{t("placeholder")}</h1>;
+  return <StatsScreen />;
 }
