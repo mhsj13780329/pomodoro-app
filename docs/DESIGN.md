@@ -54,9 +54,10 @@ The phase accent (`focus` / `short` / `long`) is one CSS variable `--phase` set 
 - **Controls:** reset (56px outline) · play/pause (84px filled, phase accent) · skip (56px outline). In RTL the order is reset → play → skip from the right.
 - **Cycle dots:** 4 dots; done = filled, current = outlined with accent border, upcoming = grey outline.
 - **Auto-start switches:** three `role="switch"` buttons (focus / short / long) in one card; on = phase accent track, off = `switch-off`.
-- **Streak chip:** flame icon + "N روز پیاپی", `focus-soft` background.
+- **Streak chip:** flame icon + "N روز پیاپی", `focus-soft` background. This is the **current** streak. On the stats page the card labeled «رکورد پیاپی» is the **best** streak, not the current one.
 - **Task row:** native checkbox (44px hit area), title, "done/planned" count; active task has a 2px focus-colored border and "در حال تمرکز" tag.
-- **Heatmap:** calendar grid, Saturday first, 7 columns × up to 6 rows, today has a 2px ink inset ring, future days dashed outline. Dates are **Jalali** (`Intl` with `fa-IR-u-ca-persian`).
+- **Heatmap:** calendar grid, 7 columns × up to 6 rows, today has a 2px ink inset ring, future days dashed outline. The week starts on **Saturday for `fa` only**; other locales use their usual first day. Dates are **Jalali** for `fa` (`Intl` with `fa-IR-u-ca-persian`) and Gregorian otherwise.
+- **7-day bars:** daily focus minutes for today and the six days before it. Shown on the phone when «۷ روز» is selected (the phone mockup omits this chart). On desktop it also sits beside the month heatmap. Values are printed on the bars, not color alone.
 - **Pro lock:** `pro-bg` pill / lock icon; tapping goes to Pricing. The check is always repeated on the server.
 - **Plan cards:** radio group (native `<input type=radio>`), recommended plan has a 2px focus border + "پیشنهاد ما" tag.
 
