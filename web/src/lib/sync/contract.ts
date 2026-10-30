@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { tasksBlockSchema } from "@/lib/tasks/contract";
 
 // Shared by the route handlers and the browser. No database import here,
 // so client code can use these types without pulling in Prisma.
@@ -134,6 +135,23 @@ export const timerCommandSchema = z.discriminatedUnion("action", [
 
 export type TimerCommand = z.infer<typeof timerCommandSchema>;
 
+/**
+ * Picks (or clears) the task for the focus session. Deliberately NOT version-checked:
+ * it only changes ActiveTimer.taskId, never the countdown, so choosing a task on one
+ * device cannot make another device's pause or complete fail with a 409.
+ */
+export const setTaskCommandSchema = z
+  .object({
+    action: z.literal("setTask"),
+    taskId: z.uuid().nullable(),
+  })
+  .strict();
+
+export type SetTaskCommand = z.infer<typeof setTaskCommandSchema>;
+
+/** Anything the offline queue can hold for the timer. */
+export type QueuedCommand = TimerCommand | SetTaskCommand;
+
 export const sessionInputSchema = z
   .object({
     id: z.uuid(),
@@ -159,6 +177,8 @@ export const syncStateSchema = z.object({
   serverNow: z.number(),
   settings: settingsWireSchema,
   activeTimer: timerWireSchema,
+  /** Only present when the pull asked for it with ?tasksSince=. */
+  tasks: tasksBlockSchema.optional(),
 });
 
 export type SyncState = z.infer<typeof syncStateSchema>;

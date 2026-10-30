@@ -237,7 +237,9 @@ export async function writeTimer(userId: string, command: TimerCommand, serverNo
         cycleIndex: step.timer.cycleIndex,
         runId: step.timer.runId,
         version: step.timer.version,
-        taskId: step.timer.taskId,
+        // taskId is left out on purpose. Picking a task (selectTask) and clearing it when the
+        // task is finished elsewhere both write it without a version check, and this write
+        // must not undo them with the value read a moment ago.
       },
     });
     if (updated.count !== 1) {
@@ -245,13 +247,16 @@ export async function writeTimer(userId: string, command: TimerCommand, serverNo
       return { kind: "conflict" as const, current: fresh ?? current, settings };
     }
 
+    const saved = await tx.activeTimer.findUnique({ where: { userId } });
+
     if (step.session) {
       await tx.focusSession.createMany({
         data: [
           {
             id: step.session.id,
             userId,
-            taskId: step.session.taskId,
+            // The task chosen right now, so the session is credited to the right task.
+            taskId: saved?.taskId ?? null,
             phase: "FOCUS",
             startedAt: new Date(step.session.startedAt),
             endedAt: new Date(step.session.endedAt),
@@ -263,7 +268,6 @@ export async function writeTimer(userId: string, command: TimerCommand, serverNo
       });
     }
 
-    const saved = await tx.activeTimer.findUnique({ where: { userId } });
     return { kind: "ok" as const, current: saved ?? current, settings };
   });
 

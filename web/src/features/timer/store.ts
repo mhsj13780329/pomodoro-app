@@ -37,7 +37,12 @@ type Actions = {
   catchUp: (now: number) => boolean;
   /** Signed-in: send complete once when the adjusted clock reaches zero. True if the chime should play. */
   completeIfDue: (now: number) => boolean;
-  adoptServer: (state: SyncState, options: { timer: boolean; kind: "ok" | "conflict" | "early" | "pull" }) => void;
+  /** Picks (or clears) the task for the focus session. Never touches the running countdown. */
+  setTask: (taskId: string | null) => void;
+  adoptServer: (
+    state: SyncState,
+    options: { timer: boolean; kind: "ok" | "conflict" | "early" | "pull"; keepTask?: boolean },
+  ) => void;
   resetGuest: () => void;
 };
 
@@ -237,6 +242,13 @@ export const useTimerStore = create<TimerStore>()(
         set(fieldsOf(step.timer));
         publishTimerCommand({ command: commandFor({ type: "select", phase }, state.version), session: null });
       },
+      setTask: (taskId) => {
+        if (get().taskId === taskId) return;
+        // Applied here at once. Signed in, the pick also goes to the server through the queue;
+        // it has no version check, so it can never interrupt or conflict with the timer.
+        set({ taskId });
+        if (syncIsActive()) publishTimerCommand({ command: { action: "setTask", taskId }, session: null });
+      },
       toggleAutoStart: (phase) => {
         const next = noteSettings(toggleCore(toCore(get()), phase));
         set(next);
@@ -265,7 +277,7 @@ export const useTimerStore = create<TimerStore>()(
         const before = toCore(get());
         const result = catchUpCore(before, now);
         if (!result.ended) return false;
-        const session = finishedFocusSession(before, crypto.randomUUID());
+        const session = finishedFocusSession(before, crypto.randomUUID(), get().taskId);
         const completedSessions = session
           ? [...get().completedSessions, session].slice(-MAX_GUEST_SESSIONS)
           : get().completedSessions;
@@ -325,7 +337,8 @@ export const useTimerStore = create<TimerStore>()(
           patch.completedFocusInCycle = timer.cycleIndex;
           patch.version = timer.version;
           patch.runId = timer.runId;
-          patch.taskId = timer.taskId;
+          // A pick still waiting in the queue is newer than what the server just sent.
+          patch.taskId = options.keepTask ? local.taskId : timer.taskId;
         } else if (local.status === "idle") {
           patch.plannedSec = idlePlanned(local.phase);
         }

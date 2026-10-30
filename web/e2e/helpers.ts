@@ -8,13 +8,18 @@ import { expect, type Browser, type BrowserContext, type Page } from "@playwrigh
 // as CommonJS, and the generated client is ESM-only.
 config({ path: ".env.local", quiet: true });
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL, max: 2 });
+// Spec files in one worker share this module. Each spec closes the pool in afterAll,
+// so the pool is created on first use and again after a close.
+let pool: Pool | null = null;
 
 export async function closeDb() {
-  await pool.end();
+  const open = pool;
+  pool = null;
+  await open?.end();
 }
 
 export async function query<T extends Record<string, unknown>>(sql: string, params: unknown[] = []): Promise<T[]> {
+  pool ??= new Pool({ connectionString: process.env.DATABASE_URL, max: 2 });
   const result = await pool.query(sql, params);
   return result.rows as T[];
 }
@@ -41,6 +46,12 @@ export async function userIdOf(email: string): Promise<string> {
 export async function focusSessionCount(userId: string): Promise<number> {
   const rows = await query<{ count: string }>(`SELECT count(*)::text AS count FROM "FocusSession" WHERE "userId" = $1`, [userId]);
   return Number(rows[0]?.count ?? 0);
+}
+
+/** The task each completed focus session was saved against (null = no task). */
+export async function sessionTaskIds(userId: string): Promise<(string | null)[]> {
+  const rows = await query<{ taskId: string | null }>(`SELECT "taskId" FROM "FocusSession" WHERE "userId" = $1`, [userId]);
+  return rows.map((row) => row.taskId);
 }
 
 export async function activeTimerRow(userId: string) {
@@ -218,4 +229,90 @@ export async function idbKeys(page: Page): Promise<string[]> {
 }
 
 /** Block only the sync endpoints, so the page and the session cookie still load. */
-export const SYNC_ROUTES = /\/api\/(sync\/state|timer|sessions|settings|import)(\?|$)/;
+export const SYNC_ROUTES = /\/api\/(sync\/state|timer|sessions|settings|import|tasks)(\?|$)/;
+
+// ---------- tasks ----------
+
+export type TaskBody = {
+  id: string;
+  title: string;
+  notes: string | null;
+  estimatePomodoros: number | null;
+  done: boolean;
+  doneAt: string | null;
+  order: number;
+  projectId: string | null;
+  parentId: string | null;
+  tagIds: string[];
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+};
+
+/** A full task row as the API expects it. `at` is the client edit time. */
+export function taskBody(patch: Partial<TaskBody> = {}, at = new Date()): TaskBody {
+  const stamp = at.toISOString();
+  return {
+    id: randomUUID(),
+    title: "Task",
+    notes: null,
+    estimatePomodoros: null,
+    done: false,
+    doneAt: null,
+    order: 0,
+    projectId: null,
+    parentId: null,
+    tagIds: [],
+    createdAt: stamp,
+    updatedAt: stamp,
+    deletedAt: null,
+    ...patch,
+  };
+}
+
+export type TaskBatchResponse = {
+  results: { kind: string; id: string; status: string; reason?: string }[];
+  rows: { tasks: TaskBody[]; projects: { id: string }[]; tags: { id: string }[] };
+  pro: boolean;
+};
+
+/** Sends a batch straight to the API, the way a device flushing its queue would. */
+export async function postTasks(
+  page: Page,
+  batch: { tasks?: TaskBody[]; projects?: unknown[]; tags?: unknown[] },
+): Promise<TaskBatchResponse> {
+  const response = await page.request.post("/api/tasks", { data: batch });
+  expect(response.status()).toBe(200);
+  return (await response.json()) as TaskBatchResponse;
+}
+
+export async function activeTaskCount(userId: string): Promise<number> {
+  const rows = await query<{ count: string }>(
+    `SELECT count(*)::text AS count FROM "Task" WHERE "userId" = $1 AND done = false AND "deletedAt" IS NULL AND "parentId" IS NULL`,
+    [userId],
+  );
+  return Number(rows[0]?.count ?? 0);
+}
+
+export async function taskRowById(id: string) {
+  const rows = await query<{ title: string; done: boolean; deletedAt: Date | null; projectId: string | null; order: number }>(
+    `SELECT title, done, "deletedAt", "projectId", "order" FROM "Task" WHERE id = $1`,
+    [id],
+  );
+  return rows[0] ?? null;
+}
+
+export async function timerTaskId(userId: string): Promise<string | null> {
+  const rows = await query<{ taskId: string | null }>(`SELECT "taskId" FROM "ActiveTimer" WHERE "userId" = $1`, [userId]);
+  return rows[0]?.taskId ?? null;
+}
+
+/** Pro until `until` (a past date makes the account "Pro that ended"). null removes it. */
+export async function setProUntil(userId: string, until: Date | null) {
+  // The column is "timestamp without time zone" and Prisma stores UTC in it. Passing a JS Date
+  // would be written in the machine's local time, so send an explicit UTC instant instead.
+  await query(`UPDATE "user" SET "proUntil" = ($2::timestamptz AT TIME ZONE 'UTC') WHERE id = $1`, [
+    userId,
+    until ? until.toISOString() : null,
+  ]);
+}

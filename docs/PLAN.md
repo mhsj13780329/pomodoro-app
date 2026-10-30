@@ -12,37 +12,38 @@ A Farsi-first Pomodoro web app (installable on phones as a PWA) with accounts, c
 
 ## 2. Key decisions (and why)
 
-| Area | Choice | Why |
-|---|---|---|
-| Framework | **Next.js (App Router) + TypeScript** | You know React; frontend and backend live in one project. |
-| Styling | **Tailwind CSS** using *logical* properties (`ms-`, `me-`, `ps-`, `pe-`, `start-`, `end-`) | RTL and LTR work from the same code without mirroring CSS. |
-| UI components | **shadcn/ui** (Radix-based) | Accessible, copy-into-project components you fully own. |
-| i18n | **next-intl**, URL-prefixed locales (`/fa`, `/en` …), `fa` default | Mature, App Router–native, handles plurals & numbers. |
-| Font | **Vazirmatn**, self-hosted via `next/font/local` | Don't depend on Google Fonts from Iran. |
-| Numbers/dates | Built-in `Intl` — `fa-IR` digits, `fa-IR-u-ca-persian` for the Jalali calendar | No extra library needed for display; week starts Saturday for fa. |
-| Database | **PostgreSQL** + **Prisma ORM** | Relational data (users, sessions, tasks, payments); Prisma is the friendliest ORM for backend beginners. |
-| Auth | **Better Auth** (self-hosted, in our own DB) with **phone-number OTP** (Iranian SMS provider, e.g. Kavenegar / sms.ir) + **email OTP** for international users | No dependence on US auth services; phone login is what Iranian users expect. |
-| Payments | **Zarinpal** (REST API v4) | Largest Iranian payment facilitator. **Requires an Enamad (اینماد)** → start that early. |
-| Billing model | **Prepaid plans**, not auto-renew: 1 month / 12 months / lifetime. User gets `proUntil` date or `lifetime = true`. | Iranian gateways don't do card-on-file auto-renewal; prepaid + renewal reminders is the norm. |
-| Hosting | **Iranian PaaS** (compare Liara, ArvanCloud, Hamravesh) with managed PostgreSQL. App built as a Docker / Next.js `standalone` output so it's portable. | Reachable from inside Iran (including during international-internet disruptions); US hosts like Vercel may block Iranian visitors (sanctions). |
-| Sync | Server is the source of truth; offline queue on the client | See §5. |
+| Area          | Choice                                                                                                                                                         | Why                                                                                                                                            |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| Framework     | **Next.js (App Router) + TypeScript**                                                                                                                          | You know React; frontend and backend live in one project.                                                                                      |
+| Styling       | **Tailwind CSS** using _logical_ properties (`ms-`, `me-`, `ps-`, `pe-`, `start-`, `end-`)                                                                     | RTL and LTR work from the same code without mirroring CSS.                                                                                     |
+| UI components | **shadcn/ui** (Radix-based)                                                                                                                                    | Accessible, copy-into-project components you fully own.                                                                                        |
+| i18n          | **next-intl**, URL-prefixed locales (`/fa`, `/en` …), `fa` default                                                                                             | Mature, App Router–native, handles plurals & numbers.                                                                                          |
+| Font          | **Vazirmatn**, self-hosted via `next/font/local`                                                                                                               | Don't depend on Google Fonts from Iran.                                                                                                        |
+| Numbers/dates | Built-in `Intl` — `fa-IR` digits, `fa-IR-u-ca-persian` for the Jalali calendar                                                                                 | No extra library needed for display; week starts Saturday for fa.                                                                              |
+| Database      | **PostgreSQL** + **Prisma ORM**                                                                                                                                | Relational data (users, sessions, tasks, payments); Prisma is the friendliest ORM for backend beginners.                                       |
+| Auth          | **Better Auth** (self-hosted, in our own DB) with **phone-number OTP** (Iranian SMS provider, e.g. Kavenegar / sms.ir) + **email OTP** for international users | No dependence on US auth services; phone login is what Iranian users expect.                                                                   |
+| Payments      | **Zarinpal** (REST API v4)                                                                                                                                     | Largest Iranian payment facilitator. **Requires an Enamad (اینماد)** → start that early.                                                       |
+| Billing model | **Prepaid plans**, not auto-renew: 1 month / 12 months / lifetime. User gets `proUntil` date or `lifetime = true`.                                             | Iranian gateways don't do card-on-file auto-renewal; prepaid + renewal reminders is the norm.                                                  |
+| Hosting       | **Iranian PaaS** (compare Liara, ArvanCloud, Hamravesh) with managed PostgreSQL. App built as a Docker / Next.js `standalone` output so it's portable.         | Reachable from inside Iran (including during international-internet disruptions); US hosts like Vercel may block Iranian visitors (sanctions). |
+| Sync          | Server is the source of truth; offline queue on the client                                                                                                     | See §5.                                                                                                                                        |
 
 ## 3. Free vs Pro (proposal — adjust anytime)
 
-| Feature | Free | Pro |
-|---|---|---|
-| Focus / short break / long break timer | ✅ presets (25/5/15, 50/10/20) | ✅ any durations, long-break interval, per-phase sounds |
-| Auto-start per phase (focus / break / long break) | ✅ | ✅ |
-| Cross-device sync | ✅ | ✅ |
-| Daily streak | ✅ | ✅ + streak freeze (later idea) |
-| Themes | 3 | Unlimited |
-| Tasks | Simple list, up to 10 active | Full suite: projects, tags, subtasks, pomodoro estimates, recurring, unlimited |
-| Stats | Today + last 7 days, current-month heatmap | Full history, full-year heatmap, per-task/project breakdown, export |
-| Notepad | ❌ | ✅ |
-| Ambient sounds | 1 | Full library + mixing |
+| Feature                                           | Free                                       | Pro                                                                 |
+| ------------------------------------------------- | ------------------------------------------ | ------------------------------------------------------------------- |
+| Focus / short break / long break timer            | ✅ presets (25/5/15, 50/10/20)             | ✅ any durations, long-break interval, per-phase sounds             |
+| Auto-start per phase (focus / break / long break) | ✅                                         | ✅                                                                  |
+| Cross-device sync                                 | ✅                                         | ✅                                                                  |
+| Daily streak                                      | ✅                                         | ✅ + streak freeze (later idea)                                     |
+| Themes                                            | 3                                          | Unlimited                                                           |
+| Tasks                                             | Simple list, up to 10 active               | Full suite: projects, tags, subtasks, pomodoro estimates, unlimited |
+| Stats                                             | Today + last 7 days, current-month heatmap | Full history, full-year heatmap, per-task/project breakdown, export |
+| Notepad                                           | ❌                                         | ✅                                                                  |
+| Ambient sounds                                    | 1                                          | Full library + mixing                                               |
 
 Streaks and sync stay free: they drive retention, and retention drives upgrades.
-**Gating rule:** every Pro check happens on the server (`requirePro()`), never only by hiding UI.
+**Gating rule:** every Pro check happens on the server (`requirePro()`, from `proUntil` / `proLifetime`), never only by hiding UI.
+**Tasks limit:** "active" means a top-level task that is not done and not deleted. Subtasks and finished tasks do not count. The limit is enforced on the server inside a per-user row lock (`SELECT … FROM "user" … FOR UPDATE`), and the same rule applies when a guest's tasks are imported, so an import cannot bypass it. A free user who is already over 10 can still view, rename, finish, reorder and delete; they just cannot add. When Pro ends, every project, tag, subtask, note and estimate stays readable. Only creating or changing Pro-only items is blocked, and clearing a Pro field back to empty stays allowed. Nothing is deleted on downgrade.
 
 ## 4. Data model (first draft)
 
@@ -66,10 +67,14 @@ FocusSession    id (equals the runId of the phase that finished → idempotent s
                 userId, taskId?, phase, startedAt, endedAt, durationSec,
                 completed (bool), createdAt
 
-Project         id, userId, name, color, archived            (Pro)
-Tag / TaskTag   …                                            (Pro)
+Project         id, userId, name, color, archived, createdAt,
+                updatedAt, deletedAt?, serverUpdatedAt       (Pro to write)
+Tag             id, userId, name, createdAt,
+                updatedAt, deletedAt?, serverUpdatedAt       (Pro to write)
+TaskTag         taskId, tagId
 Task            id, userId, projectId?, parentId?, title, notes?, estimatePomodoros?,
-                done, doneAt?, order, recurrence?, createdAt
+                done, doneAt?, order, createdAt,
+                updatedAt, deletedAt?, serverUpdatedAt
 
 Note            id, userId, title, body, updatedAt           (Pro)
 
@@ -77,7 +82,10 @@ Payment         id, userId, plan (MONTH|YEAR|LIFETIME), amountToman, authority, 
                 status (PENDING|PAID|FAILED), createdAt, verifiedAt?
 ```
 
-**Stats & streaks are derived from `FocusSession`** — no separate counters to get out of sync.
+**Sync columns (Phase 5).** `Task`, `Project` and `Tag` carry three times. `updatedAt` is the client's edit time (`@default(now())`, not Prisma `@updatedAt`): last write wins on it. `deletedAt` is a soft delete and it sticks — a later edit cannot bring a deleted row back, and the row stays so other devices learn about the delete. `serverUpdatedAt` is `@updatedAt` and is only the pull cursor. `Project` also gained `createdAt`. `Task.recurrence` was removed: recurring tasks are out of scope. `Tag` has no unique `(userId, name)`, only `@@index([userId, serverUpdatedAt])`, because two devices can create the same tag offline; the client merges duplicates by name.
+
+**Stats & streaks are derived from** `FocusSession` — no separate counters to get out of sync. Pomodoro counts on a task are derived the same way: completed focus sessions with that `taskId`, versus `estimatePomodoros`. No counter columns.
+
 - A day "counts" for the streak if it has ≥ 1 completed focus session, using the **user's timezone**.
 - Heatmap = SUM(durationSec) of completed focus sessions grouped by local date.
 
@@ -87,11 +95,12 @@ The server is the source of truth for a signed-in user. The local store is a cac
 
 1. **Timer state** lives in `ActiveTimer` as timestamps, not a ticking number. Any device computes `remaining = plannedSec − (now − startedAt − pausedTotalSec)`. While paused, `now` is `pausedAt`. Start on the laptop → the phone shows the same countdown.
 2. **Clocks can be wrong.** Every sync response includes `serverNow`. The client keeps `clockOffset = serverNow − Date.now()` (a smoothed median, ignoring a response whose round trip was over a second) and uses `Date.now() + clockOffset` in the formula above.
-3. **No silent overwrites.** Every timer change sends `expectedVersion`. The server applies it only when that matches `ActiveTimer.version`, then adds 1. A mismatch returns 409 with the current row, and the client adopts it. No error toast.
+3. **No silent overwrites.** Every timer change sends `expectedVersion`. The server applies it only when that matches `ActiveTimer.version`, then adds 1. A mismatch returns 409 with the current row, and the client adopts it. No error toast. **Exception:** `setTask`**.** Choosing the task for the current focus is a timer command with no `expectedVersion` and no `version` bump, so picking a task never makes another device's pause or complete conflict. When that task is finished or deleted (including through a deleted parent), the server clears `ActiveTimer.taskId` in the same transaction, again without a version bump. The timer keeps running and the client shows "no task". No error toast.
 4. **One completion, one row.** A phase start stores a new `runId`. The `FocusSession` for that focus uses `id = runId`. A second device, or a retry, inserts nothing.
 5. Devices refresh on app start, tab focus, becoming visible, coming back online, and every 15s while the tab is visible. Polling stops while the tab is hidden. A later `GET /api/sync/stream` (Server-Sent Events) can replace that poll; the pull function stays the one place that adopts server state.
 6. **Completed sessions** are written to IndexedDB first, then flushed when online. The `runId` makes retries safe. A signed-in device that was closed through several phases does not invent the missing sessions: one `complete` advances one phase, and auto-start begins the next phase at `serverNow`. Guests still reconstruct locally, because they have no server.
-7. Settings: last-write-wins using `updatedAt`. Tasks and notes will use the same rule when they exist.
+7. Settings: last-write-wins using `updatedAt`. Notes will use the same rule when they exist.
+8. **Tasks** sync through the same queue, pull and refresh triggers (focus, visible, online, 15s poll). Writes flush to `POST /api/tasks` (last-write-wins on `updatedAt`, soft delete via `deletedAt`, client UUIDs). `GET /api/sync/state?tasksSince=<ms>` returns a `tasks` block; `0` means the full set, and the saved cursor is `serverNow − 5s` so a row written during the round trip is not missed. Guests keep tasks on this device only and upload them through the existing import path on sign-up.
 
 Timer accuracy: never count `setInterval` ticks — browsers throttle background tabs. The interval only re-renders. The end sound and the browser notification can only play while the page is actually running. Firing them at the exact end time while the phone is locked needs the Phase 9 service worker.
 
@@ -99,14 +108,14 @@ Timer accuracy: never count `setInterval` ticks — browsers throttle background
 
 Each phase ends with something that works. Commit to git at the end of every step.
 
-- [ ] **Phase 0 — Setup:** tools installed, Next.js app scaffolded in `web/`, git initialized, Cursor rules in place.
-- [ ] **Phase 1 — Timer core (no backend):** focus → break → long break cycle, auto-start toggles per phase, pause/resume/skip/reset, end sound, browser notification, tab-title countdown. State in a single store (Zustand) + localStorage.
-- [x] **Phase 2 — i18n, RTL, design:** next-intl with all 7 locales, `dir="rtl"` for fa, Vazirmatn, Persian digits, language switcher, 3 free themes, light/dark. *No hard-coded UI strings from here on.*
+- [x] **Phase 0 — Setup:** tools installed, Next.js app scaffolded in `web/`, git initialized, Cursor rules in place.
+- [x] **Phase 1 — Timer core (no backend):** focus → break → long break cycle, auto-start toggles per phase, pause/resume/skip/reset, end sound, browser notification, tab-title countdown. State in a single store (Zustand) + localStorage.
+- [x] **Phase 2 — i18n, RTL, design:** next-intl with all 7 locales, `dir="rtl"` for fa, Vazirmatn, Persian digits, language switcher, 3 free themes, light/dark. _No hard-coded UI strings from here on._
 - [x] **Phase 3 — Database + auth:** local PostgreSQL, Prisma schema (§4), Better Auth with phone OTP + email OTP (log OTPs to the console in dev; real SMS later). Guest mode: app works without an account; on sign-up, local data is uploaded.
 - [x] **Phase 4 — Sync:** settings, ActiveTimer and FocusSession sync per §5.
-- [ ] **Phase 5 — Tasks:** free simple list; Pro projects/tags/subtasks/estimates. Pick a task for the current focus session.
+- [x] **Phase 5 — Tasks:** free simple list (add, rename, check, delete, reorder, max 10 active); Pro projects, tags, subtasks, estimates and notes, gated by `requirePro()`. The picked task is stored in `ActiveTimer.taskId` and copied to `FocusSession.taskId` when the focus completes. `/pricing` is a placeholder until Phase 7. Dev helper: `npx tsx scripts/grant-pro.ts <email> [days|lifetime|off]`.
 - [ ] **Phase 6 — Stats, heatmap, streaks:** dashboard with Jalali dates for fa, GitHub-style heatmap, current & best streak, per-task breakdown (Pro).
-- [ ] **Phase 7 — Pro & payments:** pricing page, Zarinpal sandbox → request → redirect → callback → verify → grant `proUntil`/lifetime; payment history; expiry reminders; server-side `requirePro()`.
+- [ ] **Phase 7 — Pro & payments:** pricing page (replacing the Phase 5 placeholder), Zarinpal sandbox → request → redirect → callback → verify → grant `proUntil`/lifetime; payment history; expiry reminders. `requirePro()` already exists (Phase 5); payments plug into the same two columns.
 - [ ] **Phase 8 — Pro features:** unlimited themes, fully custom timer, notepad, ambient sounds (self-hosted audio files).
 - [ ] **Phase 9 — PWA:** manifest, icons, service worker (Serwist), offline shell, "Add to Home Screen" guide (esp. iOS). The service worker also plays the phase-end sound and shows the browser notification while the page is frozen (locked phone or sleeping computer). Until then, those fire when the page runs again; the timer schedule itself does not wait.
 - [ ] **Phase 10 — Production:** domain, Iranian hosting + managed Postgres, real SMS provider, Enamad, Zarinpal production merchant, backups, error logging, privacy policy & terms (fa + en), self-hosted analytics.

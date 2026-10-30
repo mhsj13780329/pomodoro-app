@@ -1,11 +1,12 @@
+import { taskBatchResultSchema, type TaskBatch, type TaskBatchResult } from "@/lib/tasks/contract";
 import {
   sessionBatchResultSchema,
   syncStateSchema,
+  type QueuedCommand,
   type SessionBatchResult,
   type SessionInput,
   type SettingsPatch,
   type SyncState,
-  type TimerCommand,
 } from "./contract";
 
 export type SyncResponse =
@@ -41,15 +42,17 @@ async function send(path: string, method: string, body?: unknown): Promise<SyncR
   }
 }
 
-export function fetchState(): Promise<SyncResponse> {
-  return send("/api/sync/state", "GET");
+/** `tasksSince` asks for the tasks block too: 0 for everything, or the cursor from the last pull. */
+export function fetchState(tasksSince?: number): Promise<SyncResponse> {
+  const query = tasksSince === undefined ? "" : `?tasksSince=${Math.max(0, Math.floor(tasksSince))}`;
+  return send(`/api/sync/state${query}`, "GET");
 }
 
 export function putSettings(patch: SettingsPatch): Promise<SyncResponse> {
   return send("/api/settings", "PUT", patch);
 }
 
-export function postTimer(command: TimerCommand): Promise<SyncResponse> {
+export function postTimer(command: QueuedCommand): Promise<SyncResponse> {
   return send("/api/timer", "POST", command);
 }
 
@@ -69,5 +72,25 @@ export async function postSessions(
     return { ok: true, result: parsed.data };
   } catch {
     return { ok: false, network: true };
+  }
+}
+
+export async function postTaskBatch(
+  batch: TaskBatch,
+): Promise<{ ok: true; result: TaskBatchResult } | { ok: false; network: boolean; status: number }> {
+  try {
+    const response = await fetch("/api/tasks", {
+      method: "POST",
+      credentials: "include",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(batch),
+    });
+    // 400 means the batch itself is malformed and would never be accepted. 401 means signed out.
+    if (!response.ok) return { ok: false, network: response.status !== 400, status: response.status };
+    const parsed = taskBatchResultSchema.safeParse(await response.json());
+    if (!parsed.success) return { ok: false, network: true, status: response.status };
+    return { ok: true, result: parsed.data };
+  } catch {
+    return { ok: false, network: true, status: 0 };
   }
 }

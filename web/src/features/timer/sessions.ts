@@ -8,13 +8,19 @@ export type GuestFocusSession = {
   endedAt: number;
   durationSec: number;
   completed: true;
+  /** The task that was selected when the focus ended. Older saved sessions have none. */
+  taskId?: string | null;
 };
 
 /**
  * The focus that was running, if the clock has used it up.
  * Skip does not call this. A break that ends does not either.
  */
-export function finishedFocusSession(state: TimerCore, id: string): GuestFocusSession | null {
+export function finishedFocusSession(
+  state: TimerCore,
+  id: string,
+  taskId: string | null = null,
+): GuestFocusSession | null {
   if (state.phase !== "focus" || state.status !== "running" || state.startedAt == null) return null;
   if (!(state.plannedSec > 0)) return null;
   const endedAt =
@@ -27,5 +33,6 @@ export function finishedFocusSession(state: TimerCore, id: string): GuestFocusSe
     endedAt,
     durationSec: Math.round(state.plannedSec),
     completed: true,
+    taskId,
   };
 }

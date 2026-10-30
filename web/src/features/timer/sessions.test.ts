@@ -24,7 +24,12 @@ describe("finishedFocusSession", () => {
       endedAt: 1_000 + 25 * 60 * 1000,
       durationSec: 25 * 60,
       completed: true,
+      taskId: null,
     });
+  });
+
+  it("credits the focus to the task that was selected", () => {
+    expect(finishedFocusSession(runningFocus(), "id-3", "task-1")?.taskId).toBe("task-1");
   });
 
   it("adds time already spent paused", () => {

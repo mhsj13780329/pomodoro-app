@@ -1,8 +1,9 @@
 import { defaultTimer } from "@/features/timer/logic";
 import { parseTheme, THEME_COOKIE } from "@/features/settings/theme";
-import type { ImportSettings } from "./import-merge";
+import type { ImportSettings, ImportTask } from "./import-merge";
 
 const STORAGE_KEY = "pomodoro-timer";
+const TASKS_KEY = "pomodoro-tasks";
 
 type StoredSession = {
   id?: unknown;
@@ -11,6 +12,7 @@ type StoredSession = {
   endedAt?: unknown;
   durationSec?: unknown;
   completed?: unknown;
+  taskId?: unknown;
 };
 
 function minutes(value: unknown, fallbackSec: number): number {
@@ -65,9 +67,45 @@ function readSessions(value: unknown) {
         endedAt: new Date(session.endedAt).toISOString(),
         durationSec: Math.round(session.durationSec),
         completed: session.completed === true,
+        taskId: typeof session.taskId === "string" ? session.taskId : null,
       },
     ];
   });
+}
+
+/**
+ * Tasks made while signed out. They are still "guest" tasks while the saved ownerId is null:
+ * once an account has taken them, the store records its id and they are not uploaded again.
+ */
+export function readGuestTasks(): ImportTask[] {
+  try {
+    const raw = localStorage.getItem(TASKS_KEY);
+    if (!raw) return [];
+    const state = (JSON.parse(raw) as { state?: { ownerId?: unknown; tasks?: Record<string, Record<string, unknown>> } }).state;
+    if (!state || state.ownerId != null || !state.tasks) return [];
+    const list = Object.values(state.tasks).flatMap((task) => {
+      if (typeof task.id !== "string" || typeof task.title !== "string" || task.deletedAt != null) return [];
+      if (task.parentId != null) return [];
+      const updatedAt = typeof task.updatedAt === "string" ? task.updatedAt : new Date().toISOString();
+      return [
+        {
+          id: task.id,
+          title: task.title,
+          done: task.done === true,
+          doneAt: typeof task.doneAt === "string" ? task.doneAt : null,
+          order: typeof task.order === "number" ? Math.round(task.order) : 0,
+          createdAt: typeof task.createdAt === "string" ? task.createdAt : updatedAt,
+          updatedAt,
+        },
+      ];
+    });
+    // The upload takes at most 500. Unfinished tasks matter most, then the newest finished ones.
+    return list
+      .sort((a, b) => Number(a.done) - Number(b.done) || Date.parse(b.updatedAt) - Date.parse(a.updatedAt))
+      .slice(0, 500);
+  } catch {
+    return [];
+  }
 }
 
 export function readGuestImport() {
@@ -83,13 +121,17 @@ export function readGuestImport() {
   } catch {
     state = undefined;
   }
-  return { settings: readSettings(state), sessions: readSessions(sessions) };
+  return { settings: readSettings(state), sessions: readSessions(sessions), tasks: readGuestTasks() };
 }
 
-/** Uploads this browser's guest data once per account. A failed request stays unmarked so the next login retries. */
+/**
+ * Uploads this browser's guest data once per account. A failed request stays unmarked so the next login retries.
+ * Guest tasks are the exception to "once": a guest can sign in, sign out, make more tasks and sign in again,
+ * so the flag only skips the upload when there are no unclaimed guest tasks left.
+ */
 export async function importGuestData(userId: string): Promise<boolean> {
   const flag = `pomodoro-imported:${userId}`;
-  if (localStorage.getItem(flag)) return true;
+  if (localStorage.getItem(flag) && readGuestTasks().length === 0) return true;
   const response = await fetch("/api/import", {
     method: "POST",
     credentials: "include",

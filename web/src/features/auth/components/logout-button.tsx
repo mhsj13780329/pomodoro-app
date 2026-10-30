@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useTasksStore } from "@/features/tasks/store";
 import { useTimerStore } from "@/features/timer/store";
 import { useRouter } from "@/i18n/navigation";
 import { authClient } from "@/lib/auth-client";
@@ -20,6 +21,7 @@ export function LogoutButton() {
           if (waiting > 0 && !window.confirm(sync("logoutWarning", { count: waiting }))) return;
           await wipeDevice();
           useTimerStore.getState().resetGuest();
+          useTasksStore.getState().reset();
           await authClient.signOut();
           router.refresh();
         })();

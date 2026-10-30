@@ -174,26 +174,43 @@ model FocusSession {
   @@index([userId, startedAt])
 }
 
+// Projects, tags and tasks sync with last-write-wins, like Settings:
+//  - updatedAt is the CLIENT's edit time (not @updatedAt), so a slow older save cannot win.
+//  - deletedAt is a soft delete, so other devices learn about a delete on their next pull.
+//  - serverUpdatedAt is when THIS server last wrote the row. Pull uses it as a cursor
+//    ("give me everything changed since…"), because client clocks can be wrong.
 model Project {
-  id       String  @id @default(uuid())
-  userId   String
-  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  name     String
-  color    String
-  archived Boolean @default(false)
-  tasks    Task[]
+  id              String    @id @default(uuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name            String
+  // A palette id (see features/tasks/palette.ts), never a hex value.
+  color           String
+  archived        Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @default(now())
+  deletedAt       DateTime?
+  serverUpdatedAt DateTime  @updatedAt
+  tasks           Task[]
 
-  @@index([userId])
+  @@index([userId, serverUpdatedAt])
 }
 
 model Tag {
-  id     String    @id @default(uuid())
-  userId String
-  user   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  name   String
-  tasks  TaskTag[]
+  id              String    @id @default(uuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name            String
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @default(now())
+  deletedAt       DateTime?
+  serverUpdatedAt DateTime  @updatedAt
+  tasks           TaskTag[]
 
-  @@unique([userId, name])
+  // No unique (userId, name): two devices can create the same name offline with
+  // different ids, and a soft-deleted tag must not block reusing its name.
+  // The UI reuses an existing tag with the same name instead.
+  @@index([userId, serverUpdatedAt])
 }
 
 model TaskTag {
@@ -220,13 +237,19 @@ model Task {
   done              Boolean        @default(false)
   doneAt            DateTime?
   order             Int            @default(0)
-  recurrence        String?
   createdAt         DateTime       @default(now())
+  // Client edit time, used for last-write-wins. Not @updatedAt on purpose.
+  updatedAt         DateTime       @default(now())
+  // Soft delete. A deleted task stays in the table so other devices can learn about it.
+  deletedAt         DateTime?
+  // Server write time, only the pull cursor.
+  serverUpdatedAt   DateTime       @updatedAt
   tags              TaskTag[]
   focusSessions     FocusSession[]
   activeTimers      ActiveTimer[]
 
   @@index([userId])
+  @@index([userId, serverUpdatedAt])
 }
 
 model Note {

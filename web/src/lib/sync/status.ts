@@ -22,6 +22,11 @@ export function subscribeSync(listener: () => void) {
 }
 
 /** A finished focus is one waiting item, even though it is also a timer action. */
-export function waitingCountOf(actions: readonly { action: string }[], sessions: readonly unknown[]): number {
-  return sessions.length + actions.filter((action) => action.action !== "complete").length;
+export function waitingCountOf(
+  actions: readonly { action: string }[],
+  sessions: readonly unknown[],
+  /** Task, project and tag rows waiting to upload. */
+  taskRows = 0,
+): number {
+  return sessions.length + taskRows + actions.filter((action) => action.action !== "complete").length;
 }
