@@ -6,9 +6,10 @@ import { useTimerStore } from "@/features/timer/store";
 import { useTasksStore } from "@/features/tasks/store";
 import { authClient } from "@/lib/auth-client";
 import { validTimeZone } from "@/lib/stats/calendar";
-import { getNow, getServerStats, getStatsState, notePending, retainStats, subscribeStats } from "./client";
+import { getNow, getServerStats, getStatsState, notePending, retainStats, setStatsView, subscribeStats } from "./client";
 import { presentFocus, type FocusView } from "./present";
 import { browserTimeZone, toStatSession } from "./sessions";
+import type { StatsResponse } from "@/lib/stats/contract";
 
 const LOADING: FocusView = {
   status: "loading",
@@ -24,6 +25,7 @@ const LOADING: FocusView = {
   bestStreak: 0,
   byDay: new Map(),
   sessions: [],
+  handedOff: [],
 };
 
 /** Today's focus, the streak, and the free window. The same numbers on the timer and on Stats. */
@@ -70,4 +72,28 @@ export function useFocusStats(): FocusView {
     handedOff: remote.handedOff,
     guestSessions: guest.map(toStatSession),
   });
+}
+
+/** A Pro range. `settled` is false while that request is still in flight. */
+export function useStatsView(request: { from: string; to: string; breakdown: boolean } | null): {
+  view: StatsResponse | null;
+  settled: boolean;
+} {
+  const remote = useSyncExternalStore(subscribeStats, getStatsState, getServerStats);
+  const locale = useLocale();
+  const from = request?.from ?? "";
+  const to = request?.to ?? "";
+  const breakdown = request?.breakdown ?? false;
+  const active = request != null && from !== "" && to !== "";
+  useEffect(() => {
+    if (!active) {
+      setStatsView(null);
+      return;
+    }
+    setStatsView({ from, to, breakdown, locale });
+    return () => setStatsView(null);
+  }, [active, from, to, breakdown, locale]);
+  const key = active ? `${locale}:${from}:${to}:${breakdown ? "1" : "0"}` : "";
+  const settled = !active || remote.viewKey === key;
+  return { view: settled ? remote.view : null, settled };
 }

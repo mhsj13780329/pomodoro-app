@@ -13,9 +13,19 @@ export type RemoteStats = {
   snapshot: StatsResponse | null;
   offline: boolean;
   handedOff: StatSession[];
+  /** A Pro range (another month, a year, or the breakdown). Null while it is loading. */
+  view: StatsResponse | null;
+  viewKey: string;
 };
 
-const INITIAL: RemoteStats = { status: "loading", snapshot: null, offline: false, handedOff: [] };
+const INITIAL: RemoteStats = {
+  status: "loading",
+  snapshot: null,
+  offline: false,
+  handedOff: [],
+  view: null,
+  viewKey: "",
+};
 
 let state: RemoteStats = INITIAL;
 const listeners = new Set<() => void>();
@@ -24,6 +34,7 @@ let holders = 0;
 let poll: ReturnType<typeof setInterval> | null = null;
 let stopWatch: (() => void) | null = null;
 let watch: { timeZone: string; locale: string; userId: string } | null = null;
+let viewRequest: { from: string; to: string; locale: string; breakdown: boolean } | null = null;
 let nowMs = 0;
 let clockStarted = false;
 
@@ -107,6 +118,8 @@ export async function refreshStats(): Promise<void> {
       snapshot,
       offline: false,
       handedOff: state.handedOff.filter((session) => !serverIds.has(session.id)),
+      view: state.view,
+      viewKey: state.viewKey,
     });
   } catch {
     if (watch?.userId !== current.userId) return;
@@ -115,6 +128,43 @@ export async function refreshStats(): Promise<void> {
       offline: true,
       status: state.snapshot ? "ready" : "offline",
     });
+  }
+  if (viewRequest) void loadView(viewKey(viewRequest));
+}
+
+function viewKey(request: { from: string; to: string; locale: string; breakdown: boolean }): string {
+  return `${request.locale}:${request.from}:${request.to}:${request.breakdown ? "1" : "0"}`;
+}
+
+/** Ask for a range outside the free window, or for the breakdown. Pass null to drop it. */
+export function setStatsView(request: { from: string; to: string; locale: string; breakdown: boolean } | null) {
+  if (!request) {
+    viewRequest = null;
+    if (state.view || state.viewKey) emit({ ...state, view: null, viewKey: "" });
+    return;
+  }
+  const key = viewKey(request);
+  viewRequest = request;
+  if (state.viewKey !== key) void loadView(key);
+}
+
+async function loadView(key: string) {
+  const request = viewRequest;
+  if (!request || viewKey(request) !== key) return;
+  const params = new URLSearchParams({ from: request.from, to: request.to, locale: request.locale });
+  if (request.breakdown) params.set("breakdown", "1");
+  try {
+    const response = await fetch(`/api/stats?${params}`, { cache: "no-store" });
+    if (!viewRequest || viewKey(viewRequest) !== key) return;
+    if (!response.ok) {
+      emit({ ...state, view: null, viewKey: key });
+      return;
+    }
+    const view = (await response.json()) as StatsResponse;
+    if (!viewRequest || viewKey(viewRequest) !== key) return;
+    emit({ ...state, view, viewKey: key });
+  } catch {
+    if (!viewRequest || viewKey(viewRequest) !== key) return;
   }
 }
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { presentFocus } from "./present";
+import { presentFocus, withPendingBuckets } from "./present";
 import type { StatSession } from "@/lib/stats/aggregate";
 import type { StatsResponse } from "@/lib/stats/contract";
 
@@ -90,5 +90,21 @@ describe("presentFocus", () => {
       guestSessions: [],
     });
     expect(view.status).toBe("loading");
+  });
+
+  it("adds a queued session to a breakdown bucket once", () => {
+    const rows = withPendingBuckets(
+      [{ id: "task-a", name: "Read", deleted: false, focusSec: 25 * 60, sessions: 1 }],
+      [
+        { ...session("local", "2026-10-30"), taskId: "task-a" },
+        session("none", "2026-10-30"),
+      ],
+      "task",
+      new Map([["task-a", { name: "Read", deleted: false }]]),
+    );
+    expect(rows).toEqual([
+      { id: "task-a", name: "Read", deleted: false, focusSec: 50 * 60, sessions: 2 },
+      { id: null, name: null, deleted: false, focusSec: 25 * 60, sessions: 1 },
+    ]);
   });
 });

@@ -1,9 +1,9 @@
 // Turns a server payload, plus sessions still on this device, into the numbers
 // the timer chip and the stats page show. Guests never call the server.
 
-import { foldStats, type StatSession } from "@/lib/stats/aggregate";
+import { foldStats, isCountedFocus, type StatSession } from "@/lib/stats/aggregate";
 import { civilToday, validTimeZone } from "@/lib/stats/calendar";
-import type { StatsResponse } from "@/lib/stats/contract";
+import type { StatsBreakdownRow, StatsResponse } from "@/lib/stats/contract";
 
 export type FocusView = {
   /** `loading` until we know the numbers. Zeros are only for a real empty history. */
@@ -20,6 +20,7 @@ export type FocusView = {
   bestStreak: number;
   byDay: Map<string, { key: string; focusSec: number; sessions: number }>;
   sessions: StatSession[];
+  handedOff: readonly StatSession[];
 };
 
 const EMPTY_DAYS = new Map<string, { key: string; focusSec: number; sessions: number }>();
@@ -39,6 +40,7 @@ function loadingView(timeZone: string): FocusView {
     bestStreak: 0,
     byDay: EMPTY_DAYS,
     sessions: [],
+    handedOff: [],
   };
 }
 
@@ -81,6 +83,7 @@ export function presentFocus(input: {
       bestStreak: folded.bestStreak,
       byDay: folded.byDay,
       sessions: folded.sessions,
+      handedOff: input.handedOff,
     };
   }
 
@@ -110,6 +113,7 @@ export function presentFocus(input: {
       bestStreak: folded.bestStreak,
       byDay: folded.byDay,
       sessions: folded.sessions,
+      handedOff: input.handedOff,
     };
   }
 
@@ -147,5 +151,39 @@ export function presentFocus(input: {
     bestStreak: folded.bestStreak,
     byDay: folded.byDay,
     sessions: folded.sessions,
+    handedOff: input.handedOff,
   };
+}
+
+/**
+ * Server breakdown rows plus sessions that have not been uploaded yet.
+ * A repeated id is ignored. A missing name stays null ("no task" / "no project").
+ */
+export function withPendingBuckets(
+  rows: readonly StatsBreakdownRow[],
+  extra: readonly StatSession[],
+  kind: "task" | "project",
+  names: ReadonlyMap<string, { name: string; deleted: boolean }>,
+): StatsBreakdownRow[] {
+  const map = new Map<string | null, StatsBreakdownRow>();
+  for (const row of rows) map.set(row.id, { ...row });
+  const seen = new Set<string>();
+  for (const session of extra) {
+    if (!isCountedFocus(session) || seen.has(session.id)) continue;
+    seen.add(session.id);
+    const id = (kind === "task" ? session.taskId : session.projectId) ?? null;
+    const known = id ? names.get(id) : undefined;
+    const current = map.get(id) ?? {
+      id,
+      name: known?.name ?? null,
+      deleted: known?.deleted ?? false,
+      focusSec: 0,
+      sessions: 0,
+    };
+    current.focusSec += session.durationSec;
+    current.sessions += 1;
+    if (!current.name && known?.name) current.name = known.name;
+    map.set(id, current);
+  }
+  return [...map.values()].sort((a, b) => b.focusSec - a.focusSec || (a.id ?? "").localeCompare(b.id ?? ""));
 }
