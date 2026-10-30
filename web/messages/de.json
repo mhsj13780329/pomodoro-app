@@ -119,7 +119,18 @@
     "filterEmpty": "Keine Aufgabe passt zu diesem Filter."
   },
   "stats": {
-    "placeholder": "Statistik folgt bald"
+    "placeholder": "Statistik folgt bald",
+    "csv": {
+      "date": "Datum",
+      "start": "Beginn",
+      "end": "Ende",
+      "minutes": "Minuten",
+      "task": "Aufgabe",
+      "project": "Projekt",
+      "noTask": "Keine Aufgabe",
+      "noProject": "Kein Projekt",
+      "deleted": "gelöscht"
+    }
   },
   "pricing": {
     "title": "Pro",

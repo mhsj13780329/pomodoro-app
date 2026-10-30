@@ -119,7 +119,18 @@
     "filterEmpty": "Ninguna tarea coincide con este filtro."
   },
   "stats": {
-    "placeholder": "Las estadísticas llegarán pronto"
+    "placeholder": "Las estadísticas llegarán pronto",
+    "csv": {
+      "date": "Fecha",
+      "start": "Inicio",
+      "end": "Fin",
+      "minutes": "Minutos",
+      "task": "Tarea",
+      "project": "Proyecto",
+      "noTask": "Sin tarea",
+      "noProject": "Sin proyecto",
+      "deleted": "eliminada"
+    }
   },
   "pricing": {
     "title": "Pro",

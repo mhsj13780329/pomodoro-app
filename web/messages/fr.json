@@ -119,7 +119,18 @@
     "filterEmpty": "Aucune tâche ne correspond à ce filtre."
   },
   "stats": {
-    "placeholder": "Les statistiques arrivent bientôt"
+    "placeholder": "Les statistiques arrivent bientôt",
+    "csv": {
+      "date": "Date",
+      "start": "Début",
+      "end": "Fin",
+      "minutes": "Minutes",
+      "task": "Tâche",
+      "project": "Projet",
+      "noTask": "Sans tâche",
+      "noProject": "Sans projet",
+      "deleted": "supprimé"
+    }
   },
   "pricing": {
     "title": "Pro",

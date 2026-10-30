@@ -119,7 +119,18 @@
     "filterEmpty": "このフィルターに一致するタスクはありません。"
   },
   "stats": {
-    "placeholder": "統計は近日公開"
+    "placeholder": "統計は近日公開",
+    "csv": {
+      "date": "日付",
+      "start": "開始",
+      "end": "終了",
+      "minutes": "分",
+      "task": "タスク",
+      "project": "プロジェクト",
+      "noTask": "タスクなし",
+      "noProject": "プロジェクトなし",
+      "deleted": "削除済み"
+    }
   },
   "pricing": {
     "title": "Pro",

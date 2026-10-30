@@ -119,7 +119,18 @@
     "filterEmpty": "No tasks match this filter."
   },
   "stats": {
-    "placeholder": "Stats coming soon"
+    "placeholder": "Stats coming soon",
+    "csv": {
+      "date": "Date",
+      "start": "Start",
+      "end": "End",
+      "minutes": "Minutes",
+      "task": "Task",
+      "project": "Project",
+      "noTask": "No task",
+      "noProject": "No project",
+      "deleted": "deleted"
+    }
   },
   "pricing": {
     "title": "Pro",

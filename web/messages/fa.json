@@ -119,7 +119,18 @@
     "filterEmpty": "هیچ کاری با این فیلتر پیدا نشد."
   },
   "stats": {
-    "placeholder": "آمار به‌زودی"
+    "placeholder": "آمار به‌زودی",
+    "csv": {
+      "date": "تاریخ",
+      "start": "شروع",
+      "end": "پایان",
+      "minutes": "دقیقه",
+      "task": "کار",
+      "project": "پروژه",
+      "noTask": "بدون کار",
+      "noProject": "بدون پروژه",
+      "deleted": "حذف‌شده"
+    }
   },
   "pricing": {
     "title": "پرو",

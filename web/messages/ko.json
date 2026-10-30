@@ -119,7 +119,18 @@
     "filterEmpty": "이 필터에 맞는 할 일이 없어요."
   },
   "stats": {
-    "placeholder": "통계는 곧 열려요"
+    "placeholder": "통계는 곧 열려요",
+    "csv": {
+      "date": "날짜",
+      "start": "시작",
+      "end": "종료",
+      "minutes": "분",
+      "task": "작업",
+      "project": "프로젝트",
+      "noTask": "작업 없음",
+      "noProject": "프로젝트 없음",
+      "deleted": "삭제됨"
+    }
   },
   "pricing": {
     "title": "Pro",
