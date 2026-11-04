@@ -10,5 +10,7 @@ export default defineConfig({
   test: {
     environment: "node",
     include: ["src/**/*.test.ts"],
+    // *.db.test.ts need Postgres. Run them with `npm run test:db`.
+    exclude: ["src/**/*.db.test.ts", "node_modules/**"],
   },
 });
