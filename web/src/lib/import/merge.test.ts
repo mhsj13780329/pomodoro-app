@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { decideImport, decideTaskImport, type ImportSettings, type ImportTask } from "./import-merge";
+import type { ImportSettings, ImportTask } from "./contract";
+import { decideSettingsImport, decideTaskImport } from "./merge";
 
 const settings: ImportSettings = {
   focusMin: 25,
@@ -12,23 +13,13 @@ const settings: ImportSettings = {
   themeId: "warm",
 };
 
-describe("decideImport", () => {
-  it("writes settings and sessions when the account is empty", () => {
-    const decision = decideImport(
-      { hasSettings: false, sessionIds: new Set() },
-      { settings, sessions: [{ id: "a" }, { id: "b" }] },
-    );
-    expect(decision.settings).toEqual(settings);
-    expect(decision.sessions.map((session) => session.id)).toEqual(["a", "b"]);
+describe("decideSettingsImport", () => {
+  it("copies the guest settings when the account has none", () => {
+    expect(decideSettingsImport(false, settings)).toEqual(settings);
   });
 
-  it("keeps server settings and skips session ids that already exist", () => {
-    const decision = decideImport(
-      { hasSettings: true, sessionIds: new Set(["a"]) },
-      { settings: { ...settings, focusMin: 50 }, sessions: [{ id: "a" }, { id: "b" }, { id: "b" }] },
-    );
-    expect(decision.settings).toBeNull();
-    expect(decision.sessions.map((session) => session.id)).toEqual(["b"]);
+  it("keeps server settings when the account already has them", () => {
+    expect(decideSettingsImport(true, { ...settings, focusMin: 50 })).toBeNull();
   });
 });
 

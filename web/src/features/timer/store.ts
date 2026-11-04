@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import type { ImportBody, ImportSettings } from "@/lib/import/contract";
 import type { SessionInput, SyncState } from "@/lib/sync/contract";
 import { publishTimerCommand, settingsChanged, syncIsActive, syncNow } from "@/lib/sync/engine";
 import { applyTheme } from "@/features/settings/theme";
@@ -67,6 +68,62 @@ export type TimerStore = TimerCore &
   Actions & {
     completedSessions: GuestFocusSession[];
   };
+
+function wholeMinutes(sec: number): number {
+  return Math.min(24 * 60, Math.max(1, Math.round(sec / 60)));
+}
+
+/**
+ * What a guest uploads when they sign in: settings (minutes on the wire) and the focuses finished on this device.
+ * A guest focus ran its full length, so plannedSec is the duration. The theme is not in this store.
+ */
+export function guestImportOf(
+  state: Pick<
+    TimerStore,
+    | "focusSec"
+    | "shortBreakSec"
+    | "longBreakSec"
+    | "longBreakEvery"
+    | "autoStartFocus"
+    | "autoStartShortBreak"
+    | "autoStartLongBreak"
+    | "completedSessions"
+  >,
+  themeId: ImportSettings["themeId"],
+): { settings: ImportSettings; sessions: ImportBody["sessions"] } {
+  const settings: ImportSettings = {
+    focusMin: wholeMinutes(state.focusSec),
+    shortBreakMin: wholeMinutes(state.shortBreakSec),
+    longBreakMin: wholeMinutes(state.longBreakSec),
+    longBreakEvery: Math.min(20, Math.max(1, Math.round(state.longBreakEvery))),
+    autoStartFocus: state.autoStartFocus,
+    autoStartShortBreak: state.autoStartShortBreak,
+    autoStartLongBreak: state.autoStartLongBreak,
+    themeId,
+  };
+  const sessions = state.completedSessions.flatMap((session) => {
+    if (!(session.endedAt > session.startedAt) || !(session.durationSec > 0)) return [];
+    const durationSec = Math.round(session.durationSec);
+    return [
+      {
+        id: session.id,
+        phase: "focus" as const,
+        startedAt: new Date(session.startedAt).toISOString(),
+        endedAt: new Date(session.endedAt).toISOString(),
+        durationSec,
+        plannedSec: durationSec,
+        completed: true,
+        taskId: session.taskId ?? null,
+      },
+    ];
+  });
+  return { settings, sessions };
+}
+
+/** Reads the hydrated store (the saved data has already been migrated). */
+export function guestImportSnapshot(themeId: ImportSettings["themeId"]) {
+  return guestImportOf(useTimerStore.getState(), themeId);
+}
 
 let completingRunId: string | null = null;
 let chimedRunId: string | null = null;

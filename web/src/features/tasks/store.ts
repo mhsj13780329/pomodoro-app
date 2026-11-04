@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import type { ImportTask } from "@/lib/import/contract";
 import { useTimerStore } from "@/features/timer/store";
 import type { SessionInput } from "@/lib/sync/contract";
 import type { QueuedTaskRows } from "@/lib/sync/db";
@@ -113,6 +114,33 @@ let hydration: Promise<void> | null = null;
 export function hydrateTasks(): Promise<void> {
   hydration ??= useTasksStore.getState().hydrate();
   return hydration;
+}
+
+/**
+ * Tasks made while signed out. They are still "guest" tasks while ownerId is null: once an account
+ * has taken them, the store records its id and they are not uploaded again.
+ * No deleted tasks and no subtasks. The upload takes at most 500: unfinished first, then the newest finished.
+ */
+export function guestTasksOf(state: Pick<TasksState, "ownerId" | "tasks">): ImportTask[] {
+  if (state.ownerId != null) return [];
+  return Object.values(state.tasks)
+    .filter((task) => task.deletedAt == null && task.parentId == null)
+    .map((task) => ({
+      id: task.id,
+      title: task.title,
+      done: task.done,
+      doneAt: task.doneAt,
+      order: Math.round(task.order),
+      createdAt: task.createdAt,
+      updatedAt: task.updatedAt,
+    }))
+    .sort((a, b) => Number(a.done) - Number(b.done) || Date.parse(b.updatedAt) - Date.parse(a.updatedAt))
+    .slice(0, 500);
+}
+
+/** Reads the hydrated store. Await hydrateTasks() first. */
+export function guestTasksSnapshot(): ImportTask[] {
+  return guestTasksOf(useTasksStore.getState());
 }
 
 export const useTasksStore = create<TasksState>()(

@@ -1,10 +1,13 @@
 import "server-only";
 import type { Prisma, Project, Tag, Task } from "@/generated/prisma/client";
+import { decideTaskImport } from "@/lib/import/merge";
+import type { ImportTask } from "@/lib/import/contract";
 import { loadEntitlement } from "@/lib/entitlement";
 import { prisma } from "@/lib/prisma";
 import { ProRequiredError, requirePro, type Entitlement } from "@/lib/pro";
 import {
   COUNTED_IDS_WINDOW_MS,
+  FREE_ACTIVE_LIMIT,
   type ProjectWire,
   type TagWire,
   type TaskBatch,
@@ -401,4 +404,58 @@ export async function readTasksBlock(userId: string, since: number, serverNow: n
     countedIds: recent.map((row) => row.id),
     pro: proAllowed(entitlement, serverNow),
   };
+}
+
+/**
+ * Adds a guest's tasks to the account, behind the same per-user lock and with the same
+ * active-task count as the tasks API, so an import cannot get past the free limit.
+ * An id the account already has, or another user's id, is skipped. Idempotent by id.
+ */
+export async function importGuestTasks(
+  userId: string,
+  tasks: readonly ImportTask[],
+  pro: boolean,
+): Promise<{ imported: number; skipped: number }> {
+  if (tasks.length === 0) return { imported: 0, skipped: 0 };
+  return prisma.$transaction(
+    async (tx) => {
+      await lockUser(tx, userId);
+      const same = await tx.task.findMany({
+        where: { id: { in: tasks.map((task) => task.id) } },
+        select: { id: true, userId: true },
+      });
+      const [activeCount, last] = await Promise.all([
+        tx.task.count({ where: { userId, done: false, deletedAt: null, parentId: null } }),
+        tx.task.aggregate({ where: { userId }, _max: { order: true } }),
+      ]);
+      const decision = decideTaskImport(
+        {
+          knownIds: new Set(same.filter((row) => row.userId === userId).map((row) => row.id)),
+          foreignIds: new Set(same.filter((row) => row.userId !== userId).map((row) => row.id)),
+          activeCount,
+          maxOrder: last._max.order ?? -1,
+          pro,
+        },
+        tasks,
+        FREE_ACTIVE_LIMIT,
+      );
+      if (decision.insert.length > 0) {
+        await tx.task.createMany({
+          data: decision.insert.map((task) => ({
+            id: task.id,
+            userId,
+            title: task.title,
+            done: task.done,
+            doneAt: task.done ? new Date(task.doneAt ?? task.updatedAt) : null,
+            order: task.order,
+            createdAt: new Date(task.createdAt),
+            updatedAt: new Date(task.updatedAt),
+          })),
+          skipDuplicates: true,
+        });
+      }
+      return { imported: decision.insert.length, skipped: decision.skipped };
+    },
+    { timeout: 20_000 },
+  );
 }
