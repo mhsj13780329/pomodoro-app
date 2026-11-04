@@ -329,7 +329,7 @@ describe("pull", () => {
     await settle();
     expect(h.host.kinds()).toEqual(["pull"]);
     expect(h.host.themes).toEqual(["night"]);
-    expect(h.host.counts).toEqual({ [TASK_A]: 2 });
+    expect(h.host.shownCounts()).toEqual({ [TASK_A]: 2 });
     expect(syncView()).toEqual({ kind: "synced" });
   });
 
@@ -374,21 +374,19 @@ describe("pull", () => {
     expect((await queued(h)).sessions).toEqual([]);
     expect(h.host.waitingSessions).toEqual([]);
     // The server had no count for it at pull time, and it was accepted afterwards: counted once.
-    expect(h.host.counts).toEqual({ [TASK_A]: 1 });
+    expect(h.host.shownCounts()).toEqual({ [TASK_A]: 1 });
   });
 
-  // BUG (not fixed here, planned separately): flushSessions tells the tasks store about sessions the
-  // server answered "existing" for, and the store adds them on top of the counts adoptBlock just
-  // took from the server. A session the server already stores (finished focus sent with the timer's
-  // complete) is therefore counted twice until the next pull. FakeHost mirrors the store's rule.
-  it.fails("does not double-count a queued session the server already has", async () => {
+  // A finished focus reaches the server with the timer's complete and again from the queue.
+  // The pull lists it in countedIds, so neither the waiting copy nor the "existing" answer adds to it.
+  it("does not double-count a queued session the server already has", async () => {
     const h = setup();
     h.server.sessions.add("s1");
     h.server.counts = { [TASK_A]: 1 };
     await seedQueue(h, [], [session("s1", TASK_A)]);
     h.start();
     await settle();
-    expect(h.host.counts).toEqual({ [TASK_A]: 1 });
+    expect(h.host.shownCounts()).toEqual({ [TASK_A]: 1 });
   });
 
   it("pushes newer local settings instead of adopting the server's", async () => {

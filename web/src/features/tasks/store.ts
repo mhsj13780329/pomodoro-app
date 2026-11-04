@@ -4,7 +4,7 @@ import { useTimerStore } from "@/features/timer/store";
 import type { SessionInput } from "@/lib/sync/contract";
 import type { QueuedTaskRows } from "@/lib/sync/db";
 import { publishTaskWrites, syncIsActive, syncNow } from "@/lib/sync/engine";
-import { countCompletedFocus } from "@/lib/tasks/counts";
+import { adoptServerCounts, NO_COUNTS, noteUploaded, type ServerCounts } from "@/lib/tasks/counts";
 import type {
   ProjectColor,
   ProjectWire,
@@ -34,8 +34,8 @@ type TasksState = {
   tasks: Record<string, TaskWire>;
   projects: Record<string, ProjectWire>;
   tags: Record<string, TagWire>;
-  /** Completed focus sessions per task, as the server counted them at the last pull. */
-  counts: Record<string, number>;
+  /** Completed focus sessions per task as the server counted them, and which recent ids those include. */
+  counts: ServerCounts;
   /** What the server said about this account at the last pull. Guests are never Pro. */
   pro: boolean;
   /** Pull cursor. 0 means the next pull asks for everything. */
@@ -86,7 +86,7 @@ const empty = {
   tasks: {},
   projects: {},
   tags: {},
-  counts: {},
+  counts: NO_COUNTS,
   pro: false,
   cursor: 0,
   ownerId: null,
@@ -368,7 +368,7 @@ export const useTasksStore = create<TasksState>()(
             tasks: adoptRows(state.tasks, block.tasks, pendingIds, full),
             projects: adoptRows(state.projects, block.projects, pendingIds, full),
             tags: adoptRows(state.tags, block.tags, pendingIds, full),
-            counts: block.counts,
+            counts: adoptServerCounts(block),
             pro: block.pro,
             cursor: block.cursor,
             loaded: true,
@@ -404,12 +404,9 @@ export const useTasksStore = create<TasksState>()(
         },
 
         sessionsChanged: (waiting, uploaded) => {
-          const counts = { ...get().counts };
-          // A session that just reached the server counts now; the next pull replaces this with the server's number.
-          for (const [taskId, extra] of Object.entries(countCompletedFocus(uploaded))) {
-            counts[taskId] = (counts[taskId] ?? 0) + extra;
-          }
-          set({ pendingSessions: waiting, counts });
+          // A session that just reached the server counts now, unless the last pull already
+          // included it. The next pull replaces this with the server's numbers.
+          set({ pendingSessions: waiting, counts: noteUploaded(get().counts, uploaded) });
         },
 
         reset: () => set({ ...empty, loaded: false, pending: {}, pendingSessions: [], notice: null }),
@@ -421,6 +418,16 @@ export const useTasksStore = create<TasksState>()(
       // must match the empty state. SyncRoot rehydrates in the browser.
       storage: createJSONStorage(() => localStorage),
       skipHydration: true,
+      // 1: counts became { counts, countedIds }. Older saves held the bare numbers.
+      version: 1,
+      migrate: (persisted, version) => {
+        const saved = (persisted ?? {}) as { counts?: unknown };
+        if (version < 1) {
+          const counts = saved.counts && typeof saved.counts === "object" ? (saved.counts as Record<string, number>) : {};
+          return { ...saved, counts: { counts, countedIds: [] } } as never;
+        }
+        return saved as never;
+      },
       partialize: (state) => ({
         tasks: state.tasks,
         projects: state.projects,

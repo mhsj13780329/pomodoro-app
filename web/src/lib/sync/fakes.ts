@@ -1,7 +1,7 @@
 // Fakes for the engine's ports. Used by engine.test.ts; nothing in production imports this file.
 
 import type { TaskBatch } from "@/lib/tasks/contract";
-import { countCompletedFocus } from "@/lib/tasks/counts";
+import { adoptServerCounts, NO_COUNTS, noteUploaded, pomodoroCounts, type ServerCounts } from "@/lib/tasks/counts";
 import type { SessionsResponse, SyncResponse, TaskBatchResponse } from "./api";
 import type { QueuedCommand, SessionInput, SettingsPatch, SyncState } from "./contract";
 import { emptyTaskQueue } from "./db";
@@ -190,6 +190,7 @@ export class FakeServer implements SyncTransport {
         tags: [],
         tasks: [],
         counts: { ...this.counts },
+        countedIds: [...this.sessions],
         pro: false,
       };
     }
@@ -255,8 +256,8 @@ export class FakeServer implements SyncTransport {
 type AdoptOptions = Parameters<SyncHost["adopt"]>[1];
 
 /**
- * Records what the engine tells the app. `counts` follows the tasks store's rules: a pull
- * replaces them with the server's, and sessionsChanged adds the sessions that just uploaded.
+ * Records what the engine tells the app. Counts go through the same lib/tasks/counts rules
+ * as the tasks store; `shownCounts()` is what the task list would display.
  */
 export class FakeHost implements SyncHost {
   adopted: { state: SyncState; options: AdoptOptions }[] = [];
@@ -264,7 +265,7 @@ export class FakeHost implements SyncHost {
   settled: unknown[] = [];
   pending: QueuedTaskRows[] = [];
   waitingSessions: SessionInput[] = [];
-  counts: Record<string, number> = {};
+  counts: ServerCounts = NO_COUNTS;
   cursor = 0;
   settings: SettingsSnapshot = {
     settingsUpdatedAt: 0,
@@ -284,18 +285,21 @@ export class FakeHost implements SyncHost {
   tasks: SyncHost["tasks"] = {
     since: () => this.cursor,
     adopt: (block) => {
-      this.counts = { ...block.counts };
+      this.counts = adoptServerCounts(block);
       this.cursor = block.cursor;
     },
     settle: (sent, result) => void this.settled.push({ sent, result }),
     setPending: (queue) => void this.pending.push(queue),
     sessionsChanged: (waiting, uploaded) => {
       this.waitingSessions = waiting;
-      for (const [taskId, extra] of Object.entries(countCompletedFocus(uploaded))) {
-        this.counts[taskId] = (this.counts[taskId] ?? 0) + extra;
-      }
+      this.counts = noteUploaded(this.counts, uploaded);
     },
   };
+
+  /** What the task list shows: the server's counts plus waiting sessions it has not counted. */
+  shownCounts(): Record<string, number> {
+    return pomodoroCounts(this.counts, this.waitingSessions);
+  }
 
   kinds(): string[] {
     return this.adopted.map((item) => item.options.kind);

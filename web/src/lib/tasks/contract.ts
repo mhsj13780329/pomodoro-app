@@ -107,6 +107,12 @@ export const taskBatchResultSchema = z.object({
 
 export type TaskBatchResult = z.infer<typeof taskBatchResultSchema>;
 
+/**
+ * How far back a pull lists counted session ids. A session waits in a device's upload queue
+ * for seconds normally; a queue that keeps failing for longer than this may count once extra.
+ */
+export const COUNTED_IDS_WINDOW_MS = 72 * 60 * 60 * 1000;
+
 /** The tasks part of a pull: everything changed since the cursor, plus derived pomodoro counts. */
 export const tasksBlockSchema = z.object({
   /** Send this back as `tasksSince` on the next pull. */
@@ -118,6 +124,11 @@ export const tasksBlockSchema = z.object({
   tasks: z.array(taskWireSchema),
   /** taskId -> completed focus sessions. Derived from FocusSession, never stored. */
   counts: z.record(z.string(), z.number().int().nonnegative()),
+  /**
+   * Ids of recent sessions `counts` already includes (ended in the last COUNTED_IDS_WINDOW_MS).
+   * The client uses them so a session still in its upload queue is not counted twice.
+   */
+  countedIds: z.array(z.string()),
   pro: z.boolean(),
 });
 

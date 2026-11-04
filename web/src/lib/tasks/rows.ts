@@ -4,6 +4,7 @@ import { loadEntitlement } from "@/lib/entitlement";
 import { prisma } from "@/lib/prisma";
 import { ProRequiredError, requirePro, type Entitlement } from "@/lib/pro";
 import {
+  COUNTED_IDS_WINDOW_MS,
   type ProjectWire,
   type TagWire,
   type TaskBatch,
@@ -369,14 +370,20 @@ export async function readTasksBlock(userId: string, since: number, serverNow: n
   const full = since <= 0;
   const changed = full ? { deletedAt: null } : { serverUpdatedAt: { gt: new Date(since) } };
 
-  const [tasks, projects, tags, grouped, entitlement] = await Promise.all([
+  const counted = { userId, phase: "FOCUS" as const, completed: true, task: { deletedAt: null } };
+  const [tasks, projects, tags, grouped, recent, entitlement] = await Promise.all([
     prisma.task.findMany({ where: { userId, ...changed }, include: { tags: { select: { tagId: true } } } }),
     prisma.project.findMany({ where: { userId, ...changed } }),
     prisma.tag.findMany({ where: { userId, ...changed } }),
     prisma.focusSession.groupBy({
       by: ["taskId"],
-      where: { userId, phase: "FOCUS", completed: true, task: { deletedAt: null } },
+      where: counted,
       _count: { _all: true },
+    }),
+    // Same filter as the counts, so every id listed is inside a number above.
+    prisma.focusSession.findMany({
+      where: { ...counted, taskId: { not: null }, endedAt: { gte: new Date(serverNow - COUNTED_IDS_WINDOW_MS) } },
+      select: { id: true },
     }),
     loadEntitlement(userId),
   ]);
@@ -391,6 +398,7 @@ export async function readTasksBlock(userId: string, since: number, serverNow: n
     tags: tags.map(serializeTag),
     tasks: tasks.map(serializeTask),
     counts,
+    countedIds: recent.map((row) => row.id),
     pro: proAllowed(entitlement, serverNow),
   };
 }
