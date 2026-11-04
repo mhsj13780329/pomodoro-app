@@ -8,6 +8,7 @@ import {
   type SettingsPatch,
   type SyncState,
 } from "./contract";
+import type { SyncTransport } from "./ports";
 
 export type SyncResponse =
   | { ok: true; status: number; state: SyncState; sentAt: number; receivedAt: number }
@@ -56,9 +57,13 @@ export function postTimer(command: QueuedCommand): Promise<SyncResponse> {
   return send("/api/timer", "POST", command);
 }
 
-export async function postSessions(
-  sessions: SessionInput[],
-): Promise<{ ok: true; result: SessionBatchResult } | { ok: false; network: boolean }> {
+export type SessionsResponse = { ok: true; result: SessionBatchResult } | { ok: false; network: boolean };
+
+export type TaskBatchResponse =
+  | { ok: true; result: TaskBatchResult }
+  | { ok: false; network: boolean; status: number };
+
+export async function postSessions(sessions: SessionInput[]): Promise<SessionsResponse> {
   try {
     const response = await fetch("/api/sessions", {
       method: "POST",
@@ -75,9 +80,7 @@ export async function postSessions(
   }
 }
 
-export async function postTaskBatch(
-  batch: TaskBatch,
-): Promise<{ ok: true; result: TaskBatchResult } | { ok: false; network: boolean; status: number }> {
+export async function postTaskBatch(batch: TaskBatch): Promise<TaskBatchResponse> {
   try {
     const response = await fetch("/api/tasks", {
       method: "POST",
@@ -94,3 +97,6 @@ export async function postTaskBatch(
     return { ok: false, network: true, status: 0 };
   }
 }
+
+/** The production transport: the HTTP calls above, as the object the engine takes. */
+export const httpTransport: SyncTransport = { fetchState, putSettings, postTimer, postSessions, postTaskBatch };

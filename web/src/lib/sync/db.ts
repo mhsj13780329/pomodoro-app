@@ -1,6 +1,7 @@
 import { del, get, set } from "idb-keyval";
 import type { ProjectWire, TagWire, TaskWire } from "@/lib/tasks/contract";
 import type { QueuedCommand, SessionInput } from "./contract";
+import type { SyncStorage } from "./ports";
 
 export type QueuedAction = {
   id: string;
@@ -65,3 +66,14 @@ export function taskQueueSize(queue: QueuedTaskRows): number {
 export async function clearQueues(userId: string): Promise<void> {
   await Promise.all([del(actionsKey(userId)), del(sessionsKey(userId)), del(tasksKey(userId))]);
 }
+
+/** The production storage: IndexedDB through idb-keyval. */
+export const idbStorage: SyncStorage = {
+  readActions,
+  writeActions,
+  readSessions,
+  writeSessions,
+  readTaskQueue,
+  writeTaskQueue,
+  clearQueues,
+};

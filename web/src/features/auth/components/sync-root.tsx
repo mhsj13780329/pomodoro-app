@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { importGuestData } from "@/features/auth/import-guest";
-import { currentTheme } from "@/features/settings/theme";
+import { applyTheme, currentTheme } from "@/features/settings/theme";
 import { hydrateTasks, useTasksStore } from "@/features/tasks/store";
 import { useTimerStore } from "@/features/timer/store";
 import { authClient } from "@/lib/auth-client";
@@ -31,6 +31,7 @@ function snapshot(): SettingsSnapshot {
 const host: SyncHost = {
   snapshot,
   adopt: (state, options) => useTimerStore.getState().adoptServer(state, options),
+  applyTheme,
   tasks: {
     since: () => useTasksStore.getState().since(),
     adopt: (block) => useTasksStore.getState().adoptBlock(block),
