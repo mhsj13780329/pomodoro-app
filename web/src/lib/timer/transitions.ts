@@ -1,6 +1,6 @@
 // One phase change. The server applies this as the authority. The client applies
-// the same function for an optimistic update. Guest catch-up (several phases
-// while the tab was asleep) stays in the timer feature and is not this file.
+// the same function for an optimistic update, signed in or not. Guest catch-up
+// (several phases while the tab was asleep) is lib/timer/catch-up.ts.
 
 import type { RemainingStatus } from "./remaining";
 
@@ -153,7 +153,11 @@ function begin(
   );
 }
 
-function focusSession(timer: TransitionTimer): FocusSessionDraft | null {
+/**
+ * The focus this running phase finishes when its time runs out, or null for a break.
+ * The only place a finished focus is built; guest catch-up uses it too.
+ */
+export function finishedFocus(timer: TransitionTimer): FocusSessionDraft | null {
   if (timer.phase !== "focus" || timer.startedAt == null || !(timer.plannedSec > 0)) return null;
   const endedAt =
     timer.startedAt + Math.round(timer.pausedTotalSec * 1000) + Math.round(timer.plannedSec * 1000);
@@ -206,7 +210,7 @@ export function applyTimerAction(
     }
     case "complete": {
       if (timer.status !== "running" || timer.startedAt == null) return still(timer);
-      const session = focusSession(timer);
+      const session = finishedFocus(timer);
       const next = advancePhase(timer.phase, timer.cycleIndex, settings.longBreakEvery);
       // Start the next phase at `now`, not at the old end. A closed app must not
       // invent every phase that would have elapsed while it was shut.

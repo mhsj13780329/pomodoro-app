@@ -37,8 +37,8 @@ export function TimerScreen() {
     const total = state.longBreakEvery;
     const current =
       state.phase === "focus"
-        ? Math.min(state.completedFocusInCycle + 1, total)
-        : Math.min(state.completedFocusInCycle, total);
+        ? Math.min(state.cycleIndex + 1, total)
+        : Math.min(state.cycleIndex, total);
     return t("session", { current, total });
   };
 

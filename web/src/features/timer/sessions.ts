@@ -1,38 +1,7 @@
-import type { TimerCore } from "./logic";
-
-/** A focus the guest finished on this device. The id is created here so a later upload can retry. */
-export type GuestFocusSession = {
-  id: string;
-  phase: "focus";
-  startedAt: number;
-  endedAt: number;
-  durationSec: number;
-  completed: true;
-  /** The task that was selected when the focus ended. Older saved sessions have none. */
-  taskId?: string | null;
-};
+import type { FocusSessionDraft } from "@/lib/timer/transitions";
 
 /**
- * The focus that was running, if the clock has used it up.
- * Skip does not call this. A break that ends does not either.
+ * A focus the guest finished on this device. The id is created at catch-up so a later
+ * upload can retry. Same shape as the draft the transitions build for a signed-in user.
  */
-export function finishedFocusSession(
-  state: TimerCore,
-  id: string,
-  taskId: string | null = null,
-): GuestFocusSession | null {
-  if (state.phase !== "focus" || state.status !== "running" || state.startedAt == null) return null;
-  if (!(state.plannedSec > 0)) return null;
-  const endedAt =
-    state.startedAt + Math.round(state.pausedTotalSec * 1000) + Math.round(state.plannedSec * 1000);
-  if (!(endedAt > state.startedAt)) return null;
-  return {
-    id,
-    phase: "focus",
-    startedAt: state.startedAt,
-    endedAt,
-    durationSec: Math.round(state.plannedSec),
-    completed: true,
-    taskId,
-  };
-}
+export type GuestFocusSession = FocusSessionDraft;

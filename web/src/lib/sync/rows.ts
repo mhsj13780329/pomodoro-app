@@ -2,7 +2,8 @@ import "server-only";
 import { Prisma, type ActiveTimer, type Settings } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { canComplete } from "@/lib/timer/remaining";
-import { applyTimerAction, type PhaseSettings, type TimerAction, type TransitionTimer } from "@/lib/timer/transitions";
+import { commandToAction } from "@/lib/timer/commands";
+import { applyTimerAction, type PhaseSettings, type TransitionTimer } from "@/lib/timer/transitions";
 import { mergeSettings, type SyncSettings } from "./settings-lww";
 import {
   dbPhaseToWire,
@@ -175,27 +176,6 @@ function toTransition(row: ActiveTimer): TransitionTimer {
     version: row.version,
     taskId: row.taskId,
   };
-}
-
-function commandToAction(command: TimerCommand): TimerAction {
-  switch (command.action) {
-    case "start":
-      return { type: "start", runId: command.runId };
-    case "select":
-      return { type: "select", phase: command.phase };
-    case "complete":
-      // The client sends the id it already showed. If it did not, mint one here.
-      return { type: "complete", nextRunId: command.runId ?? crypto.randomUUID() };
-    case "pause":
-    case "resume":
-    case "skip":
-    case "reset":
-      return { type: command.action };
-    default: {
-      const _never: never = command;
-      return _never;
-    }
-  }
 }
 
 /**

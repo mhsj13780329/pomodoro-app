@@ -5,7 +5,7 @@ const DOT_CAP = 32;
 type Kind = "done" | "current" | "upcoming";
 
 function kindOf(index: number, state: TimerCore): Kind {
-  const count = state.completedFocusInCycle;
+  const count = state.cycleIndex;
   if (state.phase === "focus" && index === count && count < state.longBreakEvery) return "current";
   if (index < count) return "done";
   return "upcoming";

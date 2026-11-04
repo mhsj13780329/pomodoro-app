@@ -1,13 +1,10 @@
-// Pure timer math. No React. The screen asks "what time is it?" and this file answers
-// from timestamps, so a locked phone or a background tab cannot drift the countdown.
-// One-step changes go through lib/timer/transitions so guests and the server agree.
-// Catch-up below still walks several phases for a guest whose tab was asleep.
+// Client timer shape and the settings edits. No React. Phase changes (start, pause,
+// complete, skip...) live in lib/timer/transitions; guest catch-up in lib/timer/catch-up.
 
-import { applyTimerAction, advancePhase, type PhaseSettings, type TransitionTimer } from "@/lib/timer/transitions";
+import type { Phase } from "@/lib/timer/transitions";
 
 export { displaySeconds, remainingMs } from "@/lib/timer/remaining";
-
-export type Phase = "focus" | "shortBreak" | "longBreak";
+export type { Phase };
 
 export type RunStatus = "idle" | "running" | "paused";
 
@@ -26,7 +23,7 @@ export type TimerCore = {
    * Focuses finished in the current cycle.
    * During a long break this equals longBreakEvery, so every dot can show as done.
    */
-  completedFocusInCycle: number;
+  cycleIndex: number;
   focusSec: number;
   shortBreakSec: number;
   longBreakSec: number;
@@ -46,7 +43,7 @@ export const defaultTimer: TimerCore = {
   plannedSec: 25 * 60,
   pausedAt: null,
   pausedTotalSec: 0,
-  completedFocusInCycle: 0,
+  cycleIndex: 0,
   focusSec: 25 * 60,
   shortBreakSec: 5 * 60,
   longBreakSec: 15 * 60,
@@ -60,137 +57,6 @@ export function durationOf(state: TimerCore, phase: Phase): number {
   if (phase === "focus") return state.focusSec;
   if (phase === "shortBreak") return state.shortBreakSec;
   return state.longBreakSec;
-}
-
-function autoOf(state: TimerCore, phase: Phase): boolean {
-  if (phase === "focus") return state.autoStartFocus;
-  if (phase === "shortBreak") return state.autoStartShortBreak;
-  return state.autoStartLongBreak;
-}
-
-/** Whole milliseconds. The schedule is computed in ms so pauses stay exact. */
-function ms(sec: number): number {
-  return Math.round(sec * 1000);
-}
-
-function durationMs(state: TimerCore, phase: Phase): number {
-  return ms(durationOf(state, phase));
-}
-
-function phaseEndAt(state: TimerCore): number {
-  if (state.startedAt == null) return Number.POSITIVE_INFINITY;
-  return state.startedAt + ms(state.pausedTotalSec) + ms(state.plannedSec);
-}
-
-function waitPhase(base: TimerCore, phase: Phase, count: number): TimerCore {
-  return {
-    ...base,
-    phase,
-    status: "idle",
-    startedAt: null,
-    plannedSec: durationOf(base, phase),
-    pausedAt: null,
-    pausedTotalSec: 0,
-    completedFocusInCycle: count,
-  };
-}
-
-function beginPhase(
-  base: TimerCore,
-  phase: Phase,
-  count: number,
-  startedAt: number,
-): TimerCore {
-  return {
-    ...base,
-    phase,
-    status: "running",
-    startedAt,
-    plannedSec: durationOf(base, phase),
-    pausedAt: null,
-    pausedTotalSec: 0,
-    completedFocusInCycle: count,
-  };
-}
-
-/** Where a phase goes when it actually runs out. A finished focus counts toward the long break. */
-function advance(state: TimerCore): { phase: Phase; completedFocusInCycle: number } {
-  const next = advancePhase(state.phase, state.completedFocusInCycle, state.longBreakEvery);
-  return { phase: next.phase, completedFocusInCycle: next.cycleIndex };
-}
-
-function lengthsOf(state: TimerCore): PhaseSettings {
-  return {
-    focusSec: state.focusSec,
-    shortBreakSec: state.shortBreakSec,
-    longBreakSec: state.longBreakSec,
-    longBreakEvery: state.longBreakEvery,
-    autoStartFocus: state.autoStartFocus,
-    autoStartShortBreak: state.autoStartShortBreak,
-    autoStartLongBreak: state.autoStartLongBreak,
-  };
-}
-
-function toRow(state: TimerCore): TransitionTimer {
-  return {
-    phase: state.phase,
-    status: state.status,
-    startedAt: state.startedAt,
-    plannedSec: state.plannedSec,
-    pausedAt: state.pausedAt,
-    pausedTotalSec: state.pausedTotalSec,
-    cycleIndex: state.completedFocusInCycle,
-    runId: "local",
-    version: 0,
-    taskId: null,
-  };
-}
-
-function fromRow(state: TimerCore, timer: TransitionTimer): TimerCore {
-  return {
-    ...state,
-    phase: timer.phase,
-    status: timer.status,
-    startedAt: timer.startedAt,
-    plannedSec: timer.plannedSec,
-    pausedAt: timer.pausedAt,
-    pausedTotalSec: timer.pausedTotalSec,
-    completedFocusInCycle: timer.cycleIndex,
-  };
-}
-
-function guestStep(
-  state: TimerCore,
-  action: Parameters<typeof applyTimerAction>[2],
-  now: number,
-): TimerCore {
-  const step = applyTimerAction(toRow(state), lengthsOf(state), action, now);
-  if (!step.changed) return state;
-  return fromRow(state, step.timer);
-}
-
-export function start(state: TimerCore, now: number): TimerCore {
-  return guestStep(state, { type: "start", runId: "local" }, now);
-}
-
-export function pause(state: TimerCore, now: number): TimerCore {
-  return guestStep(state, { type: "pause" }, now);
-}
-
-export function resume(state: TimerCore, now: number): TimerCore {
-  return guestStep(state, { type: "resume" }, now);
-}
-
-export function reset(state: TimerCore): TimerCore {
-  return guestStep(state, { type: "reset" }, 0);
-}
-
-export function skip(state: TimerCore): TimerCore {
-  return guestStep(state, { type: "skip" }, 0);
-}
-
-export function selectPhase(state: TimerCore, phase: Phase): TimerCore {
-  return guestStep(state, { type: "select", phase }, 0);
 }
 
 export function setPhaseSeconds(state: TimerCore, phase: Phase, sec: number): TimerCore {
@@ -209,7 +75,7 @@ export function setLongBreakEvery(state: TimerCore, n: number): TimerCore {
   return {
     ...state,
     longBreakEvery: n,
-    completedFocusInCycle: Math.min(state.completedFocusInCycle, n),
+    cycleIndex: Math.min(state.cycleIndex, n),
   };
 }
 
@@ -217,170 +83,4 @@ export function toggleAutoStart(state: TimerCore, phase: Phase): TimerCore {
   if (phase === "focus") return { ...state, autoStartFocus: !state.autoStartFocus };
   if (phase === "shortBreak") return { ...state, autoStartShortBreak: !state.autoStartShortBreak };
   return { ...state, autoStartLongBreak: !state.autoStartLongBreak };
-}
-
-function cycleMs(state: TimerCore): number {
-  const n = state.longBreakEvery;
-  const focus = durationMs(state, "focus");
-  const short = durationMs(state, "shortBreak");
-  const long = durationMs(state, "longBreak");
-  return n * focus + Math.max(0, n - 1) * short + long;
-}
-
-/** Position, in ms, where this phase sits inside one full focus → short → long cycle. */
-function cycleOffsetMs(phase: Phase, count: number, state: TimerCore): number {
-  const focus = durationMs(state, "focus");
-  const rest = durationMs(state, "shortBreak");
-  const n = state.longBreakEvery;
-  if (phase === "focus") return Math.min(count, Math.max(0, n - 1)) * (focus + rest);
-  if (phase === "longBreak") return (n - 1) * (focus + rest) + focus;
-  const done = Math.min(Math.max(count, 1), Math.max(1, n - 1));
-  return (done - 1) * (focus + rest) + focus;
-}
-
-type Spot = { phase: Phase; count: number; offsetMs: number };
-
-function locate(intoMs: number, state: TimerCore): Spot {
-  const n = state.longBreakEvery;
-  const focus = durationMs(state, "focus");
-  const rest = durationMs(state, "shortBreak");
-  const long = durationMs(state, "longBreak");
-  const cycle = cycleMs(state);
-  let t = cycle > 0 ? intoMs % cycle : 0;
-  if (t < 0) t += cycle;
-
-  for (let c = 0; c < n; c += 1) {
-    if (t < focus || focus <= 0) {
-      return { phase: "focus", count: c, offsetMs: Math.max(0, Math.min(t, focus)) };
-    }
-    t -= focus;
-    const last = c === n - 1;
-    const br = last ? long : rest;
-    if (t < br || br <= 0) {
-      return {
-        phase: last ? "longBreak" : "shortBreak",
-        count: c + 1,
-        offsetMs: Math.max(0, Math.min(t, br)),
-      };
-    }
-    t -= br;
-  }
-  return { phase: "focus", count: 0, offsetMs: 0 };
-}
-
-/**
- * Every auto-start is on, so the cycle repeats without a stop.
- * One modulo lands on the right phase. Walking phase by phase would freeze the tab
- * after a long sleep with very short durations.
- */
-function projectOpenCycle(state: TimerCore, now: number): TimerCore {
-  const endAt = phaseEndAt(state);
-  const next = advance(state);
-  const origin = endAt - cycleOffsetMs(next.phase, next.completedFocusInCycle, state);
-  const elapsed = Math.max(0, now - origin);
-  const spot = locate(elapsed, state);
-  return beginPhase(state, spot.phase, spot.count, now - spot.offsetMs);
-}
-
-/**
- * Focus and short break keep auto-starting, and the long break does not.
- * Jump across that run in one step, then leave the long break waiting.
- */
-function landBeforeLongBreak(
-  base: TimerCore,
-  next: { phase: Phase; completedFocusInCycle: number },
-  nextStart: number,
-  now: number,
-): TimerCore {
-  const n = base.longBreakEvery;
-  const focus = durationMs(base, "focus");
-  const rest = durationMs(base, "shortBreak");
-  if (focus <= 0 || rest <= 0 || n < 1) {
-    return waitPhase(base, next.phase, next.completedFocusInCycle);
-  }
-
-  if (next.phase === "focus") {
-    return landFocusRun(base, next.completedFocusInCycle, nextStart, now, focus, rest, n);
-  }
-
-  const count = next.completedFocusInCycle;
-  const into = now - nextStart;
-  if (into < rest) return beginPhase(base, "shortBreak", count, now - into);
-  return landFocusRun(base, count, nextStart + rest, now, focus, rest, n);
-}
-
-function landFocusRun(
-  base: TimerCore,
-  startCount: number,
-  runStart: number,
-  now: number,
-  focus: number,
-  rest: number,
-  n: number,
-): TimerCore {
-  if (startCount >= n) return waitPhase(base, "longBreak", n);
-  const focusesLeft = n - startCount;
-  const shortsLeft = focusesLeft - 1;
-  const longStart = runStart + focusesLeft * focus + shortsLeft * rest;
-  if (now >= longStart) return waitPhase(base, "longBreak", n);
-
-  const into = now - runStart;
-  const pair = focus + rest;
-  const pairSpan = shortsLeft * pair;
-  if (shortsLeft > 0 && into < pairSpan) {
-    const pairIndex = Math.floor(into / pair);
-    const within = into % pair;
-    const count = startCount + pairIndex;
-    if (within < focus) return beginPhase(base, "focus", count, now - within);
-    return beginPhase(base, "shortBreak", count + 1, now - (within - focus));
-  }
-  return beginPhase(base, "focus", n - 1, now - (into - pairSpan));
-}
-
-/** Step forward only until a phase refuses to auto-start. That phase waits at its full length. */
-function projectUntilBlocked(state: TimerCore, now: number): TimerCore {
-  let current = state;
-  for (let step = 0; step < 8; step += 1) {
-    const endAt = phaseEndAt(current);
-    if (now < endAt) return current;
-
-    const next = advance(current);
-    const dur = durationOf(current, next.phase);
-    if (!autoOf(current, next.phase) || !(dur > 0)) {
-      return waitPhase(current, next.phase, next.completedFocusInCycle);
-    }
-
-    if (
-      current.autoStartFocus &&
-      current.autoStartShortBreak &&
-      !current.autoStartLongBreak &&
-      next.phase !== "longBreak"
-    ) {
-      return landBeforeLongBreak(current, next, endAt, now);
-    }
-
-    current = beginPhase(current, next.phase, next.completedFocusInCycle, endAt);
-  }
-  return current;
-}
-
-/**
- * If this running phase already ended at `now`, finish it and keep going as if the page
- * had stayed open. The next phase starts when the previous one ended — not when the
- * tab wakes up — but only if that next phase's auto-start is on.
- * Calling this again with the same `now` does nothing, so a tick cannot loop.
- */
-export function catchUp(state: TimerCore, now: number): { state: TimerCore; ended: boolean } {
-  if (state.status !== "running" || state.startedAt == null) {
-    return { state, ended: false };
-  }
-  if (!(state.plannedSec > 0) || !(state.longBreakEvery >= 1)) {
-    return { state, ended: false };
-  }
-  if (now < phaseEndAt(state)) return { state, ended: false };
-
-  const open =
-    state.autoStartFocus && state.autoStartShortBreak && state.autoStartLongBreak;
-  const next = open ? projectOpenCycle(state, now) : projectUntilBlocked(state, now);
-  return { state: next, ended: true };
 }
