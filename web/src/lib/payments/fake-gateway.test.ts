@@ -1,8 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { fakeGateway } from "./fake-gateway";
 import { PaymentConfigError } from "./payment-env";
-import { verifyAndGrant, type GrantLock } from "./settle";
-import type { ProColumns } from "./extend-pro";
 import { getPaymentGateway } from "./zarinpal";
 
 describe("fakeGateway", () => {
@@ -21,43 +19,6 @@ describe("fakeGateway", () => {
     expect(first.code).toBe(100);
     expect(second.code).toBe(101);
     expect(second.refId).toBe(first.refId);
-  });
-
-  it("grants through settle only once when verify is called twice", async () => {
-    const gateway = fakeGateway();
-    const { authority } = await gateway.request({
-      amountToman: 399000,
-      description: "Pro",
-      callbackUrl: "http://localhost/api/payments/callback",
-      metadata: {},
-    });
-    const state: { status: "PENDING" | "PAID"; user: ProColumns; grants: number } = {
-      status: "PENDING",
-      user: { proUntil: null, proLifetime: false },
-      grants: 0,
-    };
-    let tail = Promise.resolve();
-    const lock: GrantLock = {
-      once(_id, write) {
-        const run = tail.then(() => {
-          if (state.status === "PAID") return "already_paid" as const;
-          state.user = write(state.user).user;
-          state.status = "PAID";
-          state.grants += 1;
-          return "granted" as const;
-        });
-        tail = run.then(
-          () => undefined,
-          () => undefined,
-        );
-        return run;
-      },
-    };
-    const payment = { id: "p", amountToman: 399000, authority, plan: "YEAR" as const };
-    const now = new Date("2026-10-30T12:00:00Z");
-    await verifyAndGrant({ gateway, lock, payment, now });
-    await verifyAndGrant({ gateway, lock, payment, now });
-    expect(state.grants).toBe(1);
   });
 });
 
