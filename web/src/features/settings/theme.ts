@@ -1,13 +1,16 @@
-export const THEMES = ["warm", "night", "forest"] as const;
+import { THEME_IDS, type ThemeId } from "@/lib/settings/catalog";
 
-export type ThemeId = (typeof THEMES)[number];
+export { FREE_THEMES, isFreeTheme } from "@/lib/settings/catalog";
+export type { ThemeId };
+
+export const THEMES = THEME_IDS;
 
 export const THEME_COOKIE = "theme";
 
 export const DEFAULT_THEME: ThemeId = "warm";
 
 export function parseTheme(value: string | undefined | null): ThemeId {
-  return THEMES.includes(value as ThemeId) ? (value as ThemeId) : DEFAULT_THEME;
+  return (THEMES as readonly string[]).includes(value as string) ? (value as ThemeId) : DEFAULT_THEME;
 }
 
 let current: ThemeId = DEFAULT_THEME;
