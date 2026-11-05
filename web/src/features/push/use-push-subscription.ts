@@ -19,8 +19,9 @@ function keyBytes(base64Url: string): Uint8Array<ArrayBuffer> {
 }
 
 async function currentSubscription(): Promise<PushSubscription | null> {
-  const registration = await navigator.serviceWorker.ready;
-  return registration.pushManager.getSubscription();
+  // Not `serviceWorker.ready`: it never settles when no worker is registered (dev builds), which hung logout.
+  const registration = await navigator.serviceWorker.getRegistration();
+  return registration ? registration.pushManager.getSubscription() : null;
 }
 
 async function ensureSubscribed(): Promise<void> {
