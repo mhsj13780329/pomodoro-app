@@ -4,6 +4,7 @@ import type { ImportBody, ImportSettings } from "@/lib/import/contract";
 import type { SessionInput, SyncState } from "@/lib/sync/contract";
 import { publishTimerCommand, settingsChanged, syncIsActive, syncNow } from "@/lib/sync/engine";
 import { applyTheme } from "@/features/settings/theme";
+import { END_SOUNDS } from "@/lib/settings/catalog";
 import { catchUp as catchUpCore } from "@/lib/timer/catch-up";
 import { actionToCommand } from "@/lib/timer/commands";
 import { remainingMs } from "@/lib/timer/remaining";
@@ -34,6 +35,8 @@ type Actions = {
   setPhaseSeconds: (phase: Phase, sec: number) => void;
   setDurations: (focusMin: number, shortMin: number, longMin: number) => void;
   setLongBreakEvery: (n: number) => void;
+  /** Sets the end sound (id from END_SOUNDS) or a per-phase sound (null = same as the end sound). */
+  setSound: (field: SoundField, id: string | null) => void;
   /** True when a phase had already ended and the schedule moved on. Guests only. */
   catchUp: (now: number) => boolean;
   /** Signed-in: send complete once when the adjusted clock reaches zero. True if the chime should play. */
@@ -48,6 +51,39 @@ type Actions = {
 };
 
 const MAX_GUEST_SESSIONS = 200;
+
+export type SoundField = "soundId" | "focusSoundId" | "shortBreakSoundId" | "longBreakSoundId";
+
+/** End-of-phase sounds. soundId is the one sound; the phase ones (Pro) override it when set. */
+export type SoundFields = {
+  soundId: string;
+  focusSoundId: string | null;
+  shortBreakSoundId: string | null;
+  longBreakSoundId: string | null;
+};
+
+export const soundDefaults: SoundFields = {
+  soundId: "default",
+  focusSoundId: null,
+  shortBreakSoundId: null,
+  longBreakSoundId: null,
+};
+
+const soundKeys = Object.keys(soundDefaults) as SoundField[];
+
+function knownSound(value: unknown): value is string {
+  return typeof value === "string" && (END_SOUNDS as readonly string[]).includes(value);
+}
+
+/** Saved data from an older build has no sound fields; anything unknown falls back to the default. */
+export function soundsOf(saved: Partial<Record<SoundField, unknown>>): SoundFields {
+  return {
+    soundId: knownSound(saved.soundId) ? saved.soundId : soundDefaults.soundId,
+    focusSoundId: knownSound(saved.focusSoundId) ? saved.focusSoundId : null,
+    shortBreakSoundId: knownSound(saved.shortBreakSoundId) ? saved.shortBreakSoundId : null,
+    longBreakSoundId: knownSound(saved.longBreakSoundId) ? saved.longBreakSoundId : null,
+  };
+}
 
 type SyncFields = {
   version: number;
@@ -65,6 +101,7 @@ const syncDefaults: SyncFields = {
 
 export type TimerStore = TimerCore &
   SyncFields &
+  SoundFields &
   Actions & {
     completedSessions: GuestFocusSession[];
   };
@@ -232,6 +269,7 @@ export const useTimerStore = create<TimerStore>()(
     (set, get) => ({
       ...defaultTimer,
       ...syncDefaults,
+      ...soundDefaults,
       completedSessions: [],
       start: (now) => step({ type: "start", runId: crypto.randomUUID() }, now),
       pause: (now) => step({ type: "pause" }, now),
@@ -267,6 +305,12 @@ export const useTimerStore = create<TimerStore>()(
       setLongBreakEvery: (n) => {
         const next = noteSettings(setEveryCore(coreOf(get()), n));
         set(next);
+        if (syncIsActive()) settingsChanged();
+      },
+      setSound: (field, id) => {
+        if (field === "soundId" ? !knownSound(id) : id !== null && !knownSound(id)) return;
+        if (get()[field] === id) return;
+        set(noteSettings({ [field]: id } as Partial<TimerStore>));
         if (syncIsActive()) settingsChanged();
       },
       catchUp: (now) => {
@@ -320,6 +364,7 @@ export const useTimerStore = create<TimerStore>()(
           autoStartShortBreak: settings.autoStartShortBreak,
           autoStartLongBreak: settings.autoStartLongBreak,
           settingsUpdatedAt: Date.parse(settings.updatedAt),
+          ...soundsOf(settings),
         };
         if (options.timer) {
           patch.phase = timer.phase;
@@ -351,6 +396,7 @@ export const useTimerStore = create<TimerStore>()(
         set({
           ...defaultTimer,
           ...syncDefaults,
+          ...soundDefaults,
           completedSessions: [],
         });
       },
@@ -380,6 +426,7 @@ export const useTimerStore = create<TimerStore>()(
           runId: saved.runId ?? "",
           taskId: saved.taskId ?? null,
           settingsUpdatedAt: saved.settingsUpdatedAt ?? 0,
+          ...soundsOf(saved),
           completedSessions: saved.completedSessions ?? [],
         };
       },
@@ -389,6 +436,7 @@ export const useTimerStore = create<TimerStore>()(
         runId: state.runId,
         taskId: state.taskId,
         settingsUpdatedAt: state.settingsUpdatedAt,
+        ...Object.fromEntries(soundKeys.map((key) => [key, state[key]])),
         completedSessions: state.completedSessions,
       }),
     },

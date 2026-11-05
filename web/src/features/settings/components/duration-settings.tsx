@@ -1,15 +1,13 @@
 "use client";
 
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { defaultTimer, type Phase } from "@/features/timer/logic";
 import { useTimerStore } from "@/features/timer/store";
 import { useTimerRuntime } from "@/features/timer/timer-runtime";
-import { formatNumber } from "@/lib/format";
+import { Link } from "@/i18n/navigation";
+import { presetOf, TIMER_PRESETS } from "@/lib/settings/catalog";
 
-const PRESETS = [
-  { focus: 25, short: 5, long: 15 },
-  { focus: 50, short: 10, long: 20 },
-] as const;
+const PRESET_LABEL = { classic: "presetClassic", long: "presetLong" } as const;
 
 function minutes(sec: number): number {
   return Math.max(1, Math.round(sec / 60));
@@ -32,9 +30,8 @@ function PlusIcon() {
   );
 }
 
-export function DurationSettings() {
+export function DurationSettings({ pro = false }: { pro?: boolean }) {
   const t = useTranslations("settings.durations");
-  const locale = useLocale();
   const { ready } = useTimerRuntime();
   const stored = useTimerStore();
   const timer = ready ? stored : defaultTimer;
@@ -42,6 +39,16 @@ export function DurationSettings() {
   const short = minutes(timer.shortBreakSec);
   const long = minutes(timer.longBreakSec);
   const every = timer.longBreakEvery;
+  const activePreset = presetOf({
+    focusMin: focus,
+    shortBreakMin: short,
+    longBreakMin: long,
+    longBreakEvery: every,
+  });
+  const isCustom = activePreset === null;
+  // A free account can keep custom lengths it already has (read-only) but not change them.
+  const showSteppers = pro || isCustom;
+  const locked = !pro;
 
   const changePhase = (phase: Phase, current: number, delta: number) => {
     if (!ready) return;
@@ -60,28 +67,48 @@ export function DurationSettings() {
   return (
     <section className="mt-3 rounded-card border border-line bg-surface p-3.5">
       <h2 className="mb-1.5 text-base font-semibold">{t("title")}</h2>
-      <div className="mb-1.5 flex flex-wrap gap-2">
-        {PRESETS.map((preset) => {
-          const selected = focus === preset.focus && short === preset.short && long === preset.long;
-          const label = `${formatNumber(preset.focus, locale)} / ${formatNumber(preset.short, locale)} / ${formatNumber(preset.long, locale)}`;
+      <div className="mb-1.5 flex flex-wrap gap-2" role="group" aria-label={t("presets")}>
+        {TIMER_PRESETS.map((preset) => {
+          const selected = activePreset === preset.id;
           return (
             <button
-              key={label}
+              key={preset.id}
               type="button"
               aria-pressed={selected}
               onClick={() => {
                 if (!ready) return;
-                useTimerStore.getState().setDurations(preset.focus, preset.short, preset.long);
+                const store = useTimerStore.getState();
+                store.setDurations(preset.focusMin, preset.shortBreakMin, preset.longBreakMin);
+                store.setLongBreakEvery(preset.longBreakEvery);
               }}
               className={`min-h-11 cursor-pointer rounded-pill px-3.5 text-[13px] font-semibold ${
                 selected ? "bg-focus text-white" : "border border-line-strong bg-transparent text-ink"
               }`}
             >
-              {label}
+              {t(PRESET_LABEL[preset.id])}
             </button>
           );
         })}
+        <button
+          type="button"
+          aria-pressed={isCustom}
+          disabled={locked}
+          className={`min-h-11 rounded-pill px-3.5 text-[13px] font-semibold disabled:opacity-60 ${
+            isCustom ? "bg-focus text-white" : "border border-line-strong bg-transparent text-ink"
+          }`}
+        >
+          {t("custom")}
+        </button>
       </div>
+      {locked ? (
+        <p className="mb-1.5 text-[13px] text-muted">
+          <Link href="/pricing" className="underline">
+            {t("customPro")}
+          </Link>
+        </p>
+      ) : null}
+      {showSteppers ? (
+        <>
       <Stepper
         label={t("focus")}
         value={t("minutes", { count: focus })}
@@ -89,8 +116,8 @@ export function DurationSettings() {
         increaseLabel={t("increase", { label: t("focus") })}
         onDecrease={() => changePhase("focus", focus, -1)}
         onIncrease={() => changePhase("focus", focus, 1)}
-        decreaseDisabled={focus <= 1}
-        increaseDisabled={focus >= 24 * 60}
+        decreaseDisabled={focus <= 1 || locked}
+        increaseDisabled={focus >= 24 * 60 || locked}
       />
       <Stepper
         label={t("short")}
@@ -99,8 +126,8 @@ export function DurationSettings() {
         increaseLabel={t("increase", { label: t("short") })}
         onDecrease={() => changePhase("shortBreak", short, -1)}
         onIncrease={() => changePhase("shortBreak", short, 1)}
-        decreaseDisabled={short <= 1}
-        increaseDisabled={short >= 24 * 60}
+        decreaseDisabled={short <= 1 || locked}
+        increaseDisabled={short >= 24 * 60 || locked}
       />
       <Stepper
         label={t("long")}
@@ -109,8 +136,8 @@ export function DurationSettings() {
         increaseLabel={t("increase", { label: t("long") })}
         onDecrease={() => changePhase("longBreak", long, -1)}
         onIncrease={() => changePhase("longBreak", long, 1)}
-        decreaseDisabled={long <= 1}
-        increaseDisabled={long >= 24 * 60}
+        decreaseDisabled={long <= 1 || locked}
+        increaseDisabled={long >= 24 * 60 || locked}
       />
       <Stepper
         label={t("every")}
@@ -119,9 +146,11 @@ export function DurationSettings() {
         increaseLabel={t("increase", { label: t("every") })}
         onDecrease={() => changeEvery(-1)}
         onIncrease={() => changeEvery(1)}
-        decreaseDisabled={every <= 1}
-        increaseDisabled={every >= 20}
+        decreaseDisabled={every <= 1 || locked}
+        increaseDisabled={every >= 20 || locked}
       />
+        </>
+      ) : null}
     </section>
   );
 }
