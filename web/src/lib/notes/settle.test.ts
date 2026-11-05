@@ -7,6 +7,7 @@ const n = (patch: Partial<NoteWire> = {}): NoteWire => ({
   id: ID,
   title: "t",
   body: "b",
+  taskId: null,
   createdAt: "2026-11-01T10:00:00.000Z",
   updatedAt: "2026-11-01T10:00:00.000Z",
   deletedAt: null,

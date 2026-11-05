@@ -31,11 +31,15 @@ type NotesState = {
   sync: () => Promise<void>;
   /** Creates an empty note. Returns its id, or pro_required. */
   create: () => string | "pro_required";
-  save: (id: string, patch: { title: string; body: string }) => NoteWriteResult;
+  save: (id: string, patch: { title: string; body: string; taskId?: string | null }) => NoteWriteResult;
   remove: (id: string) => NoteWriteResult;
+  /** Drops a new note that never got any text. */
+  discardEmpty: (id: string) => void;
 };
 
 let running = false;
+/** Notes made on this device that have no text yet. They are not uploaded or saved until they get some. */
+const drafts = new Set<string>();
 let again = false;
 let flushTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -93,6 +97,8 @@ export const useNotesStore = create<NotesState>()((setState, getState) => {
       if (!parsed.success) return false;
       const pulled = parsed.data;
       const notes = adoptNotes({ notes: getState().notes, queue: getState().queue }, pulled.notes, pulled.full);
+      // A full pull would drop a local draft the server has never seen.
+      for (const id of drafts) if (getState().notes[id]) notes[id] = getState().notes[id];
       setState({ notes, cursor: pulled.cursor, pro: pulled.pro, offline: false });
       return true;
     } catch {
@@ -120,6 +126,7 @@ export const useNotesStore = create<NotesState>()((setState, getState) => {
 
     stop() {
       if (flushTimer) clearTimeout(flushTimer);
+      drafts.clear();
       setState({ userId: null, notes: {}, queue: {}, cursor: 0, loaded: false });
     },
 
@@ -146,10 +153,18 @@ export const useNotesStore = create<NotesState>()((setState, getState) => {
     create() {
       if (!getState().pro) return "pro_required";
       const now = new Date().toISOString();
-      const row: NoteWire = { id: crypto.randomUUID(), title: "", body: "", createdAt: now, updatedAt: now, deletedAt: null };
-      setState((s) => ({ notes: { ...s.notes, [row.id]: row }, queue: { ...s.queue, [row.id]: row } }));
-      persist();
-      schedule();
+      const row: NoteWire = {
+        id: crypto.randomUUID(),
+        title: "",
+        body: "",
+        taskId: null,
+        createdAt: now,
+        updatedAt: now,
+        deletedAt: null,
+      };
+      // Kept only in memory until it has text, so an empty note left behind is never saved.
+      drafts.add(row.id);
+      setState((s) => ({ notes: { ...s.notes, [row.id]: row } }));
       return row.id;
     },
 
@@ -157,17 +172,39 @@ export const useNotesStore = create<NotesState>()((setState, getState) => {
       const current = getState().notes[id];
       if (!current) return "missing";
       if (!getState().pro) return "pro_required";
-      if (current.title === patch.title && current.body === patch.body) return "ok";
-      const row = { ...current, ...patch, updatedAt: stampAfter(current.updatedAt) };
+      const taskId = patch.taskId === undefined ? current.taskId : patch.taskId;
+      if (current.title === patch.title && current.body === patch.body && current.taskId === taskId) return "ok";
+      const row = { ...current, title: patch.title, body: patch.body, taskId, updatedAt: stampAfter(current.updatedAt) };
+      if (drafts.has(id)) {
+        if (!row.title.trim() && !row.body.trim()) {
+          setState((s) => ({ notes: { ...s.notes, [id]: row } }));
+          return "ok";
+        }
+        drafts.delete(id);
+      }
       setState((s) => ({ notes: { ...s.notes, [id]: row }, queue: { ...s.queue, [id]: row } }));
       persist();
       schedule();
       return "ok";
     },
 
+    discardEmpty(id) {
+      const note = getState().notes[id];
+      if (note && drafts.has(id) && !note.title.trim() && !note.body.trim()) getState().remove(id);
+    },
+
     remove(id) {
       const current = getState().notes[id];
       if (!current) return "missing";
+      if (drafts.has(id)) {
+        drafts.delete(id);
+        setState((s) => {
+          const notes = { ...s.notes };
+          delete notes[id];
+          return { notes };
+        });
+        return "ok";
+      }
       const stamp = stampAfter(current.updatedAt);
       const row = { ...current, updatedAt: stamp, deletedAt: stamp };
       setState((s) => {

@@ -39,7 +39,7 @@ async function makeUser(data: { proLifetime?: boolean; proUntil?: Date } = {}) {
 }
 
 function note(patch: Partial<NoteWire> = {}): NoteWire {
-  return { id: randomUUID(), title: "Title", body: "Body", createdAt: at(0), updatedAt: at(0), deletedAt: null, ...patch };
+  return { id: randomUUID(), title: "Title", body: "Body", taskId: null, createdAt: at(0), updatedAt: at(0), deletedAt: null, ...patch };
 }
 
 const push = (userId: string, ...notes: NoteWire[]) => rows.applyNoteBatch(userId, { notes }, Date.now());
@@ -61,6 +61,23 @@ describe("notes server rules", () => {
     const edited = { ...n, body: "New", updatedAt: at(5) };
     expect((await push(user.id, edited)).results[0].status).toBe("ok");
     expect((await prisma.note.findUniqueOrThrow({ where: { id: n.id } })).body).toBe("New");
+  });
+
+  it("stores a new taskId on update, and a free account cannot change it", async () => {
+    const user = await makeUser({ proLifetime: true });
+    const T = randomUUID();
+    const n = note();
+    await push(user.id, n);
+    expect((await push(user.id, { ...n, taskId: T, updatedAt: at(5) })).results[0].status).toBe("ok");
+    expect((await prisma.note.findUniqueOrThrow({ where: { id: n.id } })).taskId).toBe(T);
+
+    await prisma.user.update({ where: { id: user.id }, data: { proLifetime: false } });
+    const edit = await push(user.id, { ...n, taskId: null, updatedAt: at(6) });
+    expect(edit.results[0].status).toBe("pro_required");
+    expect(edit.rows[0].taskId).toBe(T);
+    const del = await push(user.id, { ...n, taskId: null, updatedAt: at(7), deletedAt: at(7) });
+    expect(del.results[0].status).toBe("ok");
+    expect((await prisma.note.findUniqueOrThrow({ where: { id: n.id } })).taskId).toBe(T);
   });
 
   it("lets an expired Pro read and delete but not edit", async () => {

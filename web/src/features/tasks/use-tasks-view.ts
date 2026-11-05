@@ -7,8 +7,11 @@ import { subscribeSync, syncView, type SyncView } from "@/lib/sync/status";
 import { countCompletedFocus, pomodoroCounts } from "@/lib/tasks/counts";
 import { FREE_ACTIVE_LIMIT } from "@/lib/tasks/contract";
 import type { ProjectWire, TagWire } from "@/lib/tasks/contract";
+import { projectStatsOf } from "@/lib/tasks/project-stats";
 import { activeTasks, doneTasks, pickableTask } from "@/lib/tasks/select";
 import { useTasksStore } from "./store";
+
+export { NO_PROJECT, type ProjectStats } from "@/lib/tasks/project-stats";
 
 const GUEST_VIEW: SyncView = { kind: "guest" };
 
@@ -58,6 +61,11 @@ export function useTasksView() {
     return stats;
   }, [tasks]);
 
+  const projectStats = useMemo(
+    () => projectStatsOf([...active, ...done], counts, projectRows),
+    [active, done, counts, projectRows],
+  );
+
   const hasRows = Object.keys(tasks).length > 0;
   // Show the skeleton instead of a wrong "empty" while the saved rows, the session or the first pull are pending.
   const ready = hydrated && !session.isPending && (!signedIn || loaded || hasRows);
@@ -68,6 +76,7 @@ export function useTasksView() {
     offline: sync.kind === "offline",
     pro,
     projects,
+    projectStats,
     tags,
     subtaskStats,
     active,
