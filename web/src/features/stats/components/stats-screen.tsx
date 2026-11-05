@@ -20,7 +20,7 @@ import {
   startOfCalendarYear,
   weekStartsOn,
   yearWeeks,
-} from "@/lib/stats/calendar";
+} from "@/lib/calendar";
 import type { StatsResponse } from "@/lib/stats/contract";
 import { Breakdown } from "./breakdown";
 import { Heatmap } from "./heatmap";

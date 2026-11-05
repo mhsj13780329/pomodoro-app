@@ -4,7 +4,7 @@
 
 import type { StatSession } from "@/lib/stats/aggregate";
 import { mergeById } from "@/lib/stats/aggregate";
-import { calendarForLocale, civilKey, civilToday, startOfCalendarMonth, validTimeZone } from "@/lib/stats/calendar";
+import { calendarForLocale, civilKey, civilToday, startOfCalendarMonth, validTimeZone } from "@/lib/calendar";
 import type { StatsResponse } from "@/lib/stats/contract";
 import { freeWindow } from "@/lib/stats/range";
 

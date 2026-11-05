@@ -1,6 +1,7 @@
-// Local dates for stats. One implementation for the server and the browser, so a
-// timezone with daylight saving cannot disagree with the API. No date library:
-// Intl knows the zone, and for Farsi it knows the Jalali calendar.
+// Local dates and time zones: the user's calendar day, for stats, streaks, Pro reminders and
+// dates on pages. One implementation for the server and the browser, so a timezone with
+// daylight saving cannot disagree with the API. No date library: Intl knows the zone, and
+// for Farsi it knows the Jalali calendar.
 
 export type CivilDate = { year: number; month: number; day: number };
 
@@ -18,7 +19,10 @@ export function calendarForLocale(locale: string): CalendarId {
   return locale === "fa" ? "persian" : "gregory";
 }
 
-/** A bad or empty zone must not throw in the middle of a render. Tehran is the product default. */
+/** The product default (most users are in Iran). Also User.timezone's database default. */
+export const DEFAULT_TIME_ZONE = "Asia/Tehran";
+
+/** A bad or empty zone must not throw in the middle of a render. Falls back to DEFAULT_TIME_ZONE. */
 export function validTimeZone(timeZone: string | null | undefined): string {
   if (timeZone) {
     try {
@@ -28,7 +32,16 @@ export function validTimeZone(timeZone: string | null | undefined): string {
       // Fall through to the default.
     }
   }
-  return "Asia/Tehran";
+  return DEFAULT_TIME_ZONE;
+}
+
+/** This browser's zone, for guests and for a new account. Browser only. */
+export function browserTimeZone(): string {
+  try {
+    return validTimeZone(Intl.DateTimeFormat().resolvedOptions().timeZone);
+  } catch {
+    return DEFAULT_TIME_ZONE;
+  }
 }
 
 export function civilKey(date: CivilDate): string {

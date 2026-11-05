@@ -3,10 +3,11 @@
 import { useTranslations } from "next-intl";
 import { useState, useSyncExternalStore } from "react";
 import { Link } from "@/i18n/navigation";
-import { localDay, type BannerKind } from "@/lib/payments/reminders";
+import { civilToday } from "@/lib/calendar";
+import type { BannerKind } from "@/lib/pro";
 
 function storageKey(timeZone: string): string {
-  return `pomodoro-pro-banner:${localDay(new Date(), timeZone)}`;
+  return `pomodoro-pro-banner:${civilToday(new Date(), timeZone)}`;
 }
 
 function readDismissed(timeZone: string): boolean {

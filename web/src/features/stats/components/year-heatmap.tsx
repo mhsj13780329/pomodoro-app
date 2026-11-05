@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { IconChevron } from "@/components/icons";
 import { dateLocale, formatDate } from "@/lib/format";
 import { heatLevel } from "@/lib/stats/aggregate";
-import { localNoon, type MonthCell } from "@/lib/stats/calendar";
+import { localNoon, type MonthCell } from "@/lib/calendar";
 import { dayNumber, weekdayNames } from "../labels";
 
 const HEAT = [

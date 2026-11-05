@@ -18,6 +18,7 @@ async function main() {
   const { logNotifier } = await import("../src/lib/payments/notifier");
   const { reminderKind, reminderTarget } = await import("../src/lib/payments/reminders");
   const { reminderText } = await import("../src/lib/payments/reminder-copy");
+  const { validTimeZone } = await import("../src/lib/calendar");
   const notifier = logNotifier();
   const now = new Date();
 
@@ -38,7 +39,7 @@ async function main() {
 
   for (const user of users) {
     if (!user.proUntil) continue;
-    const kind = reminderKind(user.proUntil, user.timezone || "Asia/Tehran", now);
+    const kind = reminderKind(user.proUntil, validTimeZone(user.timezone), now);
     if (!kind) continue;
     const target = reminderTarget({ phoneNumber: user.phoneNumber, email: user.email });
     if (!target) continue;

@@ -5,17 +5,17 @@ import { useEffect, useSyncExternalStore } from "react";
 import { useTimerStore } from "@/features/timer/store";
 import { useTasksStore } from "@/features/tasks/store";
 import { authClient } from "@/lib/auth-client";
-import { validTimeZone } from "@/lib/stats/calendar";
+import { browserTimeZone, DEFAULT_TIME_ZONE, validTimeZone } from "@/lib/calendar";
 import { getNow, getServerStats, getStatsState, notePending, retainStats, setStatsView, subscribeStats } from "./client";
 import { presentFocus, type FocusView } from "./present";
-import { browserTimeZone, toStatSession } from "./sessions";
+import { toStatSession } from "./sessions";
 import type { StatsResponse } from "@/lib/stats/contract";
 
 const LOADING: FocusView = {
   status: "loading",
   offline: false,
   pro: false,
-  timeZone: "Asia/Tehran",
+  timeZone: DEFAULT_TIME_ZONE,
   today: "",
   from: "",
   to: "",

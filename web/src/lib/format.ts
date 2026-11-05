@@ -1,3 +1,5 @@
+import { DEFAULT_TIME_ZONE } from "@/lib/calendar";
+
 /** fa-IR uses Persian digits. Other app locales use their own numbering system. */
 export function numberLocale(locale: string): string {
   return locale === "fa" ? "fa-IR" : locale;
@@ -39,7 +41,7 @@ export function formatCode(value: string, locale: string): string {
 }
 
 /** Calendar date in the user's zone. Farsi uses the Jalali calendar. */
-export function formatDate(date: Date, locale: string, timeZone = "Asia/Tehran"): string {
+export function formatDate(date: Date, locale: string, timeZone = DEFAULT_TIME_ZONE): string {
   return new Intl.DateTimeFormat(dateLocale(locale), {
     year: "numeric",
     month: "long",

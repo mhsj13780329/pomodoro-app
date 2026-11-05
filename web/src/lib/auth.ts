@@ -1,4 +1,5 @@
 import { betterAuth } from "better-auth";
+import { DEFAULT_TIME_ZONE } from "@/lib/calendar";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { APIError, createAuthMiddleware } from "better-auth/api";
 import { emailOTP } from "better-auth/plugins/email-otp";
@@ -58,7 +59,7 @@ export const auth = betterAuth({
       timezone: {
         type: "string",
         required: true,
-        defaultValue: "Asia/Tehran",
+        defaultValue: DEFAULT_TIME_ZONE,
       },
       // Server-owned. Phase 7 writes these after a payment. Clients cannot set them.
       proUntil: {

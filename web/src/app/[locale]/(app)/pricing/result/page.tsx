@@ -6,6 +6,7 @@ import { IconChevron } from "@/components/icons";
 import { Link } from "@/i18n/navigation";
 import { routing, type Locale } from "@/i18n/routing";
 import { getCurrentUser } from "@/lib/current-user";
+import { loadProStatus } from "@/lib/entitlement";
 import { formatCode, formatDate } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 
@@ -58,12 +59,7 @@ async function ResultBody({
         })
       : null;
 
-  const account = session
-    ? await prisma.user.findUnique({
-        where: { id: session.id },
-        select: { proUntil: true, proLifetime: true, timezone: true },
-      })
-    : null;
+  const pro = session ? await loadProStatus(session.id) : null;
 
   let title = t("unknownTitle");
   let body = t("unknownBody");
@@ -71,12 +67,10 @@ async function ResultBody({
     title = t("successTitle");
     const ref = payment.refId ? t("successRef", { ref: formatCode(payment.refId, locale) }) : "";
     const until =
-      payment.plan === "LIFETIME" || account?.proLifetime === true
+      payment.plan === "LIFETIME" || pro?.lifetime === true
         ? t("successLifetime")
-        : account?.proUntil
-          ? t("successUntil", {
-              date: formatDate(account.proUntil, locale, account.timezone || "Asia/Tehran"),
-            })
+        : pro?.until
+          ? t("successUntil", { date: formatDate(pro.until, locale, pro.timeZone) })
           : "";
     body = [ref, until].filter(Boolean).join("\n");
   } else if (payment?.status === "FAILED" && payment.errorCode == null) {

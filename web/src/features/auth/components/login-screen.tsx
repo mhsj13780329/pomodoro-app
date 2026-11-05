@@ -8,19 +8,12 @@ import { normalizeIranMobile, toAsciiDigits } from "@/lib/phone";
 import { authErrorKey, type AuthErrorKey } from "../errors";
 import { importGuestData } from "../import-guest";
 import { OtpInput } from "./otp-input";
+import { browserTimeZone } from "@/lib/calendar";
 
 type Method = "phone" | "email";
 type Step = "identifier" | "code";
 
 const RESEND_SEC = 60;
-
-function timeZone(): string {
-  try {
-    return Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Tehran";
-  } catch {
-    return "Asia/Tehran";
-  }
-}
 
 function emailOk(value: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
@@ -108,7 +101,7 @@ export function LoginScreen({ returnTo = null }: { returnTo?: string | null }) {
     setError(null);
     setBusy(true);
     try {
-      const profile = { locale, timezone: timeZone() };
+      const profile = { locale, timezone: browserTimeZone() };
       const result =
         method === "phone"
           ? await authClient.phoneNumber.verify({

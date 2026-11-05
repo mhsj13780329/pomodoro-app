@@ -2,7 +2,7 @@
 // streaks and heatmap levels. The server and the browser both call them, so a
 // pending offline session is counted the same way as a row that has already synced.
 
-import { addCivilDays, civilDate, civilKey, compareCivil, eachDay, parseCivil } from "./calendar";
+import { addCivilDays, civilDate, civilKey, compareCivil, eachDay, parseCivil } from "@/lib/calendar";
 
 export type StatSession = {
   id: string;

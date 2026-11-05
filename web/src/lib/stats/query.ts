@@ -3,7 +3,7 @@
 import "server-only";
 
 import { prisma } from "@/lib/prisma";
-import { isProActive, ProRequiredError, requirePro, type Entitlement } from "@/lib/pro";
+import { isProActive, type Entitlement } from "@/lib/pro";
 import { isLocale, type Locale } from "@/i18n/routing";
 import {
   addCivilDays,
@@ -15,7 +15,7 @@ import {
   parseCivil,
   startOfCalendarMonth,
   validTimeZone,
-} from "./calendar";
+} from "@/lib/calendar";
 import { groupByBucket, streaks, type StatSession } from "./aggregate";
 import type { StatsBreakdownRow, StatsResponse, StatsSession } from "./contract";
 import { decideRange } from "./range";
@@ -169,12 +169,7 @@ export async function readStats(userId: string, query: StatsQuery): Promise<Stat
   if (!asFree.ok && asFree.reason === "invalid") return { ok: false, status: 400, error: "invalid" };
   if (!asFree.ok) {
     // The free window, a breakdown and an export are refused here, not by hiding a button.
-    try {
-      requirePro(entitlement, query.now);
-    } catch (error) {
-      if (error instanceof ProRequiredError) return { ok: false, status: 403, error: "pro_required" };
-      throw error;
-    }
+    if (!pro) return { ok: false, status: 403, error: "pro_required" };
   }
 
   const allowed = asFree.ok

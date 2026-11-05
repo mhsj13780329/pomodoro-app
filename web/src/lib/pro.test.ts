@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ProRequiredError, isProActive, requirePro } from "./pro";
+import { ProRequiredError, isProActive, proStatus, requirePro } from "./pro";
 
 const NOW = Date.parse("2026-10-30T12:00:00Z");
 
@@ -36,5 +36,33 @@ describe("requirePro", () => {
 
   it("passes for a Pro user", () => {
     expect(() => requirePro({ proUntil: null, proLifetime: true }, NOW)).not.toThrow();
+  });
+});
+
+describe("proStatus", () => {
+  const DAY = 86_400_000;
+  it("warns inside 7 days, stays quiet after that window, and notes an ended plan", () => {
+    expect(proStatus({ proUntil: new Date(NOW + 3 * DAY), proLifetime: false }, NOW).banner).toBe("soon");
+    expect(proStatus({ proUntil: new Date(NOW + 7 * DAY), proLifetime: false }, NOW).banner).toBe("soon");
+    expect(proStatus({ proUntil: new Date(NOW + 8 * DAY), proLifetime: false }, NOW).banner).toBeNull();
+    expect(proStatus({ proUntil: new Date(NOW - DAY), proLifetime: false }, NOW).banner).toBe("expired");
+    expect(proStatus({ proUntil: null, proLifetime: false }, NOW).banner).toBeNull();
+  });
+
+  it("never shows a banner for lifetime, even with an old end date", () => {
+    expect(proStatus({ proUntil: new Date(NOW - DAY), proLifetime: true }, NOW)).toEqual({
+      active: true,
+      lifetime: true,
+      until: new Date(NOW - DAY),
+      banner: null,
+    });
+  });
+
+  it("agrees with isProActive and accepts an ISO string", () => {
+    const status = proStatus({ proUntil: "2027-01-01T00:00:00Z", proLifetime: null }, NOW);
+    expect(status.active).toBe(true);
+    expect(status.lifetime).toBe(false);
+    expect(status.until?.toISOString()).toBe("2027-01-01T00:00:00.000Z");
+    expect(proStatus({ proUntil: "not a date", proLifetime: false }, NOW)).toMatchObject({ active: false, until: null, banner: null });
   });
 });

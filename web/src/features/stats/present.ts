@@ -2,7 +2,7 @@
 // the timer chip and the stats page show. Guests never call the server.
 
 import { foldStats, isCountedFocus, type StatSession } from "@/lib/stats/aggregate";
-import { civilToday, validTimeZone } from "@/lib/stats/calendar";
+import { civilToday, validTimeZone } from "@/lib/calendar";
 import type { StatsBreakdownRow, StatsResponse } from "@/lib/stats/contract";
 
 export type FocusView = {

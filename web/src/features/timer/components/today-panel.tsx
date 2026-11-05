@@ -1,6 +1,6 @@
 import { useLocale, useTranslations } from "next-intl";
 import { formatDate, formatHourMinute, formatNumber } from "@/lib/format";
-import { localNoon, parseCivil } from "@/lib/stats/calendar";
+import { localNoon, parseCivil } from "@/lib/calendar";
 import { useFocusStats } from "@/features/stats/use-focus-stats";
 
 export function TodayPanel() {

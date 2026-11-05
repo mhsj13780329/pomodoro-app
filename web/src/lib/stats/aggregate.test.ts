@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { addCivilDays, civilKey } from "./calendar";
+import { addCivilDays, civilKey } from "@/lib/calendar";
 import {
   dailyAverageSec,
   foldStats,

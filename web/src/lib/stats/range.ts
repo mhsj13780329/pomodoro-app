@@ -2,7 +2,7 @@
 // the tests share one rule: last 7 local days, plus the current calendar month
 // through today. Anything older, or a breakdown, or an export, needs Pro.
 
-import { addCivilDays, civilKey, compareCivil, parseCivil } from "./calendar";
+import { addCivilDays, civilKey, compareCivil, parseCivil } from "@/lib/calendar";
 
 export type RangeDecision =
   | { ok: true; from: string; to: string }

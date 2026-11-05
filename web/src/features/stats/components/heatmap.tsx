@@ -6,7 +6,7 @@ import { IconChevron } from "@/components/icons";
 import { Link } from "@/i18n/navigation";
 import { formatDate } from "@/lib/format";
 import { heatLevel } from "@/lib/stats/aggregate";
-import { localNoon, type MonthCell } from "@/lib/stats/calendar";
+import { localNoon, type MonthCell } from "@/lib/calendar";
 import { dayNumber, monthTitle, weekdayNames } from "../labels";
 
 const HEAT = [

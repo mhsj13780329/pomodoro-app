@@ -4,7 +4,7 @@ import { decideTaskImport } from "@/lib/import/merge";
 import type { ImportTask } from "@/lib/import/contract";
 import { loadEntitlement } from "@/lib/entitlement";
 import { prisma } from "@/lib/prisma";
-import { ProRequiredError, requirePro, type Entitlement } from "@/lib/pro";
+import { isProActive } from "@/lib/pro";
 import {
   COUNTED_IDS_WINDOW_MS,
   FREE_ACTIVE_LIMIT,
@@ -73,17 +73,6 @@ export function serializeTask(row: TaskRow): TaskWire {
 
 function stamp(row: { id: string; updatedAt: Date; deletedAt: Date | null }): Stamped {
   return { id: row.id, updatedAt: iso(row.updatedAt), deletedAt: row.deletedAt ? iso(row.deletedAt) : null };
-}
-
-/** The single Pro check for a whole request. Everything below asks this, never the UI. */
-function proAllowed(entitlement: Entitlement, now: number): boolean {
-  try {
-    requirePro(entitlement, now);
-    return true;
-  } catch (error) {
-    if (error instanceof ProRequiredError) return false;
-    throw error;
-  }
 }
 
 /**
@@ -317,7 +306,7 @@ async function applyTask(
  * item does not stop the others.
  */
 export async function applyTaskBatch(userId: string, batch: TaskBatch, serverNow: number): Promise<TaskBatchResult> {
-  const pro = proAllowed(await loadEntitlement(userId), serverNow);
+  const pro = isProActive(await loadEntitlement(userId), serverNow);
   const out: Collector = { results: [], rows: { projects: [], tags: [], tasks: [] } };
   // Parents before their subtasks, so a subtask created in the same flush finds its parent.
   const tasks = [...batch.tasks].sort((a, b) => (a.parentId ? 1 : 0) - (b.parentId ? 1 : 0));
@@ -402,7 +391,7 @@ export async function readTasksBlock(userId: string, since: number, serverNow: n
     tasks: tasks.map(serializeTask),
     counts,
     countedIds: recent.map((row) => row.id),
-    pro: proAllowed(entitlement, serverNow),
+    pro: isProActive(entitlement, serverNow),
   };
 }
 

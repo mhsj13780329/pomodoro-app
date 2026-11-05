@@ -7,10 +7,9 @@ import { PricingForm } from "@/features/pricing/components/pricing-form";
 import { Link } from "@/i18n/navigation";
 import { routing, type Locale } from "@/i18n/routing";
 import { getCurrentUser } from "@/lib/current-user";
+import { loadProStatus } from "@/lib/entitlement";
 import { formatDate } from "@/lib/format";
 import { isPlanId, type PlanId } from "@/lib/payments/plans";
-import { isProActive } from "@/lib/pro";
-import { prisma } from "@/lib/prisma";
 
 const FEATURES = ["themes", "tasks", "stats", "sounds", "ambient", "notes"] as const;
 
@@ -66,19 +65,12 @@ async function PricingAccount({
   const t = await getTranslations("pricing");
 
   const session = await getCurrentUser();
-  const account = session
-    ? await prisma.user.findUnique({
-        where: { id: session.id },
-        select: { proUntil: true, proLifetime: true, timezone: true },
-      })
-    : null;
-  const lifetime = account?.proLifetime === true;
-  const until = account?.proUntil ?? null;
-  const pro = account ? isProActive({ proUntil: until, proLifetime: lifetime }) : false;
+  const pro = session ? await loadProStatus(session.id) : null;
+  const lifetime = pro?.lifetime === true;
   const status = lifetime
     ? t("statusLifetime")
-    : pro && until
-      ? t("statusUntil", { date: formatDate(until, locale, account?.timezone ?? "Asia/Tehran") })
+    : pro?.active && pro.until
+      ? t("statusUntil", { date: formatDate(pro.until, locale, pro.timeZone) })
       : t("statusFree");
 
   return (

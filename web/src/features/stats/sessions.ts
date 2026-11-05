@@ -23,10 +23,3 @@ export function toStatSession(session: {
   };
 }
 
-export function browserTimeZone(): string {
-  try {
-    return Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Tehran";
-  } catch {
-    return "Asia/Tehran";
-  }
-}

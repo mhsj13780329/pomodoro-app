@@ -8,6 +8,7 @@ import { routing, type Locale } from "@/i18n/routing";
 import { getCurrentUser } from "@/lib/current-user";
 import { formatCode, formatDate, formatNumber } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
+import { validTimeZone } from "@/lib/calendar";
 
 const PLAN_KEY = { MONTH: "month", YEAR: "year", LIFETIME: "lifetime" } as const;
 
@@ -58,7 +59,7 @@ async function PaymentList({ locale }: { locale: Locale }) {
   const t = await getTranslations("settings.payments");
   const plans = await getTranslations("pricing.plans");
   const price = await getTranslations("pricing");
-  const zone = account?.timezone || "Asia/Tehran";
+  const zone = validTimeZone(account?.timezone);
 
   if (rows.length === 0) {
     return <p className="mt-4 text-[15px] text-muted">{t("empty")}</p>;

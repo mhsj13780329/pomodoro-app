@@ -4,7 +4,7 @@ import { readStats, toStatsResponse } from "@/lib/stats/query";
 /**
  * Focus stats for the signed-in user.
  * A free account may ask for the last 7 local days and the current month.
- * Older ranges, the per-task breakdown, and CSV export are refused with requirePro().
+ * Older ranges, the per-task breakdown, and CSV export are refused on the server unless isProActive() (lib/pro).
  */
 export async function GET(request: Request) {
   const guard = await guardSync();
