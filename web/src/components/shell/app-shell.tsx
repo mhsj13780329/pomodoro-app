@@ -11,12 +11,14 @@ import {
   IconNavTimer,
 } from "@/components/icons";
 import { Link, usePathname } from "@/i18n/navigation";
+import { IconNavNotes } from "@/features/notes/icon";
 import { SyncRoot } from "@/features/auth/components/sync-root";
 import { TimerRuntime } from "@/features/timer/timer-runtime";
 
 const links = [
   { href: "/", labelKey: "timer", icon: IconNavTimer },
   { href: "/tasks", labelKey: "tasks", icon: IconNavTasks },
+  { href: "/notes", labelKey: "notes", icon: IconNavNotes },
   { href: "/stats", labelKey: "stats", icon: IconNavStats },
   { href: "/settings", labelKey: "settings", icon: IconNavSettings },
 ] as const;
