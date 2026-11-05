@@ -308,6 +308,10 @@
     "themeNight": "Tema noche",
     "themeForest": "Tema bosque",
     "themeSelected": "{name} (seleccionado)",
+    "planFree": "Plan gratuito",
+    "planPro": "Plan Pro",
+    "proFeatures": "Funciones Pro",
+    "moreThemes": "Más temas con Pro",
     "language": "Idioma",
     "payments": {
       "title": "Pagos",

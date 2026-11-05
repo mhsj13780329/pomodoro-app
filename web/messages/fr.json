@@ -304,6 +304,10 @@
     "themeNight": "Thème nuit",
     "themeForest": "Thème forêt",
     "themeSelected": "{name} (sélectionné)",
+    "planFree": "Offre gratuite",
+    "planPro": "Offre Pro",
+    "proFeatures": "Fonctions Pro",
+    "moreThemes": "Plus de thèmes avec Pro",
     "language": "Langue",
     "payments": {
       "title": "Paiements",

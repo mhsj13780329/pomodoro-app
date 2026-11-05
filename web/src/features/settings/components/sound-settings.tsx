@@ -2,10 +2,10 @@
 
 import { useTranslations } from "next-intl";
 import { useShallow } from "zustand/react/shallow";
-import { Link } from "@/i18n/navigation";
 import { useTimerStore, type SoundField } from "@/features/timer/store";
 import { useTimerRuntime } from "@/features/timer/timer-runtime";
 import { END_SOUNDS } from "@/lib/settings/catalog";
+import { cardClass } from "../card";
 
 const PHASE_FIELDS = [
   { field: "focusSoundId", label: "focus" },
@@ -34,10 +34,10 @@ export function SoundSettings({ pro = false }: { pro?: boolean }) {
   };
 
   return (
-    <section className="mt-3 rounded-card border border-line bg-surface p-3.5">
-      <h2 className="mb-1.5 text-base font-semibold">{t("title")}</h2>
-      <label className="flex min-h-[52px] items-center justify-between gap-3">
-        <span className="text-[15px]">{t("endSound")}</span>
+    <section className={cardClass}>
+      <h2 className="mb-1.5 text-base font-bold md:text-lg">{t("title")}</h2>
+      <label className="flex min-h-[52px] items-center justify-between gap-3 md:min-h-14">
+        <span className="text-[15px] md:text-base">{t("endSound")}</span>
         <select
           value={soundId}
           disabled={!ready}
@@ -51,32 +51,35 @@ export function SoundSettings({ pro = false }: { pro?: boolean }) {
           ))}
         </select>
       </label>
-      <h3 className="mt-1 border-t border-line pt-2 text-[13px] font-semibold text-muted">{t("perPhase")}</h3>
-      {pro ? null : (
-        <p className="mt-1 text-[13px] text-muted">
-          <Link href="/pricing" className="underline">
-            {t("perPhasePro")}
-          </Link>
-        </p>
-      )}
-      {PHASE_FIELDS.map(({ field, label }) => (
-        <label key={field} className="flex min-h-[52px] items-center justify-between gap-3">
-          <span className="text-[15px]">{t(label)}</span>
-          <select
-            value={phaseIds[field] ?? ""}
-            disabled={!pro || !ready}
-            onChange={(e) => change(field, e.target.value)}
-            className={selectClass}
-          >
-            <option value="">{t("sameAsEnd")}</option>
-            {END_SOUNDS.map((id) => (
-              <option key={id} value={id}>
-                {t(`names.${id}`)}
-              </option>
-            ))}
-          </select>
-        </label>
-      ))}
+      {/* Per-phase sounds are listed with the other Pro features for a free account. */}
+      {pro ? (
+        <>
+          <h3 className="mt-1 border-t border-line pt-2 text-[13px] font-semibold text-muted">
+            {t("perPhase")}
+          </h3>
+          {PHASE_FIELDS.map(({ field, label }) => (
+            <label
+              key={field}
+              className="flex min-h-[52px] items-center justify-between gap-3"
+            >
+              <span className="text-[15px]">{t(label)}</span>
+              <select
+                value={phaseIds[field] ?? ""}
+                disabled={!ready}
+                onChange={(e) => change(field, e.target.value)}
+                className={selectClass}
+              >
+                <option value="">{t("sameAsEnd")}</option>
+                {END_SOUNDS.map((id) => (
+                  <option key={id} value={id}>
+                    {t(`names.${id}`)}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ))}
+        </>
+      ) : null}
     </section>
   );
 }

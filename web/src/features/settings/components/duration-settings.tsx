@@ -6,6 +6,8 @@ import { useTimerStore } from "@/features/timer/store";
 import { useTimerRuntime } from "@/features/timer/timer-runtime";
 import { Link } from "@/i18n/navigation";
 import { presetOf, TIMER_PRESETS } from "@/lib/settings/catalog";
+import { IconLock } from "@/components/icons";
+import { cardClass } from "../card";
 
 const PRESET_LABEL = { classic: "presetClassic", long: "presetLong" } as const;
 
@@ -46,8 +48,7 @@ export function DurationSettings({ pro = false }: { pro?: boolean }) {
     longBreakEvery: every,
   });
   const isCustom = activePreset === null;
-  // A free account can keep custom lengths it already has (read-only) but not change them.
-  const showSteppers = pro || isCustom;
+  // A free account sees its lengths read-only; any custom lengths it already has stay as they are.
   const locked = !pro;
 
   const changePhase = (phase: Phase, current: number, delta: number) => {
@@ -64,10 +65,15 @@ export function DurationSettings({ pro = false }: { pro?: boolean }) {
     useTimerStore.getState().setLongBreakEvery(next);
   };
 
+  const pillClass = (selected: boolean) =>
+    `inline-flex min-h-11 cursor-pointer items-center gap-1.5 rounded-pill px-4 text-[13px] font-semibold md:min-h-12 md:px-5 md:text-sm ${
+      selected ? "border border-focus bg-focus text-white" : "border border-line-strong bg-transparent text-ink"
+    }`;
+
   return (
-    <section className="mt-3 rounded-card border border-line bg-surface p-3.5">
-      <h2 className="mb-1.5 text-base font-semibold">{t("title")}</h2>
-      <div className="mb-1.5 flex flex-wrap gap-2" role="group" aria-label={t("presets")}>
+    <section className={cardClass}>
+      <h2 className="mb-3 text-base font-bold md:text-lg">{t("title")}</h2>
+      <div className="mb-3 flex flex-wrap gap-2 md:gap-3" role="group" aria-label={t("presets")}>
         {TIMER_PRESETS.map((preset) => {
           const selected = activePreset === preset.id;
           return (
@@ -81,34 +87,23 @@ export function DurationSettings({ pro = false }: { pro?: boolean }) {
                 store.setDurations(preset.focusMin, preset.shortBreakMin, preset.longBreakMin);
                 store.setLongBreakEvery(preset.longBreakEvery);
               }}
-              className={`min-h-11 cursor-pointer rounded-pill px-3.5 text-[13px] font-semibold ${
-                selected ? "bg-focus text-white" : "border border-line-strong bg-transparent text-ink"
-              }`}
+              className={pillClass(selected)}
             >
               {t(PRESET_LABEL[preset.id])}
             </button>
           );
         })}
-        <button
-          type="button"
-          aria-pressed={isCustom}
-          disabled={locked}
-          className={`min-h-11 rounded-pill px-3.5 text-[13px] font-semibold disabled:opacity-60 ${
-            isCustom ? "bg-focus text-white" : "border border-line-strong bg-transparent text-ink"
-          }`}
-        >
-          {t("custom")}
-        </button>
-      </div>
-      {locked ? (
-        <p className="mb-1.5 text-[13px] text-muted">
-          <Link href="/pricing" className="underline">
-            {t("customPro")}
+        {locked ? (
+          <Link href="/pricing" aria-label={`${t("custom")}: ${t("customPro")}`} className={pillClass(isCustom)}>
+            <IconLock className="size-3.5" />
+            {t("custom")}
           </Link>
-        </p>
-      ) : null}
-      {showSteppers ? (
-        <>
+        ) : (
+          <button type="button" aria-pressed={isCustom} className={pillClass(isCustom)}>
+            {t("custom")}
+          </button>
+        )}
+      </div>
       <Stepper
         label={t("focus")}
         value={t("minutes", { count: focus })}
@@ -149,8 +144,6 @@ export function DurationSettings({ pro = false }: { pro?: boolean }) {
         decreaseDisabled={every <= 1 || locked}
         increaseDisabled={every >= 20 || locked}
       />
-        </>
-      ) : null}
     </section>
   );
 }
@@ -166,25 +159,25 @@ function Stepper(props: {
   increaseDisabled: boolean;
 }) {
   return (
-    <div className="flex min-h-[52px] items-center justify-between gap-3 border-t border-line">
-      <span className="text-[15px]">{props.label}</span>
-      <div className="flex items-center gap-1">
+    <div className="flex min-h-[60px] items-center justify-between gap-3 border-t border-line md:min-h-[68px]">
+      <span className="text-[15px] md:text-base">{props.label}</span>
+      <div className="flex items-center gap-1 md:gap-2">
         <button
           type="button"
           aria-label={props.decreaseLabel}
           disabled={props.decreaseDisabled}
           onClick={props.onDecrease}
-          className="flex size-11 cursor-pointer items-center justify-center rounded-full border border-line-strong bg-transparent disabled:cursor-default disabled:opacity-40"
+          className="flex size-11 cursor-pointer items-center justify-center rounded-full border border-line-strong bg-transparent disabled:cursor-default disabled:opacity-35"
         >
           <MinusIcon />
         </button>
-        <span className="min-w-[76px] text-center text-[15px] font-semibold">{props.value}</span>
+        <span className="min-w-[84px] text-center text-[15px] font-bold md:min-w-[120px] md:text-base">{props.value}</span>
         <button
           type="button"
           aria-label={props.increaseLabel}
           disabled={props.increaseDisabled}
           onClick={props.onIncrease}
-          className="flex size-11 cursor-pointer items-center justify-center rounded-full border border-line-strong bg-transparent disabled:cursor-default disabled:opacity-40"
+          className="flex size-11 cursor-pointer items-center justify-center rounded-full border border-line-strong bg-transparent disabled:cursor-default disabled:opacity-35"
         >
           <PlusIcon />
         </button>

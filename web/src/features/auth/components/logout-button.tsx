@@ -28,7 +28,7 @@ export function LogoutButton() {
           router.refresh();
         })();
       }}
-      className="mt-3 min-h-11 cursor-pointer rounded-control border border-line-strong bg-surface px-4 text-[15px] font-semibold text-ink"
+      className="min-h-11 cursor-pointer rounded-pill border border-line-strong bg-transparent px-4 text-sm font-semibold text-ink"
     >
       {t("logout")}
     </button>

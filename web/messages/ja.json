@@ -278,6 +278,10 @@
     "themeNight": "ナイトテーマ",
     "themeForest": "フォレストテーマ",
     "themeSelected": "{name}（選択中）",
+    "planFree": "無料プラン",
+    "planPro": "Proプラン",
+    "proFeatures": "Pro機能",
+    "moreThemes": "Proでテーマを追加",
     "language": "言語",
     "payments": {
       "title": "支払い",

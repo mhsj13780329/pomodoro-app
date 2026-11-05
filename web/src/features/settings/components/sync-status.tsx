@@ -10,6 +10,7 @@ function guestView(): SyncView {
   return GUEST_VIEW;
 }
 
+/** A " · label" suffix for a line of account text; nothing for a guest. */
 export function SyncStatus() {
   const t = useTranslations("settings.sync");
   const status = useSyncExternalStore(subscribeSync, syncView, guestView);
@@ -20,9 +21,5 @@ export function SyncStatus() {
       : status.kind === "syncing"
         ? t("syncing")
         : t("synced");
-  return (
-    <p className="mt-2 text-xs text-muted" role="status">
-      {label}
-    </p>
-  );
+  return <span role="status">{` · ${label}`}</span>;
 }

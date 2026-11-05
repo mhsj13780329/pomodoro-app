@@ -1,10 +1,25 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useLayoutEffect, useSyncExternalStore, type CSSProperties } from "react";
+import {
+  useLayoutEffect,
+  useSyncExternalStore,
+  type CSSProperties,
+} from "react";
 import { touchSyncedSettings } from "@/features/timer/store";
+import { IconLock } from "@/components/icons";
 import { Link } from "@/i18n/navigation";
-import { applyTheme, currentTheme, isFreeTheme, publishTheme, serverTheme, subscribeTheme, THEMES, type ThemeId } from "../theme";
+import { cardClass } from "../card";
+import {
+  applyTheme,
+  currentTheme,
+  isFreeTheme,
+  publishTheme,
+  serverTheme,
+  subscribeTheme,
+  THEMES,
+  type ThemeId,
+} from "../theme";
 
 const swatchClass: Record<ThemeId, string> = {
   warm: "bg-swatch-warm",
@@ -45,7 +60,6 @@ function readAppliedTheme() {
 
 export function ThemePicker({ pro = false }: { pro?: boolean }) {
   const t = useTranslations("settings");
-  const tTasks = useTranslations("tasks");
   // Server and the first client render both say warm. The cookie is applied
   // before paint, then this catches up so the pressed swatch matches.
   const theme = useSyncExternalStore(subscribeTheme, currentTheme, serverTheme);
@@ -63,54 +77,59 @@ export function ThemePicker({ pro = false }: { pro?: boolean }) {
     slate: t("themeSlate"),
     sand: t("themeSand"),
   };
-  const hasLockedThemes = !pro && THEMES.some((id) => !isFreeTheme(id));
+  // A free account sees the free themes, plus a Pro theme it still has selected after Pro ended.
+  const shown = pro
+    ? THEMES
+    : THEMES.filter((id) => isFreeTheme(id) || id === theme);
 
   return (
-    <div>
-      <div className="flex flex-wrap gap-x-3.5 gap-y-4" role="group" aria-label={t("theme")}>
-        {THEMES.map((id) => {
-          const selected = theme === id;
-          const name = names[id];
-          // A stored Pro theme stays selected after Pro ends; only switching to one is locked.
-          const locked = !pro && !isFreeTheme(id) && !selected;
-          const proTheme = !isFreeTheme(id);
-          return (
-            <div key={id} className="relative">
+    <section className={cardClass}>
+      <h2 className="mb-3 text-base font-bold md:mb-4 md:text-lg">
+        {t("theme")}
+      </h2>
+      <div className="flex flex-wrap items-center gap-3 md:gap-4">
+        <div
+          className="flex flex-wrap gap-3 md:gap-4"
+          role="group"
+          aria-label={t("theme")}
+        >
+          {shown.map((id) => {
+            const selected = theme === id;
+            const name = names[id];
+            return (
               <button
+                key={id}
                 type="button"
                 aria-pressed={selected}
                 aria-label={selected ? t("themeSelected", { name }) : name}
-                disabled={locked}
                 onClick={() => {
                   applyTheme(id);
                   touchSyncedSettings();
                 }}
-                className={`flex size-[52px] items-center justify-center rounded-full border-[3px] p-0 ${
-                  locked ? "cursor-not-allowed opacity-60" : "cursor-pointer"
-                } ${
-                  selected ? "border-ink shadow-[inset_0_0_0_5px_var(--swatch)]" : "border-line"
+                className={`flex size-[52px] cursor-pointer items-center justify-center rounded-full border-[3px] p-0 md:size-14 ${
+                  selected
+                    ? "border-ink shadow-[inset_0_0_0_5px_var(--swatch)]"
+                    : "border-line"
                 } ${swatchClass[id]}`}
                 style={{ "--swatch": swatchVar[id] } as CSSProperties}
               >
-                <span className={`size-6 rounded-full ${dotClass[id]}`} />
-              </button>
-              {proTheme ? (
                 <span
-                  aria-hidden="true"
-                  className="pointer-events-none absolute -bottom-2.5 left-1/2 -translate-x-1/2 rounded-full bg-pro-bg px-1.5 text-[10px] font-bold leading-4 text-pro-ink"
-                >
-                  {t("proBadge")}
-                </span>
-              ) : null}
-            </div>
-          );
-        })}
+                  className={`size-6 rounded-full md:size-7 ${dotClass[id]}`}
+                />
+              </button>
+            );
+          })}
+        </div>
+        {pro ? null : (
+          <Link
+            href="/pricing"
+            className="inline-flex min-h-11 basis-full items-center gap-2 rounded-pill text-sm font-bold text-pro-ink md:min-h-12 md:basis-auto md:bg-pro-bg md:px-5"
+          >
+            <IconLock className="size-4" />
+            {t("moreThemes")}
+          </Link>
+        )}
       </div>
-      {hasLockedThemes ? (
-        <Link href="/pricing" className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold underline">
-          {tTasks("upgrade")}
-        </Link>
-      ) : null}
-    </div>
+    </section>
   );
 }

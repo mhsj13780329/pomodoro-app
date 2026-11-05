@@ -296,6 +296,10 @@
     "themeNight": "تم شب",
     "themeForest": "تم جنگل",
     "themeSelected": "{name} (انتخاب‌شده)",
+    "planFree": "طرح رایگان",
+    "planPro": "طرح پرو",
+    "proFeatures": "امکانات پرو",
+    "moreThemes": "تم‌های بیشتر با پرو",
     "language": "زبان",
     "payments": {
       "title": "پرداخت‌ها",
@@ -321,7 +325,7 @@
       "presets": "پیش‌تنظیم‌ها",
       "presetClassic": "۲۵ / ۵ / ۱۵",
       "presetLong": "۵۰ / ۱۰ / ۲۰",
-      "custom": "سفارشی",
+      "custom": "دلخواه",
       "customPro": "زمان‌بندی سفارشی ویژهٔ اشتراک حرفه‌ای است."
     },
     "sync": {

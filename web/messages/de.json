@@ -300,6 +300,10 @@
     "themeNight": "Nacht-Thema",
     "themeForest": "Wald-Thema",
     "themeSelected": "{name} (ausgewählt)",
+    "planFree": "Kostenloser Plan",
+    "planPro": "Pro-Plan",
+    "proFeatures": "Pro-Funktionen",
+    "moreThemes": "Mehr Themes mit Pro",
     "language": "Sprache",
     "payments": {
       "title": "Zahlungen",

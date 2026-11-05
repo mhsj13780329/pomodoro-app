@@ -2,6 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
+import { cardClass } from "@/features/settings/card";
 
 /** Chromium's install prompt event; not in lib.dom. */
 type InstallPromptEvent = Event & {
@@ -66,7 +67,7 @@ export function InstallGuide() {
   }
 
   return (
-    <section className="mt-3 rounded-card border border-line bg-surface p-3.5">
+    <section className={cardClass}>
       <h2 className="mb-1 text-base font-semibold">{t("title")}</h2>
       <p className="mb-2.5 text-sm text-muted">{t("description")}</p>
       {mode === "prompt" ? (

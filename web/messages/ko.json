@@ -281,6 +281,10 @@
     "themeNight": "나이트 테마",
     "themeForest": "포레스트 테마",
     "themeSelected": "{name} (선택됨)",
+    "planFree": "무료 플랜",
+    "planPro": "Pro 플랜",
+    "proFeatures": "Pro 기능",
+    "moreThemes": "Pro로 더 많은 테마",
     "language": "언어",
     "payments": {
       "title": "결제",
