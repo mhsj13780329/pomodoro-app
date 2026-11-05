@@ -4,6 +4,7 @@ import { decideNoteWrite, type GateNote } from "./gate";
 const note = (patch: Partial<GateNote> = {}): GateNote => ({
   title: "t",
   body: "b",
+  taskId: null,
   updatedAt: "2026-11-01T10:00:00.000Z",
   deletedAt: null,
   ...patch,
@@ -19,6 +20,12 @@ describe("decideNoteWrite", () => {
   it("stops a free account creating or editing", () => {
     expect(decideNoteWrite(null, note(), { pro: false })).toBe("pro_required");
     expect(decideNoteWrite(note(), note({ ...later, body: "x" }), { pro: false })).toBe("pro_required");
+  });
+
+  it("treats a task link change as a content edit", () => {
+    const T = "22222222-2222-4222-8222-222222222222";
+    expect(decideNoteWrite(note(), note({ ...later, taskId: T }), { pro: true })).toBe("update");
+    expect(decideNoteWrite(note(), note({ ...later, taskId: T }), { pro: false })).toBe("pro_required");
   });
 
   it("always lets a note be deleted", () => {

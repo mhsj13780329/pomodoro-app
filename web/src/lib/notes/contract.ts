@@ -14,6 +14,8 @@ export const noteWireSchema = z
     id: z.uuid(),
     title: z.string().max(NOTE_TITLE_MAX),
     body: z.string().max(NOTE_BODY_MAX),
+    /** Optional link to one task. Missing on rows saved before linking existed, so it defaults to null. */
+    taskId: z.uuid().nullable().default(null),
     createdAt: isoTime,
     /** Client edit time. Last write wins on this value. */
     updatedAt: isoTime,

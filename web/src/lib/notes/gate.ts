@@ -2,7 +2,7 @@ import type { NoteWire } from "./contract";
 
 // The rules for who may write a note. Pure, so the server and the tests share one copy.
 
-export type GateNote = Pick<NoteWire, "title" | "body" | "updatedAt" | "deletedAt">;
+export type GateNote = Pick<NoteWire, "title" | "body" | "taskId" | "updatedAt" | "deletedAt">;
 
 /**
  * insert       - new note (Pro).

@@ -18,13 +18,14 @@ export function serializeNote(row: Note): NoteWire {
     id: row.id,
     title: row.title,
     body: row.body,
+    taskId: row.taskId,
     createdAt: iso(row.createdAt),
     updatedAt: iso(row.updatedAt),
     deletedAt: row.deletedAt ? iso(row.deletedAt) : null,
   };
 }
 
-const stampOf = (row: Note) => ({ title: row.title, body: row.body, updatedAt: iso(row.updatedAt), deletedAt: row.deletedAt ? iso(row.deletedAt) : null });
+const stampOf = (row: Note) => ({ title: row.title, body: row.body, taskId: row.taskId, updatedAt: iso(row.updatedAt), deletedAt: row.deletedAt ? iso(row.deletedAt) : null });
 
 /** Same per-user lock the tasks batch takes, so two requests from one user run one after the other. */
 async function lockUser(tx: Tx, userId: string) {
@@ -66,6 +67,7 @@ export async function applyNoteBatch(userId: string, batch: NoteBatch, serverNow
               userId,
               title: incoming.title,
               body: incoming.body,
+              taskId: incoming.taskId,
               createdAt: new Date(incoming.createdAt),
               updatedAt,
             },
@@ -73,13 +75,13 @@ export async function applyNoteBatch(userId: string, batch: NoteBatch, serverNow
         } else if (!stored) {
           // A delete for a note the server never saw: keep only an empty tombstone so no content is stored.
           await tx.note.create({
-            data: { id: incoming.id, userId, title: "", body: "", createdAt: new Date(incoming.createdAt), updatedAt, deletedAt },
+            data: { id: incoming.id, userId, title: "", body: "", taskId: null, createdAt: new Date(incoming.createdAt), updatedAt, deletedAt },
           });
         } else {
           // The WHERE makes "only if still older and live" atomic with the write.
           // A delete never changes content, so a free account cannot edit text through it.
           const data =
-            decision === "delete" ? { updatedAt, deletedAt } : { title: incoming.title, body: incoming.body, updatedAt };
+            decision === "delete" ? { updatedAt, deletedAt } : { title: incoming.title, body: incoming.body, taskId: incoming.taskId, updatedAt };
           const updated = await tx.note.updateMany({
             where: { id: incoming.id, userId, deletedAt: null, updatedAt: { lt: updatedAt } },
             data,

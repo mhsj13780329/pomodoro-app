@@ -280,6 +280,8 @@ model Note {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   title           String
   body            String
+  // Plain id, no relation: tasks are soft-deleted and sync independently, so it may dangle.
+  taskId          String?
   createdAt       DateTime  @default(now())
   // Client edit time: last write wins on it. Not @updatedAt.
   updatedAt       DateTime  @default(now())
