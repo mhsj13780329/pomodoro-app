@@ -14,8 +14,10 @@
     },
     {
       "name": "web-prod",
-      "runtimeExecutable": "npm",
+      "runtimeExecutable": "env",
       "runtimeArgs": [
+        "BETTER_AUTH_URL=http://localhost:3100",
+        "npm",
         "--prefix",
         "web",
         "run",
