@@ -8,6 +8,8 @@ import { defaultTimer, displaySeconds, remainingMs, type Phase, type TimerCore }
 import { requestNotificationPermission, unlockAudio } from "../notify";
 import { useTimerStore } from "../store";
 import { useTimerRuntime } from "../timer-runtime";
+import { useTasksStore } from "@/features/tasks/store";
+import { AmbientPlayer } from "@/features/ambient/ambient-player";
 import { AutoStartSwitches } from "./auto-start-switches";
 import { CycleDots } from "./cycle-dots";
 import { PhaseTabs } from "./phase-tabs";
@@ -26,6 +28,8 @@ const phaseColor: Record<Phase, string> = {
 };
 
 export function TimerScreen() {
+  // Display only; the server re-checks Pro on every settings write.
+  const pro = useTasksStore((s) => s.pro);
   const locale = useLocale();
   const t = useTranslations("timer");
   const nav = useTranslations("nav");
@@ -136,6 +140,7 @@ export function TimerScreen() {
               }}
             />
           </div>
+          <AmbientPlayer pro={pro} />
         </section>
 
         <div className="hidden min-w-0 flex-1 flex-col gap-6 md:flex">

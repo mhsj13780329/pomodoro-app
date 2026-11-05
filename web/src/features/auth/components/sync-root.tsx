@@ -4,13 +4,17 @@ import { useEffect } from "react";
 import { importGuestData } from "@/features/auth/import-guest";
 import { applyTheme, currentTheme } from "@/features/settings/theme";
 import { hydrateTasks, useTasksStore } from "@/features/tasks/store";
-import { useTimerStore } from "@/features/timer/store";
+import { touchSyncedSettings, useTimerStore } from "@/features/timer/store";
+import { subscribeAmbientEdits, useAmbientStore } from "@/features/ambient/store";
 import { authClient } from "@/lib/auth-client";
 import { startSync, type SettingsSnapshot, type SyncHost } from "@/lib/sync/engine";
 
 function clampMinute(sec: number): number {
   return Math.min(24 * 60, Math.max(1, Math.round(sec / 60)));
 }
+
+// An ambient pick is a settings edit: stamp it and push like the other settings.
+subscribeAmbientEdits(() => touchSyncedSettings());
 
 function snapshot(): SettingsSnapshot {
   const state = useTimerStore.getState();
@@ -24,13 +28,22 @@ function snapshot(): SettingsSnapshot {
     autoStartShortBreak: state.autoStartShortBreak,
     autoStartLongBreak: state.autoStartLongBreak,
     themeId: currentTheme(),
+    soundId: state.soundId,
+    focusSoundId: state.focusSoundId,
+    shortBreakSoundId: state.shortBreakSoundId,
+    longBreakSoundId: state.longBreakSoundId,
+    ambientId: useAmbientStore.getState().ambientId,
+    ambientMix: useAmbientStore.getState().ambientMix,
   };
 }
 
 /** The sync engine talks to the stores only through this object. */
 const host: SyncHost = {
   snapshot,
-  adopt: (state, options) => useTimerStore.getState().adoptServer(state, options),
+  adopt: (state, options) => {
+    useTimerStore.getState().adoptServer(state, options);
+    useAmbientStore.getState().adopt({ ambientId: state.settings.ambientId, ambientMix: state.settings.ambientMix });
+  },
   applyTheme,
   tasks: {
     since: () => useTasksStore.getState().since(),
