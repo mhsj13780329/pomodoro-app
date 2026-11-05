@@ -276,3 +276,19 @@ textarea:focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
+
+/* Farsi stats screen: half-size text. */
+:lang(fa) .stats-screen {
+  --text-xs: 0.375rem;
+  --text-sm: 0.4375rem;
+  --text-base: 0.5rem;
+  --text-2xl: 0.75rem;
+  --text-3xl: 0.9375rem;
+}
+:lang(fa) .stats-screen .text-\[12px\] { font-size: 6px; }
+:lang(fa) .stats-screen .text-\[13px\] { font-size: 6.5px; }
+:lang(fa) .stats-screen .text-\[15px\] { font-size: 7.5px; }
+:lang(fa) .stats-screen .text-\[22px\] { font-size: 11px; }
+@media (min-width: 48rem) {
+  :lang(fa) .stats-screen .md\:text-\[26px\] { font-size: 13px; }
+}

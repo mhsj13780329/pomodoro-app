@@ -22,7 +22,7 @@ export function WeekBars({
   const slot = width / Math.max(days.length, 1);
 
   return (
-    <section className="rounded-card border border-line bg-surface p-3.5 md:rounded-panel md:p-5">
+    <section className="stats-screen rounded-card border border-line bg-surface p-3.5 md:rounded-panel md:p-5">
       <h2 className="mb-2 text-base font-semibold">{t("weekChart")}</h2>
       <svg
         viewBox={`0 0 ${width} ${height}`}
