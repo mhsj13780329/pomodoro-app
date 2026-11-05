@@ -5,6 +5,7 @@ All files are CC0 (public domain). Credit is not required but is given here.
 | File | Source | Author |
 |---|---|---|
 | brown-noise.m4a | Generated for this app | — |
+| white-noise.m4a, pink-noise.m4a, ocean.m4a, river.m4a | Generated for this app (synthesized noise; ocean and river are shaped noise approximations) | — |
 | rain.m4a | [Rain (loopable)](https://opengameart.org/content/rain-loopable), loop 1 | Ylmir |
 | fire.m4a | [Fireplace sound loop](https://opengameart.org/content/fireplace-sound-loop) | PagDev |
 | forest.m4a | [Forest Ambience](https://opengameart.org/content/forest-ambience) | TinyWorlds |

@@ -38,8 +38,8 @@ export const END_SOUNDS = ["default", "bell", "digital", "soft", "none"] as cons
 export type EndSoundId = (typeof END_SOUNDS)[number];
 
 /** Self-hosted loops in public/audio/ambient/<id>.<ext>. */
-export const FREE_AMBIENT = "brown-noise";
-export const AMBIENT_TRACKS = [FREE_AMBIENT, "rain", "forest", "fire", "wind"] as const;
+export const FREE_AMBIENT = "rain";
+export const AMBIENT_TRACKS = [FREE_AMBIENT, "brown-noise", "white-noise", "pink-noise", "ocean", "fire", "wind", "forest", "river"] as const;
 export type AmbientId = (typeof AMBIENT_TRACKS)[number];
 export const MAX_MIX_TRACKS = 4;
 

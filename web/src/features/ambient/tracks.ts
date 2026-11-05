@@ -7,4 +7,8 @@ export const AMBIENT_URLS: Record<AmbientId, string> = {
   forest: "/audio/ambient/forest.m4a",
   fire: "/audio/ambient/fire.m4a",
   wind: "/audio/ambient/wind.m4a",
+  "white-noise": "/audio/ambient/white-noise.m4a",
+  "pink-noise": "/audio/ambient/pink-noise.m4a",
+  ocean: "/audio/ambient/ocean.m4a",
+  river: "/audio/ambient/river.m4a",
 };

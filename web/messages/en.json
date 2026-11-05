@@ -114,12 +114,7 @@
     "title": "Focus stats",
     "pro": "Pro",
     "rangeLabel": "Range",
-    "ranges": {
-      "today": "Today",
-      "week": "7 days",
-      "month": "Month",
-      "year": "Year"
-    },
+    "ranges": { "today": "Today", "week": "7 days", "month": "Month", "year": "Year" },
     "focusTime": "Focus time",
     "sessions": "Sessions done",
     "best": "Best streak",
@@ -217,7 +212,9 @@
         "pro": "Full history, year heatmap, breakdown and export"
       },
       "notepad": { "label": "Notepad", "free": "Not included", "pro": "Included" },
-      "ambient": { "label": "Ambient sound", "free": "1 sound", "pro": "Full library" }
+      "ambient": { "label": "Ambient sound", "free": "1 sound", "pro": "Full library" },
+      "lead": "The basics stay free. Pro is for people who use the timer every day.",
+      "retention": "If Pro ends, nothing is deleted. Your projects, tags, subtasks and notes stay readable. Only creating and editing Pro items is locked until you renew."
     },
     "errors": {
       "gateway": "The payment did not start. Try again.",
@@ -248,6 +245,34 @@
     "remind": {
       "expiring": "Pro ends in three days. Open the Pro page when you want to renew.",
       "expired": "Pro ended yesterday. You can turn it back on whenever you like."
+    },
+    "plansTitle": "Choose a plan",
+    "selected": "Selected plan",
+    "oneOff": "One payment, no auto-renewal.",
+    "secure": "Secure payment through Zarinpal",
+    "faq": {
+      "title": "Common questions",
+      "renew": {
+        "q": "Does it renew by itself?",
+        "a": "No. Each plan is one payment and nothing is taken from your card automatically. We remind you before Pro ends."
+      },
+      "after": {
+        "q": "What happens when Pro ends?",
+        "a": "No data is deleted. Pro items stay readable, and only creating or editing them is locked until you renew. Free features work as before."
+      },
+      "lifetime": {
+        "q": "What does Lifetime mean?",
+        "a": "You pay once and keep Pro for good, with no renewal and no reminders."
+      },
+      "pay": {
+        "q": "How do I pay?",
+        "a": "Payment goes through the secure Zarinpal gateway with Shetab cards. Pro turns on right after a successful payment."
+      }
+    },
+    "cta": {
+      "title": "Ready to take focus seriously?",
+      "body": "Pick your plan above and turn it on in seconds.",
+      "button": "Choose a plan"
     }
   },
   "settings": {
@@ -262,12 +287,7 @@
       "title": "Payments",
       "empty": "No payments yet.",
       "ref": "Reference: {ref}",
-      "status": {
-        "PENDING": "Pending",
-        "PAID": "Paid",
-        "FAILED": "Failed",
-        "EXPIRED": "Expired"
-      }
+      "status": { "PENDING": "Pending", "PAID": "Paid", "FAILED": "Failed", "EXPIRED": "Expired" }
     },
     "durations": {
       "title": "Durations",
@@ -360,6 +380,8 @@
   },
   "ambient": {
     "title": "Ambient sound",
+    "nowPlaying": "Playing: {name}",
+    "stopped": "Stopped",
     "play": "Play",
     "pause": "Pause",
     "volume": "{name} volume",
@@ -373,7 +395,11 @@
       "rain": "Rain",
       "forest": "Forest",
       "fire": "Fireplace",
-      "wind": "Wind"
+      "wind": "Wind",
+      "white-noise": "White noise",
+      "pink-noise": "Pink noise",
+      "ocean": "Ocean",
+      "river": "River"
     }
   },
   "notes": {

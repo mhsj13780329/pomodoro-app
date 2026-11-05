@@ -13,6 +13,7 @@ import {
 import { Link, usePathname } from "@/i18n/navigation";
 import { IconNavNotes } from "@/features/notes/icon";
 import { SyncRoot } from "@/features/auth/components/sync-root";
+import { useTasksStore } from "@/features/tasks/store";
 import { TimerRuntime } from "@/features/timer/timer-runtime";
 
 const links = [
@@ -43,6 +44,9 @@ export function AppShell({ children }: { children: ReactNode }) {
 function DesktopNav() {
   const pathname = usePathname();
   const t = useTranslations("nav");
+  const tasks = useTranslations("tasks");
+  const pricing = useTranslations("pricing");
+  const pro = useTasksStore((st) => st.pro);
   return (
     <aside className="hidden w-60 shrink-0 flex-col gap-1.5 border-e border-line bg-surface px-4 py-5 md:flex">
       <div className="mb-3 flex min-h-12 items-center gap-2.5 px-2">
@@ -70,6 +74,13 @@ function DesktopNav() {
           );
         })}
       </nav>
+      <div className="min-h-6 flex-1" />
+      {!pro && (
+        <Link href="/pricing" className="flex flex-col gap-1 rounded-sheet bg-pro-bg p-3.5 text-pro-ink">
+          <span className="text-[15px] font-bold">{tasks("upgrade")}</span>
+          <span className="text-[13px] leading-relaxed">{pricing("headline")}</span>
+        </Link>
+      )}
     </aside>
   );
 }

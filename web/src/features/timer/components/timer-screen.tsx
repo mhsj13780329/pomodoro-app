@@ -98,8 +98,8 @@ export function TimerScreen() {
         <StreakChip />
       </div>
 
-      <div className="mt-3 flex flex-col md:mt-6 md:flex-row md:items-start md:gap-6">
-        <section className="flex flex-col md:min-w-0 md:flex-[1.6] md:items-center md:gap-6 md:rounded-feature md:border md:border-line md:bg-surface md:p-8">
+      <div className="mt-3 flex flex-col md:mt-6 md:grid md:grid-cols-[1.6fr_1fr] md:grid-rows-[auto_auto_auto_1fr] md:items-start md:gap-6">
+        <section className="flex flex-col md:col-start-1 md:row-span-4 md:row-start-1 md:min-w-0 md:items-center md:gap-6 md:rounded-feature md:border md:border-line md:bg-surface md:p-8">
           <div className="mt-3 w-full md:mt-0 md:max-w-[460px]">
             <PhaseTabs
               phase={timer.phase}
@@ -140,12 +140,16 @@ export function TimerScreen() {
               }}
             />
           </div>
-          <AmbientPlayer pro={pro} />
         </section>
 
-        <div className="hidden min-w-0 flex-1 flex-col gap-6 md:flex">
+        <div className="hidden min-w-0 md:col-start-2 md:block">
           <TodayPanel />
+        </div>
+        <div className="hidden min-w-0 md:col-start-2 md:block">
           <TaskList />
+        </div>
+        <div className="mt-4 md:col-start-2 md:mt-0">
+          <AmbientPlayer pro={pro} />
         </div>
       </div>
       <div className="flex-1 md:hidden" />

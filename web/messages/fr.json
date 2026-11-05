@@ -19,7 +19,11 @@
     "longHint": "Respire profondément",
     "started": "C’est parti",
     "ready": "Prêt",
-    "phases": { "focus": "Concentration", "shortBreak": "Pause courte", "longBreak": "Pause longue" }
+    "phases": {
+      "focus": "Concentration",
+      "shortBreak": "Pause courte",
+      "longBreak": "Pause longue"
+    }
   },
   "streak": "{count, plural, one {# jour d’affilée} other {# jours d’affilée}}",
   "today": {
@@ -118,12 +122,7 @@
     "title": "Statistiques de concentration",
     "pro": "Pro",
     "rangeLabel": "Période",
-    "ranges": {
-      "today": "Aujourd'hui",
-      "week": "7 jours",
-      "month": "Mois",
-      "year": "Année"
-    },
+    "ranges": { "today": "Aujourd'hui", "week": "7 jours", "month": "Mois", "year": "Année" },
     "focusTime": "Temps de concentration",
     "sessions": "Sessions terminées",
     "best": "Meilleure série",
@@ -221,7 +220,9 @@
         "pro": "Historique complet, carte annuelle, détail et export"
       },
       "notepad": { "label": "Bloc-notes", "free": "Non inclus", "pro": "Inclus" },
-      "ambient": { "label": "Son d’ambiance", "free": "1 son", "pro": "Bibliothèque complète" }
+      "ambient": { "label": "Son d’ambiance", "free": "1 son", "pro": "Bibliothèque complète" },
+      "lead": "L'essentiel reste gratuit. Pro s'adresse à ceux qui utilisent le minuteur chaque jour.",
+      "retention": "Si Pro se termine, rien n'est supprimé. Vos projets, étiquettes, sous-tâches et notes restent lisibles. Seuls la création et la modification d'éléments Pro sont bloquées jusqu'au renouvellement."
     },
     "errors": {
       "gateway": "Le paiement n’a pas démarré. Réessayez.",
@@ -252,6 +253,34 @@
     "remind": {
       "expiring": "Pro se termine dans trois jours. Ouvrez la page Pro pour le renouveler.",
       "expired": "Pro s’est terminé hier. Vous pouvez le réactiver quand vous voulez."
+    },
+    "plansTitle": "Choisissez un forfait",
+    "selected": "Forfait choisi",
+    "oneOff": "Un seul paiement, sans renouvellement automatique.",
+    "secure": "Paiement sécurisé via Zarinpal",
+    "faq": {
+      "title": "Questions fréquentes",
+      "renew": {
+        "q": "Est-ce que ça se renouvelle tout seul ?",
+        "a": "Non. Chaque forfait est un paiement unique et rien n'est prélevé automatiquement sur votre carte. Nous vous prévenons avant la fin de Pro."
+      },
+      "after": {
+        "q": "Que se passe-t-il à la fin de Pro ?",
+        "a": "Aucune donnée n'est supprimée. Les éléments Pro restent lisibles ; seuls leur création et leur modification sont bloquées jusqu'au renouvellement. Les fonctions gratuites fonctionnent comme avant."
+      },
+      "lifetime": {
+        "q": "Que signifie À vie ?",
+        "a": "Vous payez une fois et gardez Pro pour toujours, sans renouvellement ni rappel."
+      },
+      "pay": {
+        "q": "Comment payer ?",
+        "a": "Le paiement passe par la passerelle sécurisée Zarinpal avec les cartes Shetab. Pro s'active juste après un paiement réussi."
+      }
+    },
+    "cta": {
+      "title": "Prêt à prendre la concentration au sérieux ?",
+      "body": "Choisissez votre forfait ci-dessus et activez-le en quelques secondes.",
+      "button": "Choisir un forfait"
     }
   },
   "settings": {
@@ -266,12 +295,7 @@
       "title": "Paiements",
       "empty": "Aucun paiement pour l’instant.",
       "ref": "Référence : {ref}",
-      "status": {
-        "PENDING": "En attente",
-        "PAID": "Payé",
-        "FAILED": "Échoué",
-        "EXPIRED": "Expiré"
-      }
+      "status": { "PENDING": "En attente", "PAID": "Payé", "FAILED": "Échoué", "EXPIRED": "Expiré" }
     },
     "durations": {
       "title": "Durées",
@@ -364,6 +388,8 @@
   },
   "ambient": {
     "title": "Son d’ambiance",
+    "nowPlaying": "Lecture : {name}",
+    "stopped": "Arrêté",
     "play": "Lire",
     "pause": "Pause",
     "volume": "Volume de {name}",
@@ -377,7 +403,11 @@
       "rain": "Pluie",
       "forest": "Forêt",
       "fire": "Cheminée",
-      "wind": "Vent"
+      "wind": "Vent",
+      "white-noise": "Bruit blanc",
+      "pink-noise": "Bruit rose",
+      "ocean": "Océan",
+      "river": "Rivière"
     }
   },
   "notes": {

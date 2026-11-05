@@ -61,8 +61,8 @@ describe("gateSettingsPatch for a free account", () => {
   });
 
   it("allows the free ambient track and drops others", () => {
-    expect(gateSettingsPatch(stored, { ambientId: "brown-noise" }, false).rejected).toEqual([]);
-    expect(gateSettingsPatch(stored, { ambientId: "rain" }, false).rejected).toEqual(["ambientId"]);
+    expect(gateSettingsPatch(stored, { ambientId: "rain" }, false).rejected).toEqual([]);
+    expect(gateSettingsPatch(stored, { ambientId: "brown-noise" }, false).rejected).toEqual(["ambientId"]);
     expect(gateSettingsPatch(stored, { ambientId: null }, false).rejected).toEqual([]);
   });
 

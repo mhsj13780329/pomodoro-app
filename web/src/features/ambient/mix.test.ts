@@ -2,9 +2,9 @@ import { describe, expect, it } from "vitest";
 import { clampVolume, isMixFull, isSelectable, playlistOf, selectableTracks, setMixVolume, toggleInMix } from "./mix";
 
 describe("selectable tracks", () => {
-  it("lets free users pick only brown noise", () => {
-    expect(selectableTracks(false)).toEqual(["brown-noise"]);
-    expect(isSelectable("rain", false)).toBe(false);
+  it("lets free users pick only rain", () => {
+    expect(selectableTracks(false)).toEqual(["rain"]);
+    expect(isSelectable("brown-noise", false)).toBe(false);
   });
   it("lets Pro pick every known track and nothing else", () => {
     expect(isSelectable("rain", true)).toBe(true);

@@ -138,14 +138,3 @@ Each phase ends with something that works. Commit to git at the end of every ste
 
 **Start in parallel with development (they take weeks):** buy the domain → apply for Enamad → open Zarinpal merchant account → sign up with an SMS provider (needs approved message templates).
 
-## 7. Cursor workflow
-
-- Open the **project root** in Cursor. Rules live in `.cursor/rules/`; they're applied automatically.
-- **One feature per chat.** Start a new chat when a phase/feature is done or the chat gets long.
-- For anything bigger than a small fix, ask the agent to **plan first** (Plan mode, or "propose a plan, don't write code yet"), read the plan, then let it implement.
-- Reference context explicitly: `@docs/PLAN.md`, specific files, and official docs.
-- **Review every diff.** If you don't understand backend code, ask "explain this like I'm new to backends" before accepting. You're learning the backend as you go; that's the point.
-- Run the app and test after each step. When something breaks, paste the **exact error** into the chat.
-- **Tests:** from `web/`, `npm test` runs the unit tests. With Postgres running, `npm run test:e2e` runs the Playwright sync tests (two signed-in browsers on one account, about 4 minutes because two tests wait out a real one-minute focus). The first run needs `npx playwright install chromium`. The suite starts its own dev server on port 3100 (folder `.next/e2e`, so `npm run dev` can keep running) with `E2E_OTP=1`, which lets the tests read login codes from `GET /api/test/otp`. That route answers 404 in every other mode. Test accounts are `e2e-…@example.com` and are deleted after each test.
-- `git commit` after each working step, so any bad AI change is one `git restore` away.
-- Never paste real secrets into chat; keep them in `web/.env.local` (git-ignored).

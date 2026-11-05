@@ -23,7 +23,7 @@ export default async function PricingPage({
   const t = await getTranslations("pricing");
 
   return (
-    <div className="mx-auto flex w-full max-w-md flex-col pb-6">
+    <div className="mx-auto flex w-full max-w-[1080px] flex-col pb-10">
       <div className="flex min-h-11 items-center">
         <Link
           href="/"
@@ -35,13 +35,13 @@ export default async function PricingPage({
         </Link>
       </div>
 
-      <div className="mt-1">
+      <div className="mx-auto mt-1 max-w-[760px] text-center md:mt-8">
         <div className="inline-flex min-h-7 items-center gap-1.5 rounded-pill bg-pro-bg px-3 text-[13px] font-semibold text-pro-ink">
           <IconCrown className="size-3.5" />
           <span>{t("badge")}</span>
         </div>
-        <h1 className="mt-2.5 text-[26px] font-bold leading-snug">{t("headline")}</h1>
-        <p className="mt-1 text-[15px] leading-relaxed text-muted">{t("lead")}</p>
+        <h1 className="mt-4 text-[26px] font-bold leading-snug md:text-[34px]">{t("headline")}</h1>
+        <p className="mt-3 text-base leading-loose text-muted">{t("lead")}</p>
       </div>
 
       {/* The plan query and the signed-in row are request data. Suspense lets the rest of the page render. */}
@@ -75,7 +75,7 @@ async function PricingAccount({
 
   return (
     <>
-      <p className="mt-3 text-[15px] font-semibold">{status}</p>
+      <p className="mt-4 text-center text-[15px] font-semibold">{status}</p>
       {lifetime ? (
         <LifetimeThanks />
       ) : (
@@ -88,7 +88,7 @@ async function PricingAccount({
 async function LifetimeThanks() {
   const t = await getTranslations("pricing");
   return (
-    <div className="mt-4">
+    <div className="mx-auto mt-4 w-full max-w-md">
       <section className="rounded-card border border-line bg-surface p-3.5">
         <h2 className="text-base font-semibold">{t("thanksTitle")}</h2>
         <p className="mt-1 text-[15px] leading-relaxed text-muted">{t("thanksBody")}</p>
