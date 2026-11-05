@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { importGuestData } from "@/features/auth/import-guest";
+import { usePushSubscription } from "@/features/push/use-push-subscription";
 import { applyTheme, currentTheme } from "@/features/settings/theme";
 import { hydrateTasks, useTasksStore } from "@/features/tasks/store";
 import { touchSyncedSettings, useTimerStore } from "@/features/timer/store";
@@ -58,6 +59,7 @@ const host: SyncHost = {
 export function SyncRoot() {
   const { data, isPending } = authClient.useSession();
   const userId = data?.user.id;
+  usePushSubscription(isPending ? undefined : userId);
 
   // Guests need their saved tasks too, so this does not wait for a session.
   useEffect(() => {

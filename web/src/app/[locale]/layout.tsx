@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import "@fontsource-variable/vazirmatn";
 import { hasLocale } from "next-intl";
@@ -6,6 +6,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { APP_NAME } from "@/config/brand";
+import { SwRegister } from "@/features/pwa/sw-register";
 import { ThemeSync } from "@/features/settings/components/theme-sync";
 import { THEME_COOKIE } from "@/features/settings/theme";
 import { dirFor, routing } from "@/i18n/routing";
@@ -21,8 +22,19 @@ export async function generateMetadata(props: LayoutProps<"/[locale]">): Promise
   return {
     title: APP_NAME,
     description: t("description", { appName: APP_NAME }),
+    applicationName: APP_NAME,
+    icons: {
+      icon: [{ url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" }],
+      apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+    },
+    appleWebApp: { capable: true, title: APP_NAME, statusBarStyle: "default" },
   };
 }
+
+// The "warm" theme ground color (globals.css).
+export const viewport: Viewport = {
+  themeColor: "#f6f1e9",
+};
 
 export default async function LocaleLayout({ children, params }: LayoutProps<"/[locale]">) {
   const { locale } = await params;
@@ -45,6 +57,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
           {`(function(){try{var m=document.cookie.match(/(?:^|; )${THEME_COOKIE}=([^;]*)/);var t=m&&decodeURIComponent(m[1]);if(t==="warm"||t==="night"||t==="forest")document.documentElement.setAttribute("data-theme",t)}catch(e){}})();`}
         </Script>
         <ThemeSync />
+        <SwRegister />
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
       </body>
     </html>

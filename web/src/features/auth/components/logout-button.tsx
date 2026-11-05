@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { unsubscribePush } from "@/features/push/use-push-subscription";
 import { useTasksStore } from "@/features/tasks/store";
 import { useTimerStore } from "@/features/timer/store";
 import { useRouter } from "@/i18n/navigation";
@@ -19,6 +20,7 @@ export function LogoutButton() {
         void (async () => {
           const waiting = await flushForLogout();
           if (waiting > 0 && !window.confirm(sync("logoutWarning", { count: waiting }))) return;
+          await unsubscribePush(); // needs the session cookie, so before signOut
           await wipeDevice();
           useTimerStore.getState().resetGuest();
           useTasksStore.getState().reset();

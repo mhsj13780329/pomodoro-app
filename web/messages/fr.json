@@ -1,5 +1,19 @@
 {
   "meta": { "description": "Un minuteur {appName} pour rester concentré" },
+  "install": {
+    "title": "Ajouter à l'écran d'accueil",
+    "description": "Installez l'app pour ouvrir le minuteur en plein écran, comme n'importe quelle autre app.",
+    "button": "Installer l'app",
+    "iosStepShare": "Touchez le bouton Partager dans la barre de Safari.",
+    "iosStepAdd": "Choisissez Sur l'écran d'accueil, puis confirmez.",
+    "iosStepOpen": "Ouvrez l'app depuis son icône sur l'écran d'accueil.",
+    "iosNotifications": "Sur iOS, les notifications de fin de phase ne fonctionnent que si l'app est installée depuis l'écran d'accueil."
+  },
+  "offline": {
+    "title": "Vous êtes hors ligne",
+    "body": "Cette page n'a pas encore été enregistrée. Vérifiez votre connexion et réessayez.",
+    "retry": "Réessayer"
+  },
   "nav": {
     "menu": "Menu principal",
     "timer": "Minuteur",

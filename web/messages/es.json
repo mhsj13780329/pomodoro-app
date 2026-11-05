@@ -1,5 +1,19 @@
 {
   "meta": { "description": "Un temporizador {appName} para concentrarte" },
+  "install": {
+    "title": "Añadir a la pantalla de inicio",
+    "description": "Instala la app para abrir el temporizador a pantalla completa, como cualquier otra app.",
+    "button": "Instalar app",
+    "iosStepShare": "Toca el botón Compartir en la barra de Safari.",
+    "iosStepAdd": "Elige Añadir a pantalla de inicio y confirma.",
+    "iosStepOpen": "Abre la app desde su icono en la pantalla de inicio.",
+    "iosNotifications": "En iOS, los avisos al final de cada fase solo funcionan si la app está instalada desde la pantalla de inicio."
+  },
+  "offline": {
+    "title": "Sin conexión",
+    "body": "Esta página aún no se ha guardado. Revisa tu conexión e inténtalo de nuevo.",
+    "retry": "Reintentar"
+  },
   "nav": {
     "menu": "Menú principal",
     "timer": "Temporizador",

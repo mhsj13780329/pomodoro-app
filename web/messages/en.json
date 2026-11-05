@@ -1,5 +1,19 @@
 {
   "meta": { "description": "A {appName} timer for staying focused" },
+  "install": {
+    "title": "Add to Home Screen",
+    "description": "Install the app to open the timer full screen, like any other app.",
+    "button": "Install app",
+    "iosStepShare": "Tap the Share button in Safari's toolbar.",
+    "iosStepAdd": "Choose Add to Home Screen, then confirm.",
+    "iosStepOpen": "Open the app from its Home Screen icon.",
+    "iosNotifications": "On iOS, notifications at the end of a phase only work when the app is installed from the Home Screen."
+  },
+  "offline": {
+    "title": "You are offline",
+    "body": "This page has not been saved yet. Check your connection and try again.",
+    "retry": "Try again"
+  },
   "nav": {
     "menu": "Main menu",
     "timer": "Timer",

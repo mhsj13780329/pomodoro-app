@@ -1,5 +1,19 @@
 {
   "meta": { "description": "집중을 위한 {appName} 타이머" },
+  "install": {
+    "title": "홈 화면에 추가",
+    "description": "앱을 설치하면 다른 앱처럼 타이머를 전체 화면으로 열 수 있습니다.",
+    "button": "앱 설치",
+    "iosStepShare": "Safari 도구 막대에서 공유 버튼을 누르세요.",
+    "iosStepAdd": "홈 화면에 추가를 선택하고 확인하세요.",
+    "iosStepOpen": "홈 화면 아이콘으로 앱을 여세요.",
+    "iosNotifications": "iOS에서는 각 단계가 끝날 때의 알림이 홈 화면에서 설치한 앱에서만 작동합니다."
+  },
+  "offline": {
+    "title": "오프라인 상태입니다",
+    "body": "이 페이지는 아직 저장되지 않았습니다. 연결을 확인하고 다시 시도하세요.",
+    "retry": "다시 시도"
+  },
   "nav": {
     "menu": "주 메뉴",
     "timer": "타이머",

@@ -114,6 +114,16 @@ export function notifyPhase(title: string, body: string): void {
   try {
     new Notification(title, { body });
   } catch {
-    // A few browsers only allow notifications from a service worker. Phase 9 covers that.
+    // Android Chrome only allows notifications from a service worker.
+    void showFromServiceWorker(title, body);
   }
+}
+
+function showFromServiceWorker(title: string, body: string): Promise<void> {
+  if (typeof navigator === "undefined" || !("serviceWorker" in navigator)) return Promise.resolve();
+  return navigator.serviceWorker.ready
+    .then((registration) => registration.showNotification(title, { body, icon: "/icons/icon-192.png" }))
+    .catch(() => {
+      // No worker (dev mode, or not registered yet): the chime still plays.
+    });
 }

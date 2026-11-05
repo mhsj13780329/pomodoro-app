@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withSerwist } from "@serwist/turbopack";
 import createNextIntlPlugin from "next-intl/plugin";
 
 const nextConfig: NextConfig = {
@@ -9,6 +10,10 @@ const nextConfig: NextConfig = {
   // Prisma's generated client loads a query-compiler wasm that should not be bundled.
   serverExternalPackages: ["@prisma/client", "@prisma/adapter-pg", "pg"],
   partialPrefetching: true,
+  // The service worker is built by app/serwist/[path]/route.ts; the browser asks for /sw.js.
+  async rewrites() {
+    return [{ source: "/sw.js", destination: "/serwist/sw.js" }];
+  },
   turbopack: {
     rules: {
       "*.css": {
@@ -21,4 +26,4 @@ const nextConfig: NextConfig = {
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
-export default withNextIntl(nextConfig);
+export default withSerwist(withNextIntl(nextConfig));

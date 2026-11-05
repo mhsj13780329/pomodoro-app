@@ -37,6 +37,7 @@ model User {
   notes               Note[]
   payments            Payment[]
   proReminders        ProReminder[]
+  pushSubscriptions   PushSubscription[]
 
   @@unique([email])
   @@unique([phoneNumber])
@@ -334,4 +335,19 @@ model OtpRateLimit {
   key         String   @id
   windowStart DateTime
   count       Int
+}
+
+// A browser's Web Push endpoint. The server pushes the phase end here while the page is frozen.
+model PushSubscription {
+  id            String    @id @default(uuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  endpoint      String    @unique
+  p256dh        String
+  auth          String
+  userAgent     String?
+  createdAt     DateTime  @default(now())
+  lastSuccessAt DateTime?
+
+  @@index([userId])
 }

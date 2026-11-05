@@ -9,6 +9,7 @@ import { DurationSettings } from "@/features/settings/components/duration-settin
 import { LanguageSwitcher } from "@/features/settings/components/language-switcher";
 import { SoundSettings } from "@/features/settings/components/sound-settings";
 import { ThemePicker } from "@/features/settings/components/theme-picker";
+import { InstallGuide } from "@/features/pwa/install-guide";
 import { routing } from "@/i18n/routing";
 
 export default async function SettingsPage({ params }: PageProps<"/[locale]">) {
@@ -30,6 +31,7 @@ export default async function SettingsPage({ params }: PageProps<"/[locale]">) {
       <Suspense fallback={<ProSettings pro={false} themeTitle={t("theme")} />}>
         <LoadedProSettings themeTitle={t("theme")} />
       </Suspense>
+      <InstallGuide />
       <section className="mt-3 rounded-card border border-line bg-surface p-3.5">
         <h2 className="mb-2.5 text-base font-semibold">{t("language")}</h2>
         <LanguageSwitcher />

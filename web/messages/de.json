@@ -1,5 +1,19 @@
 {
   "meta": { "description": "Ein {appName}-Timer für konzentriertes Arbeiten" },
+  "install": {
+    "title": "Zum Home-Bildschirm hinzufügen",
+    "description": "Installiere die App, um den Timer im Vollbild wie jede andere App zu öffnen.",
+    "button": "App installieren",
+    "iosStepShare": "Tippe in der Safari-Leiste auf die Schaltfläche Teilen.",
+    "iosStepAdd": "Wähle Zum Home-Bildschirm und bestätige.",
+    "iosStepOpen": "Öffne die App über das Symbol auf dem Home-Bildschirm.",
+    "iosNotifications": "Unter iOS funktionieren Benachrichtigungen am Ende einer Phase nur, wenn die App vom Home-Bildschirm aus installiert wurde."
+  },
+  "offline": {
+    "title": "Du bist offline",
+    "body": "Diese Seite wurde noch nicht gespeichert. Prüfe deine Verbindung und versuche es erneut.",
+    "retry": "Erneut versuchen"
+  },
   "nav": {
     "menu": "Hauptmenü",
     "timer": "Timer",
