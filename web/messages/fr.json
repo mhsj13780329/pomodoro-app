@@ -27,6 +27,7 @@
     "pause": "Pause",
     "reset": "Recommencer",
     "skip": "Passer",
+    "skipConfirm": { "title": "Passer cette session ?", "focus": "Passer le focus ? Cette session ne comptera pas.", "break": "Passer cette pause ?", "confirm": "Oui, passer", "cancel": "Annuler" },
     "autoStart": "Démarrage automatique",
     "session": "Session {current, number} sur {total, number}",
     "shortHint": "C’est l’heure de la pause",

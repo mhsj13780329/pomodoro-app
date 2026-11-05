@@ -27,6 +27,7 @@
     "pause": "一時停止",
     "reset": "最初から",
     "skip": "スキップ",
+    "skipConfirm": { "title": "このセッションをスキップしますか？", "focus": "集中をスキップしますか？このセッションは記録されません。", "break": "この休憩をスキップしますか？", "confirm": "スキップする", "cancel": "キャンセル" },
     "autoStart": "自動スタート",
     "session": "セッション {current, number} / {total, number}",
     "shortHint": "休憩の時間です",

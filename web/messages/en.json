@@ -27,6 +27,7 @@
     "pause": "Pause",
     "reset": "Reset",
     "skip": "Skip",
+    "skipConfirm": { "title": "Skip this session?", "focus": "Skip focus? This session won't count.", "break": "Skip this break?", "confirm": "Yes, skip", "cancel": "Cancel" },
     "autoStart": "Auto-start",
     "session": "Session {current, number} of {total, number}",
     "shortHint": "Time for a break",

@@ -27,6 +27,7 @@
     "pause": "Pausa",
     "reset": "Reiniciar",
     "skip": "Saltar",
+    "skipConfirm": { "title": "¿Saltar esta sesión?", "focus": "¿Saltar el enfoque? Esta sesión no contará.", "break": "¿Saltar este descanso?", "confirm": "Sí, saltar", "cancel": "Cancelar" },
     "autoStart": "Inicio automático",
     "session": "Sesión {current, number} de {total, number}",
     "shortHint": "Hora de descansar",

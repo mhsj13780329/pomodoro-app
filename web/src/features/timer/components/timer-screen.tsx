@@ -1,6 +1,7 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import { useState, type CSSProperties } from "react";
+import { Dialog } from "@/components/dialog";
 import { useLocale, useTranslations } from "next-intl";
 import { APP_NAME } from "@/config/brand";
 import { formatClock } from "@/lib/format";
@@ -37,6 +38,8 @@ export function TimerScreen() {
   const { ready, now, sync, refresh } = useTimerRuntime();
   const timer = ready ? stored : defaultTimer;
   const clockNow = ready ? now : 0;
+  // What waits on the skip prompt: the skip button, or a phase tab.
+  const [pending, setPending] = useState<{ type: "skip" } | { type: "select"; phase: Phase } | null>(null);
   const sessionLabel = (state: TimerCore) => {
     const total = state.longBreakEvery;
     const current =
@@ -105,7 +108,7 @@ export function TimerScreen() {
               phase={timer.phase}
               onSelect={(phase) => {
                 if (phase === timer.phase) return;
-                act(() => useTimerStore.getState().selectPhase(phase));
+                setPending({ type: "select", phase });
               }}
             />
           </div>
@@ -120,7 +123,7 @@ export function TimerScreen() {
               running={timer.status === "running"}
               onToggle={onToggle}
               onReset={() => act(() => useTimerStore.getState().reset())}
-              onSkip={() => act(() => useTimerStore.getState().skip())}
+              onSkip={() => setPending({ type: "skip" })}
             />
           </div>
           <div className="mt-3.5 md:mt-0">
@@ -153,6 +156,36 @@ export function TimerScreen() {
         </div>
       </div>
       <div className="flex-1 md:hidden" />
+      <Dialog open={pending !== null} onClose={() => setPending(null)} title={t("skipConfirm.title")}>
+        <p className="text-sm text-muted">
+          {timer.phase === "focus" ? t("skipConfirm.focus") : t("skipConfirm.break")}
+        </p>
+        <div className="mt-2 flex justify-end gap-2">
+          <button
+            type="button"
+            onClick={() => setPending(null)}
+            className="min-h-11 cursor-pointer rounded-pill border border-line-strong bg-transparent px-4 text-sm font-semibold text-ink"
+          >
+            {t("skipConfirm.cancel")}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              const action = pending;
+              setPending(null);
+              if (!action) return;
+              act(() => {
+                const state = useTimerStore.getState();
+                if (action.type === "skip") state.skip();
+                else state.selectPhase(action.phase);
+              });
+            }}
+            className="min-h-11 cursor-pointer rounded-pill border-0 bg-[var(--phase)] px-4 text-sm font-semibold text-white"
+          >
+            {t("skipConfirm.confirm")}
+          </button>
+        </div>
+      </Dialog>
     </div>
   );
 }

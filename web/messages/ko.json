@@ -27,6 +27,7 @@
     "pause": "일시정지",
     "reset": "처음부터",
     "skip": "건너뛰기",
+    "skipConfirm": { "title": "이 세션을 건너뛸까요?", "focus": "집중을 건너뛸까요? 이 세션은 기록되지 않습니다.", "break": "이 휴식을 건너뛸까요?", "confirm": "건너뛰기", "cancel": "취소" },
     "autoStart": "자동 시작",
     "session": "세션 {current, number} / {total, number}",
     "shortHint": "쉬는 시간이에요",

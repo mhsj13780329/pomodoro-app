@@ -211,6 +211,7 @@ export async function clickAndSync(page: Page, name: string) {
     { timeout: 15_000 },
   );
   await page.getByRole("button", { name, exact: true }).click();
+  if (name === "Skip") await page.getByRole("button", { name: "Yes, skip", exact: true }).click();
   const response = await answered;
   expect(response.status()).toBe(200);
 }

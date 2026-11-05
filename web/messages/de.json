@@ -27,6 +27,7 @@
     "pause": "Pause",
     "reset": "Neu starten",
     "skip": "Überspringen",
+    "skipConfirm": { "title": "Diese Sitzung überspringen?", "focus": "Fokus überspringen? Diese Sitzung zählt nicht.", "break": "Diese Pause überspringen?", "confirm": "Ja, überspringen", "cancel": "Abbrechen" },
     "autoStart": "Automatisch starten",
     "session": "Sitzung {current, number} von {total, number}",
     "shortHint": "Zeit für eine Pause",

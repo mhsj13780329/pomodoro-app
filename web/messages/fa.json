@@ -27,6 +27,7 @@
     "pause": "توقف",
     "reset": "از اول",
     "skip": "رد کردن",
+    "skipConfirm": { "title": "از این جلسه رد شوید؟", "focus": "از تمرکز رد شوید؟ این جلسه حساب نمی‌شود.", "break": "از این استراحت رد شوید؟", "confirm": "بله، رد شو", "cancel": "لغو" },
     "autoStart": "شروع خودکار",
     "session": "جلسه {current, number} از {total, number}",
     "shortHint": "وقت استراحت",
