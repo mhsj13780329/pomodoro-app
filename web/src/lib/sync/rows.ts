@@ -5,6 +5,10 @@ import { canComplete } from "@/lib/timer/remaining";
 import { commandToAction } from "@/lib/timer/commands";
 import { applyTimerAction, type PhaseSettings, type TransitionTimer } from "@/lib/timer/transitions";
 import { mergeSettings, type SyncSettings } from "./settings-lww";
+import { loadEntitlement } from "@/lib/entitlement";
+import { isProActive } from "@/lib/pro";
+import { gateSettingsPatch, type GatedField } from "@/lib/settings/gate";
+import { THEME_IDS } from "@/lib/settings/catalog";
 import {
   dbPhaseToWire,
   dbStatusToWire,
@@ -30,6 +34,10 @@ const DEFAULT_SETTINGS = {
   autoStartLongBreak: true,
   themeId: "warm",
   soundId: "default",
+  ambientId: null,
+  focusSoundId: null,
+  shortBreakSoundId: null,
+  longBreakSoundId: null,
   notificationsOn: true,
 };
 
@@ -100,6 +108,30 @@ function payload(serverNow: number, settings: Settings, timer: ActiveTimer): Syn
   };
 }
 
+/** Reads the stored Json defensively: anything that is not a clean list of {id, volume} is no mix. */
+function parseAmbientMix(value: unknown): { id: string; volume: number }[] | null {
+  if (!Array.isArray(value)) return null;
+  const out: { id: string; volume: number }[] = [];
+  for (const entry of value) {
+    if (
+      entry == null ||
+      typeof entry !== "object" ||
+      typeof (entry as { id?: unknown }).id !== "string" ||
+      typeof (entry as { volume?: unknown }).volume !== "number" ||
+      !Number.isFinite((entry as { volume: number }).volume)
+    ) {
+      return null;
+    }
+    const { id, volume } = entry as { id: string; volume: number };
+    out.push({ id, volume: Math.min(1, Math.max(0, volume)) });
+  }
+  return out.length > 0 ? out : null;
+}
+
+function serializeThemeId(id: string): SettingsWire["themeId"] {
+  return (THEME_IDS as readonly string[]).includes(id) ? (id as SettingsWire["themeId"]) : "warm";
+}
+
 function serializeSettings(row: Settings): SettingsWire {
   return {
     focusMin: row.focusMin,
@@ -109,9 +141,13 @@ function serializeSettings(row: Settings): SettingsWire {
     autoStartFocus: row.autoStartFocus,
     autoStartShortBreak: row.autoStartShortBreak,
     autoStartLongBreak: row.autoStartLongBreak,
-    themeId: row.themeId === "night" || row.themeId === "forest" ? row.themeId : "warm",
+    themeId: serializeThemeId(row.themeId),
     soundId: row.soundId,
     ambientId: row.ambientId,
+    focusSoundId: row.focusSoundId,
+    shortBreakSoundId: row.shortBreakSoundId,
+    longBreakSoundId: row.longBreakSoundId,
+    ambientMix: parseAmbientMix(row.ambientMix),
     notificationsOn: row.notificationsOn,
     updatedAt: row.updatedAt.toISOString(),
   };
@@ -145,6 +181,10 @@ function toSyncSettings(row: Settings): SyncSettings {
     themeId: row.themeId,
     soundId: row.soundId,
     ambientId: row.ambientId,
+    focusSoundId: row.focusSoundId,
+    shortBreakSoundId: row.shortBreakSoundId,
+    longBreakSoundId: row.longBreakSoundId,
+    ambientMix: parseAmbientMix(row.ambientMix),
     notificationsOn: row.notificationsOn,
     updatedAt: row.updatedAt.getTime(),
   };
@@ -269,7 +309,15 @@ export async function writeSettings(userId: string, patch: SettingsPatch, server
 
   const stored = toSyncSettings(row);
   const { clientUpdatedAt, ...fields } = patch;
-  const merged = mergeSettings(stored, Date.parse(clientUpdatedAt), fields);
+  const clientAt = Date.parse(clientUpdatedAt);
+  // A stale patch changes nothing, so there is nothing to refuse (and no need to load Pro).
+  let gated: typeof fields = fields;
+  let rejected: GatedField[] = [];
+  if (clientAt > stored.updatedAt) {
+    const pro = isProActive(await loadEntitlement(userId), serverNow);
+    ({ patch: gated, rejected } = gateSettingsPatch(stored, fields, pro));
+  }
+  const merged = mergeSettings(stored, clientAt, gated);
   if (merged !== stored) {
     const editedAt = new Date(merged.updatedAt);
     await prisma.$executeRaw`
@@ -285,6 +333,10 @@ export async function writeSettings(userId: string, patch: SettingsPatch, server
         "themeId" = ${merged.themeId},
         "soundId" = ${merged.soundId},
         "ambientId" = ${merged.ambientId},
+        "focusSoundId" = ${merged.focusSoundId},
+        "shortBreakSoundId" = ${merged.shortBreakSoundId},
+        "longBreakSoundId" = ${merged.longBreakSoundId},
+        "ambientMix" = ${merged.ambientMix == null ? null : JSON.stringify(merged.ambientMix)}::jsonb,
         "notificationsOn" = ${merged.notificationsOn},
         "updatedAt" = ${editedAt}
       WHERE "userId" = ${userId} AND "updatedAt" < ${editedAt}
@@ -296,7 +348,8 @@ export async function writeSettings(userId: string, patch: SettingsPatch, server
     prisma.activeTimer.findUnique({ where: { userId } }),
   ]);
   if (!settings || !activeTimer) throw new Error("Sync rows were missing after a settings write");
-  return payload(serverNow, settings, activeTimer);
+  const state = payload(serverNow, settings, activeTimer);
+  return rejected.length > 0 ? { ...state, rejected } : state;
 }
 
 /**

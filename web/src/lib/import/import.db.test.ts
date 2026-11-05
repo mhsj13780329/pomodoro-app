@@ -86,7 +86,7 @@ function body(parts: { settings?: object; sessions?: object[]; tasks?: object[] 
 
 describe("importGuest", () => {
   it("copies settings only when the account has none", async () => {
-    const fresh = await makeUser();
+    const fresh = await makeUser({ proLifetime: true });
     const first = await importGuest(fresh.id, body(), NOW);
     expect(first.importedSettings).toBe(true);
     expect((await prisma.settings.findUnique({ where: { userId: fresh.id } }))?.focusMin).toBe(40);
@@ -100,6 +100,13 @@ describe("importGuest", () => {
     const kept = await importGuest(owner.id, body(), NOW);
     expect(kept.importedSettings).toBe(false);
     expect((await prisma.settings.findUnique({ where: { userId: owner.id } }))?.focusMin).toBe(30);
+  });
+
+  it("gives a free account the 25/5/15 preset and a free theme instead of Pro settings", async () => {
+    const free = await makeUser();
+    await importGuest(free.id, body({ settings: { ...guestSettings, themeId: "ocean" } }), NOW);
+    const row = await prisma.settings.findUnique({ where: { userId: free.id } });
+    expect(row).toMatchObject({ focusMin: 25, shortBreakMin: 5, longBreakMin: 15, longBreakEvery: 4, themeId: "warm" });
   });
 
   it("inserts nothing new when run twice", async () => {

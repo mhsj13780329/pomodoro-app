@@ -3,7 +3,7 @@
 import type { TaskBatch } from "@/lib/tasks/contract";
 import { adoptServerCounts, NO_COUNTS, noteUploaded, pomodoroCounts, type ServerCounts } from "@/lib/tasks/counts";
 import type { SessionsResponse, SyncResponse, TaskBatchResponse } from "./api";
-import type { QueuedCommand, SessionInput, SettingsPatch, SyncState } from "./contract";
+import type { QueuedCommand, SessionInput, SettingsPatch, SettingsWire, SyncState } from "./contract";
 import { emptyTaskQueue } from "./db";
 import type {
   QueuedAction,
@@ -121,7 +121,7 @@ export class FakeServer implements SyncTransport {
   version = 1;
   taskId: string | null = null;
   settingsUpdatedAt = "2020-01-01T00:00:00.000Z";
-  themeId: "warm" | "night" | "forest" = "warm";
+  themeId: SettingsWire["themeId"] = "warm";
   clockSkewMs = 0;
   counts: Record<string, number> = {};
   /** Session ids the server already stores. */
@@ -154,6 +154,10 @@ export class FakeServer implements SyncTransport {
         themeId: this.themeId,
         soundId: "bell",
         ambientId: null,
+        focusSoundId: null,
+        shortBreakSoundId: null,
+        longBreakSoundId: null,
+        ambientMix: null,
         notificationsOn: false,
         updatedAt: this.settingsUpdatedAt,
       },
@@ -277,6 +281,12 @@ export class FakeHost implements SyncHost {
     autoStartShortBreak: false,
     autoStartLongBreak: false,
     themeId: "warm",
+    soundId: "default",
+    focusSoundId: null,
+    shortBreakSoundId: null,
+    longBreakSoundId: null,
+    ambientId: null,
+    ambientMix: null,
   };
 
   snapshot = () => this.settings;

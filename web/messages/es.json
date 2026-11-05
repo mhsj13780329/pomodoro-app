@@ -1,13 +1,12 @@
 {
-  "meta": {
-    "description": "Un temporizador {appName} para concentrarte"
-  },
+  "meta": { "description": "Un temporizador {appName} para concentrarte" },
   "nav": {
     "menu": "Menú principal",
     "timer": "Temporizador",
     "tasks": "Tareas",
     "stats": "Estadísticas",
-    "settings": "Ajustes"
+    "settings": "Ajustes",
+    "notes": "Notas"
   },
   "timer": {
     "play": "Empezar",
@@ -20,18 +19,10 @@
     "longHint": "Respira hondo",
     "started": "Empezó",
     "ready": "Listo",
-    "phases": {
-      "focus": "Concentración",
-      "shortBreak": "Descanso corto",
-      "longBreak": "Descanso largo"
-    }
+    "phases": { "focus": "Concentración", "shortBreak": "Descanso corto", "longBreak": "Descanso largo" }
   },
   "streak": "{count, plural, one {# día seguido} other {# días seguidos}}",
-  "today": {
-    "heading": "Hoy",
-    "focusHours": "Tiempo de concentración",
-    "sessionsDone": "Sesiones hechas"
-  },
+  "today": { "heading": "Hoy", "focusHours": "Tiempo de concentración", "sessionsDone": "Sesiones hechas" },
   "tasks": {
     "heading": "Tareas",
     "all": "Todas",
@@ -206,13 +197,25 @@
       "title": "Gratis y Pro",
       "free": "Gratis",
       "pro": "Pro",
-      "timer": { "label": "Temporizador", "free": "Preajustes 25/5/15 y 50/10/20", "pro": "Cualquier duración, intervalo y sonidos por fase" },
+      "timer": {
+        "label": "Temporizador",
+        "free": "Preajustes 25/5/15 y 50/10/20",
+        "pro": "Cualquier duración, intervalo y sonidos por fase"
+      },
       "autostart": { "label": "Inicio automático", "free": "Cada fase", "pro": "Cada fase" },
       "sync": { "label": "Sincronización", "free": "Entre dispositivos", "pro": "Entre dispositivos" },
       "streak": { "label": "Racha diaria", "free": "Incluida", "pro": "Incluida" },
       "themes": { "label": "Temas", "free": "3 temas", "pro": "Ilimitados" },
-      "tasks": { "label": "Tareas", "free": "Lista simple, hasta 10 activas", "pro": "Proyectos, etiquetas, subtareas, sin límite" },
-      "stats": { "label": "Estadísticas", "free": "Hoy, 7 días y este mes", "pro": "Historial completo, mapa anual, desglose y exportación" },
+      "tasks": {
+        "label": "Tareas",
+        "free": "Lista simple, hasta 10 activas",
+        "pro": "Proyectos, etiquetas, subtareas, sin límite"
+      },
+      "stats": {
+        "label": "Estadísticas",
+        "free": "Hoy, 7 días y este mes",
+        "pro": "Historial completo, mapa anual, desglose y exportación"
+      },
       "notepad": { "label": "Bloc", "free": "No incluido", "pro": "Incluido" },
       "ambient": { "label": "Sonido ambiental", "free": "1 sonido", "pro": "Biblioteca completa" }
     },
@@ -275,13 +278,42 @@
       "minutes": "{count, number} min",
       "sessions": "{count, number} sesiones",
       "decrease": "Reducir {label}",
-      "increase": "Aumentar {label}"
+      "increase": "Aumentar {label}",
+      "presets": "Ajustes predefinidos",
+      "presetClassic": "25 / 5 / 15",
+      "presetLong": "50 / 10 / 20",
+      "custom": "Personalizado",
+      "customPro": "Las duraciones personalizadas son una función Pro."
     },
     "sync": {
       "synced": "Sincronizado",
       "offline": "Sin conexión — {count, number} en espera",
       "syncing": "Sincronizando…",
       "logoutWarning": "{count, number} elementos aún no se han sincronizado y se perderán si sales. ¿Salir de todos modos?"
+    },
+    "themeOcean": "Tema océano",
+    "themeDusk": "Tema atardecer",
+    "themeRose": "Tema rosa",
+    "themeSlate": "Tema pizarra",
+    "themeSand": "Tema arena",
+    "proBadge": "Pro",
+    "rejected": "Algunos cambios requieren Pro y no se guardaron.",
+    "sounds": {
+      "title": "Sonidos",
+      "endSound": "Sonido final",
+      "perPhase": "Un sonido por fase",
+      "perPhasePro": "Los sonidos por fase son una función Pro.",
+      "focus": "Tras el enfoque",
+      "shortBreak": "Tras el descanso corto",
+      "longBreak": "Tras el descanso largo",
+      "sameAsEnd": "Igual que el sonido final",
+      "names": {
+        "default": "Carillón",
+        "bell": "Campana",
+        "digital": "Digital",
+        "soft": "Suave",
+        "none": "Ninguno"
+      }
     }
   },
   "auth": {
@@ -325,5 +357,36 @@
     "de": "Deutsch",
     "ja": "日本語",
     "ko": "한국어"
+  },
+  "ambient": {
+    "title": "Sonido ambiente",
+    "play": "Reproducir",
+    "pause": "Pausar",
+    "volume": "Volumen de {name}",
+    "mix": "Mezclar sonidos",
+    "add": "Añadir un sonido",
+    "remove": "Quitar {name}",
+    "max": "Hasta {count, number} sonidos a la vez",
+    "proOnly": "La biblioteca completa y la mezcla son funciones Pro.",
+    "tracks": {
+      "brown-noise": "Ruido marrón",
+      "rain": "Lluvia",
+      "forest": "Bosque",
+      "fire": "Chimenea",
+      "wind": "Viento"
+    }
+  },
+  "notes": {
+    "title": "Notas",
+    "new": "Nueva nota",
+    "empty": "Aún no hay notas.",
+    "untitled": "Sin título",
+    "titlePlaceholder": "Título",
+    "bodyPlaceholder": "Escribe algo…",
+    "delete": "Eliminar nota",
+    "confirmDelete": "¿Eliminar esta nota?",
+    "proRequired": "El bloc de notas es una función Pro.",
+    "readOnly": "Tu Pro ha terminado. Tus notas siguen visibles; renueva Pro para editarlas.",
+    "saved": "Guardado"
   }
 }

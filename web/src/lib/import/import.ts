@@ -6,9 +6,23 @@ import { storeSessions } from "@/lib/sync/rows";
 import { importGuestTasks } from "@/lib/tasks/rows";
 import type { ImportBody, ImportResult, ImportSettings } from "./contract";
 import { decideSettingsImport } from "./merge";
+import { isFreeTheme, presetOf, TIMER_PRESETS } from "@/lib/settings/catalog";
+
+/** A free account gets no Pro settings from a guest upload: off-preset durations fall back to 25/5/15, a Pro theme to warm. */
+export function gateImportedSettings(settings: ImportSettings, pro: boolean): ImportSettings {
+  if (pro) return settings;
+  const out = { ...settings };
+  if (presetOf(out) == null) {
+    const { focusMin, shortBreakMin, longBreakMin, longBreakEvery } = TIMER_PRESETS[0];
+    Object.assign(out, { focusMin, shortBreakMin, longBreakMin, longBreakEvery });
+  }
+  if (!isFreeTheme(out.themeId)) out.themeId = "warm";
+  return out;
+}
 
 /** Copies the guest settings only when the account has none. Rechecked inside the transaction. */
-async function importGuestSettings(userId: string, settings: ImportSettings): Promise<boolean> {
+async function importGuestSettings(userId: string, guest: ImportSettings, pro: boolean): Promise<boolean> {
+  const settings = gateImportedSettings(guest, pro);
   const first = await prisma.settings.findUnique({ where: { userId }, select: { userId: true } });
   if (!decideSettingsImport(first != null, settings)) return false;
   return prisma.$transaction(async (tx) => {
@@ -30,8 +44,8 @@ async function importGuestSettings(userId: string, settings: ImportSettings): Pr
  * after a 200). A partial run followed by a retry ends in the same state as one clean run.
  */
 export async function importGuest(userId: string, body: ImportBody, serverNow: number): Promise<ImportResult> {
-  const importedSettings = await importGuestSettings(userId, body.settings);
   const pro = isProActive(await loadEntitlement(userId));
+  const importedSettings = await importGuestSettings(userId, body.settings, pro);
   const tasks = await importGuestTasks(userId, body.tasks, pro);
   // Rejected sessions are dropped silently, as /api/sessions does.
   const sessions = await storeSessions(userId, body.sessions, serverNow);

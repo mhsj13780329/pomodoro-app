@@ -10,16 +10,9 @@ test("a guest's tasks and finished focus are on the account after signing in", a
   const context = await browser.newContext();
   try {
     const page = await context.newPage();
-    // Fake clock so a one-minute focus can be finished without waiting.
+    // Fake clock so the 25-minute focus (guests only get the presets) can be finished without waiting.
     await page.clock.install({ time: Date.now() });
     await page.clock.resume();
-
-    // The shortest focus the settings allow is one minute.
-    await page.goto("/en/settings");
-    const decrease = page.getByRole("button", { name: "Decrease Focus" });
-    await expect(page.getByText("25 min").first()).toBeVisible();
-    for (let i = 0; i < 24; i++) await decrease.click();
-    await expect(page.getByText("1 min").first()).toBeVisible();
 
     await page.goto("/en/tasks");
     for (const title of ["Write report", "Read paper"]) {
@@ -32,7 +25,7 @@ test("a guest's tasks and finished focus are on the account after signing in", a
     await page.getByRole("button", { name: "Focus on: Write report" }).first().click();
     const before = (await readRing(page)).subtitle;
     await page.getByRole("button", { name: "Start", exact: true }).click();
-    await page.clock.fastForward("01:10");
+    await page.clock.fastForward("25:10");
     await expect.poll(async () => (await readRing(page)).subtitle).not.toBe(before);
 
     await login(page, email);

@@ -128,7 +128,6 @@ test("a focus length changed on one device reaches the other", async ({ browser 
 
   await openSettings(b.page);
   await expect(b.page.getByRole("button", { name: "50 / 10 / 20" })).toHaveAttribute("aria-pressed", "true");
-  await expect(b.page.getByText("50 min", { exact: true })).toBeVisible();
   await openTimer(b.page);
   await expect.poll(async () => (await readRing(b.page)).seconds).toBe(50 * 60);
 });

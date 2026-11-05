@@ -152,12 +152,20 @@ export async function openTimer(page: Page, reload = false) {
   await expect(page.getByRole("button", { name: /^(Start|Pause)$/ })).toBeVisible();
 }
 
-/** Sets the focus length straight on the server, the way another device would. */
+/**
+ * Sets the focus length straight in the database, as if a Pro device had saved it.
+ * A free account cannot pick a custom length through the API (only the presets), and
+ * the tests need a one-minute focus without making the account Pro.
+ */
 export async function setFocusMinutes(page: Page, focusMin: number) {
-  const response = await page.request.put("/api/settings", {
-    data: { clientUpdatedAt: new Date().toISOString(), focusMin },
-  });
-  expect(response.ok()).toBe(true);
+  const session = await page.request.get("/api/auth/get-session");
+  const userId = ((await session.json()) as { user: { id: string } }).user.id;
+  await page.request.get("/api/sync/state");
+  const rows = await query(
+    `UPDATE "Settings" SET "focusMin" = $1, "updatedAt" = now() WHERE "userId" = $2 RETURNING "userId"`,
+    [focusMin, userId],
+  );
+  expect(rows).toHaveLength(1);
 }
 
 export type RingView = {

@@ -11,6 +11,10 @@ export type SyncSettings = {
   themeId: string;
   soundId: string;
   ambientId: string | null;
+  focusSoundId: string | null;
+  shortBreakSoundId: string | null;
+  longBreakSoundId: string | null;
+  ambientMix: { id: string; volume: number }[] | null;
   notificationsOn: boolean;
   /** Epoch milliseconds. Compared to the client's clock only against this field. */
   updatedAt: number;

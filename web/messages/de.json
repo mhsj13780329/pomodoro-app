@@ -1,13 +1,12 @@
 {
-  "meta": {
-    "description": "Ein {appName}-Timer für konzentriertes Arbeiten"
-  },
+  "meta": { "description": "Ein {appName}-Timer für konzentriertes Arbeiten" },
   "nav": {
     "menu": "Hauptmenü",
     "timer": "Timer",
     "tasks": "Aufgaben",
     "stats": "Statistik",
-    "settings": "Einstellungen"
+    "settings": "Einstellungen",
+    "notes": "Notizen"
   },
   "timer": {
     "play": "Start",
@@ -20,18 +19,10 @@
     "longHint": "Tief durchatmen",
     "started": "Gestartet",
     "ready": "Bereit",
-    "phases": {
-      "focus": "Fokus",
-      "shortBreak": "Kurze Pause",
-      "longBreak": "Lange Pause"
-    }
+    "phases": { "focus": "Fokus", "shortBreak": "Kurze Pause", "longBreak": "Lange Pause" }
   },
   "streak": "{count, plural, one {# Tag in Folge} other {# Tage in Folge}}",
-  "today": {
-    "heading": "Heute",
-    "focusHours": "Fokuszeit",
-    "sessionsDone": "Abgeschlossene Sitzungen"
-  },
+  "today": { "heading": "Heute", "focusHours": "Fokuszeit", "sessionsDone": "Abgeschlossene Sitzungen" },
   "tasks": {
     "heading": "Aufgaben",
     "all": "Alle",
@@ -206,13 +197,25 @@
       "title": "Kostenlos und Pro",
       "free": "Kostenlos",
       "pro": "Pro",
-      "timer": { "label": "Timer", "free": "Vorlagen 25/5/15 und 50/10/20", "pro": "Jede Länge, Langpausen-Abstand und Töne je Phase" },
+      "timer": {
+        "label": "Timer",
+        "free": "Vorlagen 25/5/15 und 50/10/20",
+        "pro": "Jede Länge, Langpausen-Abstand und Töne je Phase"
+      },
       "autostart": { "label": "Autostart", "free": "Jede Phase", "pro": "Jede Phase" },
       "sync": { "label": "Sync", "free": "Zwischen Geräten", "pro": "Zwischen Geräten" },
       "streak": { "label": "Tagessträhne", "free": "Enthalten", "pro": "Enthalten" },
       "themes": { "label": "Themen", "free": "3 Themen", "pro": "Unbegrenzt" },
-      "tasks": { "label": "Aufgaben", "free": "Einfache Liste, bis 10 aktiv", "pro": "Projekte, Tags, Unteraufgaben, unbegrenzt" },
-      "stats": { "label": "Statistik", "free": "Heute, 7 Tage und dieser Monat", "pro": "Ganze Historie, Jahres-Heatmap, Aufschlüsselung und Export" },
+      "tasks": {
+        "label": "Aufgaben",
+        "free": "Einfache Liste, bis 10 aktiv",
+        "pro": "Projekte, Tags, Unteraufgaben, unbegrenzt"
+      },
+      "stats": {
+        "label": "Statistik",
+        "free": "Heute, 7 Tage und dieser Monat",
+        "pro": "Ganze Historie, Jahres-Heatmap, Aufschlüsselung und Export"
+      },
       "notepad": { "label": "Notizbuch", "free": "Nicht enthalten", "pro": "Enthalten" },
       "ambient": { "label": "Umgebungsklang", "free": "1 Klang", "pro": "Ganze Bibliothek" }
     },
@@ -275,13 +278,42 @@
       "minutes": "{count, number} Min.",
       "sessions": "{count, number} Einheiten",
       "decrease": "{label} verringern",
-      "increase": "{label} erhöhen"
+      "increase": "{label} erhöhen",
+      "presets": "Vorlagen",
+      "presetClassic": "25 / 5 / 15",
+      "presetLong": "50 / 10 / 20",
+      "custom": "Eigene",
+      "customPro": "Eigene Zeiten sind eine Pro-Funktion."
     },
     "sync": {
       "synced": "Synchron",
       "offline": "Offline — {count, number} wartend",
       "syncing": "Synchronisiert…",
       "logoutWarning": "{count, number} Einträge sind noch nicht synchron und gehen beim Abmelden verloren. Trotzdem abmelden?"
+    },
+    "themeOcean": "Ozean-Design",
+    "themeDusk": "Dämmerungs-Design",
+    "themeRose": "Rosen-Design",
+    "themeSlate": "Schiefer-Design",
+    "themeSand": "Sand-Design",
+    "proBadge": "Pro",
+    "rejected": "Einige Änderungen erfordern Pro und wurden nicht gespeichert.",
+    "sounds": {
+      "title": "Töne",
+      "endSound": "Endton",
+      "perPhase": "Eigener Ton pro Phase",
+      "perPhasePro": "Töne pro Phase sind eine Pro-Funktion.",
+      "focus": "Nach dem Fokus",
+      "shortBreak": "Nach kurzer Pause",
+      "longBreak": "Nach langer Pause",
+      "sameAsEnd": "Wie der Endton",
+      "names": {
+        "default": "Glockenspiel",
+        "bell": "Glocke",
+        "digital": "Digital",
+        "soft": "Sanft",
+        "none": "Keiner"
+      }
     }
   },
   "auth": {
@@ -325,5 +357,36 @@
     "de": "Deutsch",
     "ja": "日本語",
     "ko": "한국어"
+  },
+  "ambient": {
+    "title": "Umgebungsklang",
+    "play": "Abspielen",
+    "pause": "Pausieren",
+    "volume": "Lautstärke {name}",
+    "mix": "Klänge mischen",
+    "add": "Klang hinzufügen",
+    "remove": "{name} entfernen",
+    "max": "Bis zu {count, number} Klänge gleichzeitig",
+    "proOnly": "Die ganze Bibliothek und das Mischen sind Pro-Funktionen.",
+    "tracks": {
+      "brown-noise": "Braunes Rauschen",
+      "rain": "Regen",
+      "forest": "Wald",
+      "fire": "Kamin",
+      "wind": "Wind"
+    }
+  },
+  "notes": {
+    "title": "Notizen",
+    "new": "Neue Notiz",
+    "empty": "Noch keine Notizen.",
+    "untitled": "Ohne Titel",
+    "titlePlaceholder": "Titel",
+    "bodyPlaceholder": "Schreib etwas…",
+    "delete": "Notiz löschen",
+    "confirmDelete": "Diese Notiz löschen?",
+    "proRequired": "Der Notizblock ist eine Pro-Funktion.",
+    "readOnly": "Dein Pro ist abgelaufen. Deine Notizen bleiben lesbar; verlängere Pro, um sie zu bearbeiten.",
+    "saved": "Gespeichert"
   }
 }

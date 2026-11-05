@@ -1,13 +1,12 @@
 {
-  "meta": {
-    "description": "Un minuteur {appName} pour rester concentré"
-  },
+  "meta": { "description": "Un minuteur {appName} pour rester concentré" },
   "nav": {
     "menu": "Menu principal",
     "timer": "Minuteur",
     "tasks": "Tâches",
     "stats": "Statistiques",
-    "settings": "Réglages"
+    "settings": "Réglages",
+    "notes": "Notes"
   },
   "timer": {
     "play": "Démarrer",
@@ -20,11 +19,7 @@
     "longHint": "Respire profondément",
     "started": "C’est parti",
     "ready": "Prêt",
-    "phases": {
-      "focus": "Concentration",
-      "shortBreak": "Pause courte",
-      "longBreak": "Pause longue"
-    }
+    "phases": { "focus": "Concentration", "shortBreak": "Pause courte", "longBreak": "Pause longue" }
   },
   "streak": "{count, plural, one {# jour d’affilée} other {# jours d’affilée}}",
   "today": {
@@ -206,13 +201,25 @@
       "title": "Gratuit et Pro",
       "free": "Gratuit",
       "pro": "Pro",
-      "timer": { "label": "Minuteur", "free": "Préréglages 25/5/15 et 50/10/20", "pro": "Toute durée, intervalle et sons par phase" },
+      "timer": {
+        "label": "Minuteur",
+        "free": "Préréglages 25/5/15 et 50/10/20",
+        "pro": "Toute durée, intervalle et sons par phase"
+      },
       "autostart": { "label": "Démarrage auto", "free": "Chaque phase", "pro": "Chaque phase" },
       "sync": { "label": "Synchro", "free": "Entre appareils", "pro": "Entre appareils" },
       "streak": { "label": "Série quotidienne", "free": "Incluse", "pro": "Incluse" },
       "themes": { "label": "Thèmes", "free": "3 thèmes", "pro": "Illimités" },
-      "tasks": { "label": "Tâches", "free": "Liste simple, 10 actives au plus", "pro": "Projets, étiquettes, sous-tâches, sans limite" },
-      "stats": { "label": "Statistiques", "free": "Aujourd’hui, 7 jours et ce mois", "pro": "Historique complet, carte annuelle, détail et export" },
+      "tasks": {
+        "label": "Tâches",
+        "free": "Liste simple, 10 actives au plus",
+        "pro": "Projets, étiquettes, sous-tâches, sans limite"
+      },
+      "stats": {
+        "label": "Statistiques",
+        "free": "Aujourd’hui, 7 jours et ce mois",
+        "pro": "Historique complet, carte annuelle, détail et export"
+      },
       "notepad": { "label": "Bloc-notes", "free": "Non inclus", "pro": "Inclus" },
       "ambient": { "label": "Son d’ambiance", "free": "1 son", "pro": "Bibliothèque complète" }
     },
@@ -275,13 +282,42 @@
       "minutes": "{count, number} min",
       "sessions": "{count, number} sessions",
       "decrease": "Diminuer {label}",
-      "increase": "Augmenter {label}"
+      "increase": "Augmenter {label}",
+      "presets": "Préréglages",
+      "presetClassic": "25 / 5 / 15",
+      "presetLong": "50 / 10 / 20",
+      "custom": "Personnalisé",
+      "customPro": "Les durées personnalisées sont une fonction Pro."
     },
     "sync": {
       "synced": "Synchronisé",
       "offline": "Hors ligne — {count, number} en attente",
       "syncing": "Synchronisation…",
       "logoutWarning": "{count, number} éléments ne sont pas encore synchronisés et seront perdus si vous vous déconnectez. Se déconnecter quand même ?"
+    },
+    "themeOcean": "Thème océan",
+    "themeDusk": "Thème crépuscule",
+    "themeRose": "Thème rose",
+    "themeSlate": "Thème ardoise",
+    "themeSand": "Thème sable",
+    "proBadge": "Pro",
+    "rejected": "Certaines modifications nécessitent Pro et n’ont pas été enregistrées.",
+    "sounds": {
+      "title": "Sons",
+      "endSound": "Son de fin",
+      "perPhase": "Un son par phase",
+      "perPhasePro": "Les sons par phase sont une fonction Pro.",
+      "focus": "Après la concentration",
+      "shortBreak": "Après la pause courte",
+      "longBreak": "Après la pause longue",
+      "sameAsEnd": "Comme le son de fin",
+      "names": {
+        "default": "Carillon",
+        "bell": "Cloche",
+        "digital": "Numérique",
+        "soft": "Doux",
+        "none": "Aucun"
+      }
     }
   },
   "auth": {
@@ -325,5 +361,36 @@
     "de": "Deutsch",
     "ja": "日本語",
     "ko": "한국어"
+  },
+  "ambient": {
+    "title": "Son d’ambiance",
+    "play": "Lire",
+    "pause": "Pause",
+    "volume": "Volume de {name}",
+    "mix": "Mélanger les sons",
+    "add": "Ajouter un son",
+    "remove": "Retirer {name}",
+    "max": "Jusqu’à {count, number} sons à la fois",
+    "proOnly": "La bibliothèque complète et le mixage sont des fonctions Pro.",
+    "tracks": {
+      "brown-noise": "Bruit brun",
+      "rain": "Pluie",
+      "forest": "Forêt",
+      "fire": "Cheminée",
+      "wind": "Vent"
+    }
+  },
+  "notes": {
+    "title": "Notes",
+    "new": "Nouvelle note",
+    "empty": "Aucune note pour l’instant.",
+    "untitled": "Sans titre",
+    "titlePlaceholder": "Titre",
+    "bodyPlaceholder": "Écrivez quelque chose…",
+    "delete": "Supprimer la note",
+    "confirmDelete": "Supprimer cette note ?",
+    "proRequired": "Le bloc-notes est une fonction Pro.",
+    "readOnly": "Votre Pro a expiré. Vos notes restent lisibles ; renouvelez Pro pour les modifier.",
+    "saved": "Enregistré"
   }
 }

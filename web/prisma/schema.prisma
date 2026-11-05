@@ -146,6 +146,11 @@ model Settings {
   themeId             String
   soundId             String   @default("default")
   ambientId           String?
+  // Pro: per-phase end sounds (null = use soundId) and a mix of ambient tracks.
+  focusSoundId        String?
+  shortBreakSoundId   String?
+  longBreakSoundId    String?
+  ambientMix          Json?
   notificationsOn     Boolean  @default(true)
   updatedAt           DateTime @updatedAt
 }
@@ -272,11 +277,16 @@ model Note {
   id        String   @id @default(uuid())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  title     String
-  body      String
-  updatedAt DateTime @updatedAt
+  title           String
+  body            String
+  createdAt       DateTime  @default(now())
+  // Client edit time: last write wins on it. Not @updatedAt.
+  updatedAt       DateTime  @default(now())
+  deletedAt       DateTime?
+  // Pull cursor only.
+  serverUpdatedAt DateTime  @updatedAt
 
-  @@index([userId])
+  @@index([userId, serverUpdatedAt])
 }
 
 model Payment {

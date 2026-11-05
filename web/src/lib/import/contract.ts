@@ -1,4 +1,5 @@
 // What a browser uploads once, on first sign-in, from the data a guest made on this device.
+import { THEME_IDS } from "@/lib/settings/catalog";
 // Sessions use the same wire shape as the sync flush (POST /api/sessions), so the server can
 // store them through the same writer and the same checks.
 
@@ -13,7 +14,7 @@ export const importSettingsSchema = z.object({
   autoStartFocus: z.boolean(),
   autoStartShortBreak: z.boolean(),
   autoStartLongBreak: z.boolean(),
-  themeId: z.enum(["warm", "night", "forest"]),
+  themeId: z.enum(THEME_IDS),
 });
 
 export type ImportSettings = z.infer<typeof importSettingsSchema>;

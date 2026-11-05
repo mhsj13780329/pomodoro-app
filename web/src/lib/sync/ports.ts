@@ -58,6 +58,12 @@ export type SettingsSnapshot = {
   autoStartShortBreak: boolean;
   autoStartLongBreak: boolean;
   themeId: NonNullable<SettingsPatch["themeId"]>;
+  soundId: string;
+  focusSoundId: string | null;
+  shortBreakSoundId: string | null;
+  longBreakSoundId: string | null;
+  ambientId: string | null;
+  ambientMix: { id: string; volume: number }[] | null;
 };
 
 /** The part of the sync host that belongs to the tasks store. */

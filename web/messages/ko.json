@@ -1,13 +1,12 @@
 {
-  "meta": {
-    "description": "집중을 위한 {appName} 타이머"
-  },
+  "meta": { "description": "집중을 위한 {appName} 타이머" },
   "nav": {
     "menu": "주 메뉴",
     "timer": "타이머",
     "tasks": "할 일",
     "stats": "통계",
-    "settings": "설정"
+    "settings": "설정",
+    "notes": "메모"
   },
   "timer": {
     "play": "시작",
@@ -20,18 +19,10 @@
     "longHint": "깊게 숨을 쉬어 보세요",
     "started": "시작됨",
     "ready": "준비됨",
-    "phases": {
-      "focus": "집중",
-      "shortBreak": "짧은 휴식",
-      "longBreak": "긴 휴식"
-    }
+    "phases": { "focus": "집중", "shortBreak": "짧은 휴식", "longBreak": "긴 휴식" }
   },
   "streak": "{count, plural, other {#일 연속}}",
-  "today": {
-    "heading": "오늘",
-    "focusHours": "집중 시간",
-    "sessionsDone": "완료한 세션"
-  },
+  "today": { "heading": "오늘", "focusHours": "집중 시간", "sessionsDone": "완료한 세션" },
   "tasks": {
     "heading": "할 일",
     "all": "전체",
@@ -275,13 +266,42 @@
       "minutes": "{count, number}분",
       "sessions": "{count, number}회",
       "decrease": "{label} 줄이기",
-      "increase": "{label} 늘리기"
+      "increase": "{label} 늘리기",
+      "presets": "프리셋",
+      "presetClassic": "25 / 5 / 15",
+      "presetLong": "50 / 10 / 20",
+      "custom": "사용자 지정",
+      "customPro": "사용자 지정 시간은 Pro 기능입니다."
     },
     "sync": {
       "synced": "동기화됨",
       "offline": "오프라인 — {count, number}개 대기",
       "syncing": "동기화 중…",
       "logoutWarning": "{count, number}개가 아직 동기화되지 않았습니다. 로그아웃하면 사라집니다. 로그아웃할까요?"
+    },
+    "themeOcean": "오션 테마",
+    "themeDusk": "황혼 테마",
+    "themeRose": "로즈 테마",
+    "themeSlate": "슬레이트 테마",
+    "themeSand": "샌드 테마",
+    "proBadge": "Pro",
+    "rejected": "일부 변경 사항은 Pro가 필요해 저장되지 않았습니다.",
+    "sounds": {
+      "title": "소리",
+      "endSound": "종료음",
+      "perPhase": "단계별 다른 소리",
+      "perPhasePro": "단계별 소리는 Pro 기능입니다.",
+      "focus": "집중 후",
+      "shortBreak": "짧은 휴식 후",
+      "longBreak": "긴 휴식 후",
+      "sameAsEnd": "종료음과 동일",
+      "names": {
+        "default": "차임",
+        "bell": "종",
+        "digital": "디지털",
+        "soft": "부드러운 소리",
+        "none": "없음"
+      }
     }
   },
   "auth": {
@@ -325,5 +345,36 @@
     "de": "Deutsch",
     "ja": "日本語",
     "ko": "한국어"
+  },
+  "ambient": {
+    "title": "배경음",
+    "play": "재생",
+    "pause": "일시정지",
+    "volume": "{name} 볼륨",
+    "mix": "소리 섞기",
+    "add": "소리 추가",
+    "remove": "{name} 제거",
+    "max": "최대 {count, number}개까지 동시 재생",
+    "proOnly": "전체 라이브러리와 믹스는 Pro 기능입니다.",
+    "tracks": {
+      "brown-noise": "브라운 노이즈",
+      "rain": "비",
+      "forest": "숲",
+      "fire": "벽난로",
+      "wind": "바람"
+    }
+  },
+  "notes": {
+    "title": "메모",
+    "new": "새 메모",
+    "empty": "아직 메모가 없습니다.",
+    "untitled": "제목 없음",
+    "titlePlaceholder": "제목",
+    "bodyPlaceholder": "무언가 적어 보세요…",
+    "delete": "메모 삭제",
+    "confirmDelete": "이 메모를 삭제할까요?",
+    "proRequired": "메모장은 Pro 기능입니다.",
+    "readOnly": "Pro가 종료되었습니다. 메모는 계속 읽을 수 있으며, 편집하려면 Pro를 갱신하세요.",
+    "saved": "저장됨"
   }
 }

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { tasksBlockSchema } from "@/lib/tasks/contract";
+import { MAX_MIX_TRACKS, THEME_IDS } from "@/lib/settings/catalog";
 
 // Shared by the route handlers and the browser. No database import here,
 // so client code can use these types without pulling in Prisma.
@@ -55,7 +56,12 @@ export function dbStatusToWire(status: DbStatus): WireStatus {
 }
 
 const minute = z.number().int().min(1).max(24 * 60);
-const themeId = z.enum(["warm", "night", "forest"]);
+const themeId = z.enum(THEME_IDS);
+const soundRef = z.string().min(1).max(40);
+const ambientMix = z
+  .array(z.object({ id: soundRef, volume: z.number().min(0).max(1) }).strict())
+  .min(1)
+  .max(MAX_MIX_TRACKS);
 
 export const settingsWireSchema = z.object({
   focusMin: minute,
@@ -68,6 +74,10 @@ export const settingsWireSchema = z.object({
   themeId,
   soundId: z.string().min(1).max(40),
   ambientId: z.string().min(1).max(40).nullable(),
+  focusSoundId: soundRef.nullable(),
+  shortBreakSoundId: soundRef.nullable(),
+  longBreakSoundId: soundRef.nullable(),
+  ambientMix: ambientMix.nullable(),
   notificationsOn: z.boolean(),
   updatedAt: z.string(),
 });
@@ -87,6 +97,10 @@ export const settingsPatchSchema = z
     themeId: themeId.optional(),
     soundId: z.string().min(1).max(40).optional(),
     ambientId: z.string().min(1).max(40).nullable().optional(),
+    focusSoundId: soundRef.nullable().optional(),
+    shortBreakSoundId: soundRef.nullable().optional(),
+    longBreakSoundId: soundRef.nullable().optional(),
+    ambientMix: ambientMix.nullable().optional(),
     notificationsOn: z.boolean().optional(),
   })
   .strict();
@@ -179,6 +193,8 @@ export const syncStateSchema = z.object({
   activeTimer: timerWireSchema,
   /** Only present when the pull asked for it with ?tasksSince=. */
   tasks: tasksBlockSchema.optional(),
+  /** Settings fields a settings write dropped because they need Pro (or are unknown). */
+  rejected: z.array(z.string()).optional(),
 });
 
 export type SyncState = z.infer<typeof syncStateSchema>;

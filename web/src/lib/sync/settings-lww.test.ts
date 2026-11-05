@@ -12,6 +12,10 @@ const stored: SyncSettings = {
   themeId: "warm",
   soundId: "default",
   ambientId: null,
+  focusSoundId: null,
+  shortBreakSoundId: null,
+  longBreakSoundId: null,
+  ambientMix: null,
   notificationsOn: true,
   updatedAt: 1_000,
 };

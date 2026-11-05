@@ -1,13 +1,12 @@
 {
-  "meta": {
-    "description": "A {appName} timer for staying focused"
-  },
+  "meta": { "description": "A {appName} timer for staying focused" },
   "nav": {
     "menu": "Main menu",
     "timer": "Timer",
     "tasks": "Tasks",
     "stats": "Stats",
-    "settings": "Settings"
+    "settings": "Settings",
+    "notes": "Notes"
   },
   "timer": {
     "play": "Start",
@@ -20,18 +19,10 @@
     "longHint": "Take a deep breath",
     "started": "Started",
     "ready": "Ready",
-    "phases": {
-      "focus": "Focus",
-      "shortBreak": "Short break",
-      "longBreak": "Long break"
-    }
+    "phases": { "focus": "Focus", "shortBreak": "Short break", "longBreak": "Long break" }
   },
   "streak": "{count, plural, one {# day in a row} other {# days in a row}}",
-  "today": {
-    "heading": "Today",
-    "focusHours": "Focus time",
-    "sessionsDone": "Sessions done"
-  },
+  "today": { "heading": "Today", "focusHours": "Focus time", "sessionsDone": "Sessions done" },
   "tasks": {
     "heading": "Tasks",
     "all": "All",
@@ -206,13 +197,25 @@
       "title": "Free and Pro",
       "free": "Free",
       "pro": "Pro",
-      "timer": { "label": "Timer", "free": "Presets 25/5/15 and 50/10/20", "pro": "Any length, long-break interval and per-phase sounds" },
+      "timer": {
+        "label": "Timer",
+        "free": "Presets 25/5/15 and 50/10/20",
+        "pro": "Any length, long-break interval and per-phase sounds"
+      },
       "autostart": { "label": "Auto-start", "free": "Each phase", "pro": "Each phase" },
       "sync": { "label": "Sync", "free": "Across devices", "pro": "Across devices" },
       "streak": { "label": "Daily streak", "free": "Included", "pro": "Included" },
       "themes": { "label": "Themes", "free": "3 themes", "pro": "Unlimited" },
-      "tasks": { "label": "Tasks", "free": "A simple list, up to 10 active", "pro": "Projects, tags, subtasks, unlimited" },
-      "stats": { "label": "Stats", "free": "Today, 7 days and this month", "pro": "Full history, year heatmap, breakdown and export" },
+      "tasks": {
+        "label": "Tasks",
+        "free": "A simple list, up to 10 active",
+        "pro": "Projects, tags, subtasks, unlimited"
+      },
+      "stats": {
+        "label": "Stats",
+        "free": "Today, 7 days and this month",
+        "pro": "Full history, year heatmap, breakdown and export"
+      },
       "notepad": { "label": "Notepad", "free": "Not included", "pro": "Included" },
       "ambient": { "label": "Ambient sound", "free": "1 sound", "pro": "Full library" }
     },
@@ -275,13 +278,42 @@
       "minutes": "{count, number} min",
       "sessions": "{count, number} sessions",
       "decrease": "Decrease {label}",
-      "increase": "Increase {label}"
+      "increase": "Increase {label}",
+      "presets": "Presets",
+      "presetClassic": "25 / 5 / 15",
+      "presetLong": "50 / 10 / 20",
+      "custom": "Custom",
+      "customPro": "Custom durations are a Pro feature."
     },
     "sync": {
       "synced": "Synced",
       "offline": "Offline — {count, number} waiting",
       "syncing": "Syncing…",
       "logoutWarning": "{count, number} items are not synced yet and will be lost if you log out. Log out anyway?"
+    },
+    "themeOcean": "Ocean theme",
+    "themeDusk": "Dusk theme",
+    "themeRose": "Rose theme",
+    "themeSlate": "Slate theme",
+    "themeSand": "Sand theme",
+    "proBadge": "Pro",
+    "rejected": "Some changes need Pro and were not saved.",
+    "sounds": {
+      "title": "Sounds",
+      "endSound": "End sound",
+      "perPhase": "Different sound per phase",
+      "perPhasePro": "Per-phase sounds are a Pro feature.",
+      "focus": "After focus",
+      "shortBreak": "After short break",
+      "longBreak": "After long break",
+      "sameAsEnd": "Same as end sound",
+      "names": {
+        "default": "Chime",
+        "bell": "Bell",
+        "digital": "Digital",
+        "soft": "Soft",
+        "none": "None"
+      }
     }
   },
   "auth": {
@@ -325,5 +357,36 @@
     "de": "Deutsch",
     "ja": "日本語",
     "ko": "한국어"
+  },
+  "ambient": {
+    "title": "Ambient sound",
+    "play": "Play",
+    "pause": "Pause",
+    "volume": "{name} volume",
+    "mix": "Mix sounds",
+    "add": "Add a sound",
+    "remove": "Remove {name}",
+    "max": "Up to {count, number} sounds at once",
+    "proOnly": "The full library and mixing are Pro features.",
+    "tracks": {
+      "brown-noise": "Brown noise",
+      "rain": "Rain",
+      "forest": "Forest",
+      "fire": "Fireplace",
+      "wind": "Wind"
+    }
+  },
+  "notes": {
+    "title": "Notes",
+    "new": "New note",
+    "empty": "No notes yet.",
+    "untitled": "Untitled",
+    "titlePlaceholder": "Title",
+    "bodyPlaceholder": "Write something…",
+    "delete": "Delete note",
+    "confirmDelete": "Delete this note?",
+    "proRequired": "The notepad is a Pro feature.",
+    "readOnly": "Your Pro has ended. Your notes stay readable; renew Pro to edit them.",
+    "saved": "Saved"
   }
 }

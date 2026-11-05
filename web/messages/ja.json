@@ -1,13 +1,12 @@
 {
-  "meta": {
-    "description": "集中するための{appName}タイマー"
-  },
+  "meta": { "description": "集中するための{appName}タイマー" },
   "nav": {
     "menu": "メインメニュー",
     "timer": "タイマー",
     "tasks": "タスク",
     "stats": "統計",
-    "settings": "設定"
+    "settings": "設定",
+    "notes": "メモ"
   },
   "timer": {
     "play": "開始",
@@ -20,18 +19,10 @@
     "longHint": "深呼吸しましょう",
     "started": "始まりました",
     "ready": "準備できました",
-    "phases": {
-      "focus": "集中",
-      "shortBreak": "短い休憩",
-      "longBreak": "長い休憩"
-    }
+    "phases": { "focus": "集中", "shortBreak": "短い休憩", "longBreak": "長い休憩" }
   },
   "streak": "{count, plural, other {#日連続}}",
-  "today": {
-    "heading": "今日",
-    "focusHours": "集中時間",
-    "sessionsDone": "完了したセッション"
-  },
+  "today": { "heading": "今日", "focusHours": "集中時間", "sessionsDone": "完了したセッション" },
   "tasks": {
     "heading": "タスク",
     "all": "すべて",
@@ -216,10 +207,7 @@
       "notepad": { "label": "ノート", "free": "含まない", "pro": "含む" },
       "ambient": { "label": "環境音", "free": "1種類", "pro": "すべての音" }
     },
-    "errors": {
-      "gateway": "支払いを開始できませんでした。もう一度お試しください。",
-      "unavailable": "決済サービスに接続できません。しばらくしてからお試しください。"
-    },
+    "errors": { "gateway": "支払いを開始できませんでした。もう一度お試しください。", "unavailable": "決済サービスに接続できません。しばらくしてからお試しください。" },
     "result": {
       "successTitle": "支払いが完了しました",
       "successRef": "照会番号: {ref}",
@@ -275,13 +263,42 @@
       "minutes": "{count, number}分",
       "sessions": "{count, number}回",
       "decrease": "{label}を減らす",
-      "increase": "{label}を増やす"
+      "increase": "{label}を増やす",
+      "presets": "プリセット",
+      "presetClassic": "25 / 5 / 15",
+      "presetLong": "50 / 10 / 20",
+      "custom": "カスタム",
+      "customPro": "カスタム時間は Pro の機能です。"
     },
     "sync": {
       "synced": "同期済み",
       "offline": "オフライン — {count, number}件待機",
       "syncing": "同期中…",
       "logoutWarning": "{count, number}件がまだ同期されていません。ログアウトすると失われます。ログアウトしますか？"
+    },
+    "themeOcean": "オーシャンテーマ",
+    "themeDusk": "夕暮れテーマ",
+    "themeRose": "ローズテーマ",
+    "themeSlate": "スレートテーマ",
+    "themeSand": "サンドテーマ",
+    "proBadge": "Pro",
+    "rejected": "一部の変更は Pro が必要なため保存されませんでした。",
+    "sounds": {
+      "title": "サウンド",
+      "endSound": "終了音",
+      "perPhase": "フェーズごとに別の音",
+      "perPhasePro": "フェーズごとの音は Pro の機能です。",
+      "focus": "集中の後",
+      "shortBreak": "短い休憩の後",
+      "longBreak": "長い休憩の後",
+      "sameAsEnd": "終了音と同じ",
+      "names": {
+        "default": "チャイム",
+        "bell": "ベル",
+        "digital": "デジタル",
+        "soft": "ソフト",
+        "none": "なし"
+      }
     }
   },
   "auth": {
@@ -325,5 +342,36 @@
     "de": "Deutsch",
     "ja": "日本語",
     "ko": "한국어"
+  },
+  "ambient": {
+    "title": "環境音",
+    "play": "再生",
+    "pause": "一時停止",
+    "volume": "{name} の音量",
+    "mix": "サウンドをミックス",
+    "add": "サウンドを追加",
+    "remove": "{name} を削除",
+    "max": "同時に最大 {count, number} 個",
+    "proOnly": "全ライブラリとミックスは Pro の機能です。",
+    "tracks": {
+      "brown-noise": "ブラウンノイズ",
+      "rain": "雨",
+      "forest": "森",
+      "fire": "暖炉",
+      "wind": "風"
+    }
+  },
+  "notes": {
+    "title": "メモ",
+    "new": "新しいメモ",
+    "empty": "メモはまだありません。",
+    "untitled": "無題",
+    "titlePlaceholder": "タイトル",
+    "bodyPlaceholder": "何か書いてください…",
+    "delete": "メモを削除",
+    "confirmDelete": "このメモを削除しますか？",
+    "proRequired": "メモ帳は Pro の機能です。",
+    "readOnly": "Pro の期間が終了しました。メモは引き続き読めます。編集するには Pro を更新してください。",
+    "saved": "保存しました"
   }
 }

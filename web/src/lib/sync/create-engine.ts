@@ -293,6 +293,12 @@ export function createSyncEngine({ env, transport, storage, host }: SyncPorts): 
         autoStartShortBreak: snap.autoStartShortBreak,
         autoStartLongBreak: snap.autoStartLongBreak,
         themeId: snap.themeId,
+        soundId: snap.soundId,
+        focusSoundId: snap.focusSoundId,
+        shortBreakSoundId: snap.shortBreakSoundId,
+        longBreakSoundId: snap.longBreakSoundId,
+        ambientId: snap.ambientId,
+        ambientMix: snap.ambientMix,
       };
       const seen = epoch;
       const result = await transport.putSettings(patch);
