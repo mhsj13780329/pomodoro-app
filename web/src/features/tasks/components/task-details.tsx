@@ -9,15 +9,15 @@ import { DetailsNotes } from "./details-notes";
 import { DetailsSubtasks } from "./details-subtasks";
 import { DetailsTags } from "./details-tags";
 import { ProLock } from "./pro-lock";
-import { field, secondaryButton, sectionLabel } from "./styles";
+import { ProjectPicker } from "./project-picker";
+import { secondaryButton, sectionLabel } from "./styles";
 
 const MAX_ESTIMATE = 50;
 
 function Body({ task, onClose }: { task: TaskWire; onClose: () => void }) {
   const t = useTranslations("tasks");
   const pro = useTasksStore((state) => state.pro);
-  const projects = useTasksStore((state) => state.projects);
-  const projectId = useId();
+  const estimateId = useId();
   // Not Pro (never was, or it ended): everything shows, nothing can be added or changed.
   // The server refuses those writes too; this only keeps the UI honest.
   const locked = !pro;
@@ -25,9 +25,6 @@ function Body({ task, onClose }: { task: TaskWire; onClose: () => void }) {
 
   const setEstimate = (value: number | null) => useTasksStore.getState().updateTask(task.id, { estimatePomodoros: value });
 
-  const choices = Object.values(projects)
-    .filter((project) => !project.archived || project.id === task.projectId)
-    .sort((a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt));
 
   return (
     <div className="flex max-h-[70vh] flex-col gap-4 overflow-y-auto">
@@ -39,10 +36,10 @@ function Body({ task, onClose }: { task: TaskWire; onClose: () => void }) {
       )}
 
       <div className="flex flex-col gap-1.5">
-        <span id={`${projectId}-estimate`} className={sectionLabel}>
+        <span id={`${estimateId}-estimate`} className={sectionLabel}>
           {t("estimateLabel")}
         </span>
-        <div role="group" aria-labelledby={`${projectId}-estimate`} className="flex items-center gap-2">
+        <div role="group" aria-labelledby={`${estimateId}-estimate`} className="flex items-center gap-2">
           <button
             type="button"
             aria-label={t("estimateLess")}
@@ -68,23 +65,12 @@ function Body({ task, onClose }: { task: TaskWire; onClose: () => void }) {
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <label htmlFor={projectId} className={sectionLabel}>
-          {t("projectLabel")}
-        </label>
-        <select
-          id={projectId}
-          value={task.projectId && projects[task.projectId] ? task.projectId : ""}
+        <span className={sectionLabel}>{t("projectLabel")}</span>
+        <ProjectPicker
+          value={task.projectId}
           disabled={locked}
-          onChange={(event) => useTasksStore.getState().updateTask(task.id, { projectId: event.target.value || null })}
-          className={field}
-        >
-          <option value="">{t("projectNone")}</option>
-          {choices.map((project) => (
-            <option key={project.id} value={project.id}>
-              {project.archived ? t("projectArchivedName", { name: project.name }) : project.name}
-            </option>
-          ))}
-        </select>
+          onChange={(id) => useTasksStore.getState().updateTask(task.id, { projectId: id })}
+        />
       </div>
 
       <DetailsTags task={task} locked={locked} />

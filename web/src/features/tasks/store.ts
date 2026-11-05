@@ -27,6 +27,7 @@ export type TaskNotice = "active_limit" | "pro_required";
 export type WriteResult = "ok" | "missing" | "empty" | "active_limit" | "pro_required";
 
 export const TITLE_MAX = 200;
+export const PROJECT_NAME_MAX = 60;
 
 type TaskPatch = Partial<Pick<TaskWire, "title" | "notes" | "estimatePomodoros" | "projectId" | "tagIds" | "parentId">>;
 type ProjectPatch = Partial<Pick<ProjectWire, "name" | "color" | "archived">>;
@@ -52,7 +53,8 @@ type TasksState = {
   pendingSessions: SessionInput[];
   notice: TaskNotice | null;
 
-  addTask: (title: string) => WriteResult;
+  /** `projectId` (Pro) files the new task straight into that project. */
+  addTask: (title: string, projectId?: string | null) => WriteResult;
   /** Pro: a task one level under another task. */
   addSubtask: (parentId: string, title: string) => WriteResult;
   renameTask: (id: string, title: string) => WriteResult;
@@ -61,9 +63,14 @@ type TasksState = {
   removeTask: (id: string) => WriteResult;
   moveTask: (id: string, direction: "up" | "down") => WriteResult;
 
-  addProject: (name: string, color: ProjectColor) => WriteResult;
+  /** Returns the new project's id when it was created. */
+  addProject: (name: string, color: ProjectColor) => { result: WriteResult; id: string | null };
   updateProject: (id: string, patch: ProjectPatch) => WriteResult;
-  removeProject: (id: string) => WriteResult;
+  /**
+   * Deletes a project. Its tasks (done ones too) either move to "no project" or are deleted with it,
+   * subtasks included. Past focus sessions are never touched, so stats keep them.
+   */
+  removeProject: (id: string, options?: { deleteTasks?: boolean }) => WriteResult;
   /** Returns the id of an existing live tag with that name, or of the new one. */
   addTag: (name: string) => { result: WriteResult; id: string | null };
   removeTag: (id: string) => WriteResult;
@@ -220,7 +227,7 @@ export const useTasksStore = create<TasksState>()(
         pendingSessions: [],
         notice: null,
 
-        addTask: (title) => {
+        addTask: (title, projectId = null) => {
           const clean = cleanTitle(title);
           if (!clean) return "empty";
           const stamp = nextStamp();
@@ -233,7 +240,7 @@ export const useTasksStore = create<TasksState>()(
             done: false,
             doneAt: null,
             order: nextOrder(topLevel),
-            projectId: null,
+            projectId: projectId && get().projects[projectId] ? projectId : null,
             parentId: null,
             tagIds: [],
             createdAt: stamp,
@@ -310,34 +317,45 @@ export const useTasksStore = create<TasksState>()(
         },
 
         addProject: (name, color) => {
-          const clean = name.trim().slice(0, 60);
-          if (!clean) return "empty";
-          if (!gateProItemWrite({ pro: get().pro }).ok) return refuse("pro_required");
+          const clean = name.trim().slice(0, PROJECT_NAME_MAX);
+          if (!clean) return { result: "empty", id: null };
+          if (!gateProItemWrite({ pro: get().pro }).ok) return { result: refuse("pro_required"), id: null };
           const stamp = nextStamp();
+          const id = crypto.randomUUID();
           commit({
-            projects: [
-              { id: crypto.randomUUID(), name: clean, color, archived: false, createdAt: stamp, updatedAt: stamp, deletedAt: null },
-            ],
+            projects: [{ id, name: clean, color, archived: false, createdAt: stamp, updatedAt: stamp, deletedAt: null }],
           });
-          return "ok";
+          return { result: "ok", id };
         },
 
         updateProject: (id, patch) => {
           const stored = get().projects[id];
           if (!stored) return "missing";
           if (!gateProItemWrite({ pro: get().pro }).ok) return refuse("pro_required");
-          const name = patch.name === undefined ? stored.name : patch.name.trim().slice(0, 60);
+          const name = patch.name === undefined ? stored.name : patch.name.trim().slice(0, PROJECT_NAME_MAX);
           if (!name) return "empty";
           commit({ projects: [{ ...stored, ...patch, name, updatedAt: nextStamp(stored.updatedAt) }] });
           return "ok";
         },
 
-        removeProject: (id) => {
-          const stored = get().projects[id];
+        removeProject: (id, options = {}) => {
+          const state = get();
+          const stored = state.projects[id];
           if (!stored) return "missing";
-          if (!gateProItemWrite({ pro: get().pro }).ok) return refuse("pro_required");
+          if (!gateProItemWrite({ pro: state.pro }).ok) return refuse("pro_required");
           const stamp = nextStamp(stored.updatedAt);
-          commit({ projects: [{ ...stored, deletedAt: stamp, updatedAt: stamp }] });
+          const live = Object.values(state.tasks).filter((task) => task.deletedAt == null);
+          const owned = live.filter((task) => task.projectId === id);
+          const ownedIds = new Set(owned.map((task) => task.id));
+          const children = live.filter((task) => task.parentId != null && ownedIds.has(task.parentId) && !ownedIds.has(task.id));
+          const tasks = options.deleteTasks
+            ? [...owned, ...children].map((task) => {
+                const at = nextStamp(task.updatedAt);
+                return { ...task, deletedAt: at, updatedAt: at };
+              })
+            : // Clearing a project is always allowed, so this works for any account.
+              owned.map((task) => ({ ...task, projectId: null, updatedAt: nextStamp(task.updatedAt) }));
+          commit({ projects: [{ ...stored, deletedAt: stamp, updatedAt: stamp }], tasks });
           return "ok";
         },
 
